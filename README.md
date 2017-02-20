@@ -21,5 +21,5 @@ run matlab scripts: */scripts/read_data_write_data_with_enhanced_labels.m*
 3. To train and predict netwroks models:
 run shell scripts:  */model/inception_residual_train_prediction_xfm/train.sh* **or** *predict.sh*
 4. To generate segmentation on test set:
-run matlab scripts */odel/inception_residual_train_prediction_3fm/run_segmentation_on_test_set.m*
+run matlab scripts */model/inception_residual_train_prediction_3fm/run_segmentation_on_test_set.m*
 
