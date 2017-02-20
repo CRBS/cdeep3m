@@ -16,10 +16,13 @@ http://brainiac2.mit.edu/SNEMI3D/downloads
 # Code
 1. To generate boundary labels:
 run matlab scripts:  */scripts/create_new_vertical_closed_label.m*
+
 2. To generate all data h5 files (train, valid, test)
 run matlab scripts: */scripts/read_data_write_data_with_enhanced_labels.m*
+
 3. To train and predict netwroks models:
 run shell scripts:  */model/inception_residual_train_prediction_xfm/train.sh* **or** *predict.sh*
+
 4. To generate segmentation on test set:
 run matlab scripts */model/inception_residual_train_prediction_3fm/run_segmentation_on_test_set.m*
 
