@@ -5,7 +5,7 @@ This is the implementation code for paper submitted to Bioinformatics: **"DeepEM
 C++, bash shell, matlab, Cuda7.5
 
 # Data
-(1). Register first at:
+(1). Register at:
 http://brainiac2.mit.edu/SNEMI3D/user/register
 
 (2). Login in and download data at:
