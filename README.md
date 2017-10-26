@@ -11,7 +11,7 @@ http://brainiac2.mit.edu/SNEMI3D/user/register
 (2). Login in and download data at:
 http://brainiac2.mit.edu/SNEMI3D/downloads
 
-(3) Convert image files into h5 file that contains **\data** and **\label** sets.
+(3) Convert image files into h5 file that contains **/data** and **/label** sets.
 
 # Code
 1. To generate boundary labels:  
