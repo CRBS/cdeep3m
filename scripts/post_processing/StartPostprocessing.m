@@ -36,7 +36,7 @@ fprintf('Generating Average Prediction of %s\n',inputdir)
 average=generate_16_average_probs(inputdir);
 save_mat_file=fullfile(inputdir,'ave_probs.mat');
 save_h5_file=fullfile(inputdir, 'ave_probs.h5');
-save(save_mat_file,'average','-v7.3');
+save(save_mat_file,'average','-v7');
 p=single(average);
 d_details.location = '/';
 d_details.Name = 'probabilities';
