@@ -6,7 +6,8 @@ function [img_stack] = imageimporter(img_path)
 %-----------------------------------------------------------------------------
 %% Adapted for Deep3M -- NCMIR/NBCR, UCSD -- Author: M Haberl -- Date: 10/2017
 %-----------------------------------------------------------------------------
-
+disp('image importer = '); 
+disp(img_path); 
 % check if a folder of png/tif files or a single stack to load
 [Dir,name,ext] = fileparts(img_path);
 if ~isempty(ext)
@@ -23,7 +24,7 @@ if ~isempty(ext)
         
     end
     
-elseif isdir(label_img_path)
+elseif isdir(img_path)
     file_list = read_files_in_folder(img_path);
     png_list = filter_files(file_list,'png');
     tif_list = filter_files(file_list,'tif');

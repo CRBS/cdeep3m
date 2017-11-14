@@ -13,13 +13,13 @@
 %------------------------------------------------------------------
 
 %% Initialize
+disp('hi'); 
 arg_list = argv ();
 pkg load hdf5oct
 pkg load image
 
 userinput = arg_list{1};
 useroutput = arg_list{2};
-
 %% Load data
 if isdir(userinput)
     file_list = read_files_in_folder(userinput);
@@ -49,19 +49,29 @@ end
 
 %% User error prevention
 [Dir,name,ext] = fileparts(useroutput); 
+disp('dir = '); 
+disp(Dir); 
+disp('name = '); 
+disp(name); 
+disp('ext = '); 
+disp(ext); 
+
 ext = '.h5'; %overwrite extension, has to be .h5 file
 if ~exist(Dir,'dir')
     mkdir(Dir)
 end
-save_h5_file=fullfile(Dir,name,ext);
+h5filename = [name '.h5'];
+save_h5_file=fullfile(Dir,h5filename);
 
 %% Check if saving as data, image or labelfile
-if numel(arg_list>2)
+if numel(arg_list)>2
     datatype = arg_list{3};
-    d_details.Name = datatype;
+    d_details = ['/' datatype];
 else
-d_details.Name = 'data';
+d_details = '/data';
 end
 %% Write file
-d_details.location = '/';
+%d_details.location = '/';
+disp('d_details = '); 
+disp(d_details); 
 h5write(save_h5_file,d_details,imgstack);

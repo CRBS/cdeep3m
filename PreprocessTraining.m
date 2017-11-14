@@ -23,14 +23,19 @@ pkg load image
 
 arg_list = argv ();
 label_img_path = arg_list{1};
+
+disp(label_img_path); 
 trainig_img_path = arg_list{2};
 save_file = arg_list{3};
 tic
+
+addpath('./scripts'); 
 
 % ----------------------------------------------------------------------------------------
 %% Load train data
 % ----------------------------------------------------------------------------------------
 
+disp(label_img_path); 
 [lblstack] = imageimporter(label_img_path);
 
 
@@ -53,13 +58,19 @@ l_tr =single(labels_arr);
 [data,labels]=augment_data(d_tr,l_tr)
 
 [outdir,name,ext] = fileparts(save_file);
+
+d_details = '/data'; 
+l_details = '/label'; 
 if ~exist(outdir,'dir'), mkdir(outdir); end
 ext = '.h5';
 for i=1:length(data)
     d_tr=data{i};
     l_tr=labels{i};
     filename = fullfile(outdir, name, sprintf('training_full_stacks_v%s%s', num2str(i), ext));
+    disp(size(d_tr)); 
+    disp(filename); 
     h5write(filename,d_details,d_tr,l_details,l_tr);
+    %h5write(filename,d_details,d_tr); 
 end
 
 %savefile= fullfile((save_dir, 'training_full_stacks_v16.mat');
