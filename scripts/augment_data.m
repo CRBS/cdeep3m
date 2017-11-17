@@ -1,4 +1,5 @@
 function [D,L]=augment_data(x,y)
+disp('augmenting'); 
 [data1,label1]=create8Variation(x,y);
 
 slices=size(x,1);
@@ -70,7 +71,7 @@ for j = 1:8
             case 2
                 original = flipdim(original,1);
 				lb = flipdim(lb,1);
-				seg_lb=flipdim(seg_lb,1)
+				seg_lb=flipdim(seg_lb,1); 
             case 3
                 original = flipdim(original,2);
 				lb = flipdim(lb,2);
@@ -98,7 +99,7 @@ for j = 1:8
         end
 		data(i,:,:) = original;
 		label(i,:,:) =lb;
-		seg_label(i,:,:)=seg_lb
+		seg_label(i,:,:)=seg_lb; 
 		%elm_labels(i,:,:) = label;
 	end
 	D{j} = data;

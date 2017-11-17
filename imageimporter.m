@@ -1,4 +1,4 @@
-function [img_stack] = imageimporter(img_path)
+function [imgstack] = imageimporter(img_path)
 %imageimporter: loads image data from folder or from an individual stack
 %
 %  
@@ -34,6 +34,8 @@ elseif isdir(img_path)
         if type==1, file_list = tif_list; elseif type==2, file_list = png_list; end
         for idx =1:size(file_list,1)
             filename = fullfile(img_path,file_list(idx).name);
+            disp('reading filename = '); 
+            disp(filename); 
             imgstack(:,:,idx) = imread(filename);
         end
     end

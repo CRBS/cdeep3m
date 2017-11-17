@@ -22,10 +22,10 @@ pkg load hdf5oct
 pkg load image
 
 arg_list = argv ();
-label_img_path = arg_list{1};
+label_img_path = arg_list{2};
 
 disp(label_img_path); 
-trainig_img_path = arg_list{2};
+trainig_img_path = arg_list{1};
 save_file = arg_list{3};
 tic
 
@@ -55,7 +55,7 @@ labels_arr=permute(lblstack,[3 1 2]); %from h5 to tiff /100*1000*1000
 
 d_tr =single(data_arr);
 l_tr =single(labels_arr);
-[data,labels]=augment_data(d_tr,l_tr)
+[data,labels]=augment_data(d_tr,l_tr); 
 
 [outdir,name,ext] = fileparts(save_file);
 
@@ -67,9 +67,10 @@ for i=1:length(data)
     d_tr=data{i};
     l_tr=labels{i};
     filename = fullfile(outdir, name, sprintf('training_full_stacks_v%s%s', num2str(i), ext));
-    disp(size(d_tr)); 
     disp(filename); 
-    h5write(filename,d_details,d_tr,l_details,l_tr);
+    h5create(filename,'empty',[1]); 
+    h5write(filename,d_details,d_tr);
+    h5write(filename,l_details,l_tr); 
     %h5write(filename,d_details,d_tr); 
 end
 
