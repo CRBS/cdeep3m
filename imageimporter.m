@@ -1,5 +1,5 @@
-function [img_stack] = imageimporter(img_path)
-%imageimporter: loads image data from folder or from an individual stack
+function [imgstack] = imageimporter(img_path)
+%imageimporter: loads image data from folder or from an individual image stack
 %
 %  
 %  
@@ -10,10 +10,12 @@ function [img_stack] = imageimporter(img_path)
 % check if a folder of png/tif files or a single stack to load
 [Dir,name,ext] = fileparts(img_path);
 if ~isempty(ext)
-    if ~isempty(strfind(ext,'h5')) %overwrite extension, has to be .h5 file
-        %h5read
-        disp('H5 currently not supported as input');
-        return
+    if ~isempty(strfind(ext,'h5'))
+        disp('Reading H5 image file');
+        hinfo = h5info(img_path);
+        %h5read(img_path, hinfo.GroupHierarchy.Datasets.Name);  
+        imgstack = h5read(img_path, ['/', hinfo.Datasets.Name]);
+        
     elseif ~isempty(strfind(ext,'tif'))
         info = imfinfo(img_path);
         fprintf('Reading image stack with %d images\n',size(info,1));
