@@ -25,7 +25,7 @@ if ~isempty(ext)
         
     end
     
-elseif isdir(label_img_path)
+elseif isdir(img_path)
     file_list = read_files_in_folder(img_path);
     png_list = filter_files(file_list,'png');
     tif_list = filter_files(file_list,'tif');
