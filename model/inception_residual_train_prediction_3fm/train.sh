@@ -1,5 +1,5 @@
 #0!/bin/bash
-caffe_path=../../../caffe_nd_sense_segmetation/.build_release/tools
+caffe_path=../../../caffe_nd_sense_segmentation/.build_release/tools
 log_dir=LOG
 mkdir -p $log_dir
 mkdir -p trained_weights
