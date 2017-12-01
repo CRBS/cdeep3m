@@ -3,7 +3,7 @@
 % PreprocessTraining
 % Makes augmented hdf5 datafiles from raw and label images
 %
-% Syntax : PreprocessTraining /example/training/images/ /example/training/labels/ /savedirectory/trainingfilename
+% Syntax : PreprocessTraining /example/training/images/ /example/training/labels/ /savedirectory/
 %
 %
 %----------------------------------------------------------------------------------------
@@ -26,7 +26,7 @@ label_img_path = arg_list{2};
 
 disp(label_img_path); 
 trainig_img_path = arg_list{1};
-save_file = arg_list{3};
+outdir = arg_list{3};
 tic
 
 addpath('./scripts'); 
@@ -57,7 +57,7 @@ d_tr =single(data_arr);
 l_tr =single(labels_arr);
 [data,labels]=augment_data(d_tr,l_tr); 
 
-[outdir,name,ext] = fileparts(save_file);
+%[outdir,name,ext] = fileparts(save_file);
 
 d_details = '/data'; 
 l_details = '/label'; 
@@ -66,9 +66,9 @@ ext = '.h5';
 for i=1:length(data)
     d_tr=data{i};
     l_tr=labels{i};
-    filename = fullfile(outdir, name, sprintf('training_full_stacks_v%s%s', num2str(i), ext));
+    filename = fullfile(outdir, sprintf('training_full_stacks_v%s%s', num2str(i), ext));
     disp(filename); 
-    h5create(filename,'empty',[1]); 
+    %h5create(filename,'empty',[1]); 
     h5write(filename,d_details,d_tr);
     h5write(filename,l_details,l_tr); 
     %h5write(filename,d_details,d_tr); 
