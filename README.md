@@ -24,8 +24,7 @@ Data post-processing (includes data de-augmentation and ensemble prediction)
 # Data format
 Expected data:
 A) Training data: Images together with matching binary labels -> For steps 1&2
-B) 
-Input data format, PNGs, TIFs or TIF stack
+B) Input data format, PNGs, TIFs or TIF stack
 Data is converted to h5 file during augmentation
 
 # Further reading:
