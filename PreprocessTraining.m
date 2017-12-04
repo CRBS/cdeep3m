@@ -29,7 +29,7 @@ trainig_img_path = arg_list{1};
 outdir = arg_list{3};
 tic
 
-addpath('./ProcessingScripts/')
+addpath('./scripts/')
 
 % ----------------------------------------------------------------------------------------
 %% Load train data
