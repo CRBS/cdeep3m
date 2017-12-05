@@ -3,7 +3,7 @@
 % PreprocessTraining
 % Makes augmented hdf5 datafiles from raw and label images
 %
-% Syntax : PreprocessTraining /example/training/images/ /example/training/labels/ /savedirectory/
+% Syntax : PreprocessTraining /ImageData/training/images/ /ImageData/training/labels/ /ImageData/augmentedtraining/
 %
 %
 %----------------------------------------------------------------------------------------
