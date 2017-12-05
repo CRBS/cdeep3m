@@ -18,6 +18,7 @@
 %% Initialize
 % ----------------------------------------------------------------------------------------
 
+disp('Starting Training data Preprocessing');
 pkg load hdf5oct
 pkg load image
 
@@ -35,6 +36,7 @@ addpath('./scripts/')
 %% Load train data
 % ----------------------------------------------------------------------------------------
 
+disp('Loading:');
 disp(label_img_path); 
 [lblstack] = imageimporter(label_img_path);
 
@@ -43,6 +45,8 @@ disp(label_img_path);
 %% Load training images
 % ----------------------------------------------------------------------------------------
 
+disp('Loading:');
+disp(trainig_img_path); 
 [imgstack] = imageimporter(trainig_img_path);
 
 
@@ -50,6 +54,7 @@ disp(label_img_path);
 %% Augment the data, generating 16 versions and save
 % ----------------------------------------------------------------------------------------
 
+disp('Augmenting ...');
 data_arr=permute(imgstack,[3 1 2]); %from h5 to tiff /100*1000*1000
 labels_arr=permute(lblstack,[3 1 2]); %from h5 to tiff /100*1000*1000
 
@@ -63,6 +68,8 @@ d_details = '/data';
 l_details = '/label'; 
 if ~exist(outdir,'dir'), mkdir(outdir); end
 ext = '.h5';
+
+disp('Saving ...');
 for i=1:length(data)
     d_tr=data{i};
     l_tr=labels{i};
