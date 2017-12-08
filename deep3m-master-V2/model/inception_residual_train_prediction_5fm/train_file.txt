@@ -1,0 +1,16 @@
+../../data/snemi3d_train_full_stacks_v1.h5
+../../data/snemi3d_train_full_stacks_v2.h5
+../../data/snemi3d_train_full_stacks_v3.h5
+../../data/snemi3d_train_full_stacks_v4.h5
+../../data/snemi3d_train_full_stacks_v5.h5
+../../data/snemi3d_train_full_stacks_v6.h5
+../../data/snemi3d_train_full_stacks_v7.h5
+../../data/snemi3d_train_full_stacks_v8.h5
+../../data/snemi3d_train_full_stacks_v9.h5
+../../data/snemi3d_train_full_stacks_v10.h5
+../../data/snemi3d_train_full_stacks_v11.h5
+../../data/snemi3d_train_full_stacks_v12.h5
+../../data/snemi3d_train_full_stacks_v13.h5
+../../data/snemi3d_train_full_stacks_v14.h5
+../../data/snemi3d_train_full_stacks_v15.h5
+../../data/snemi3d_train_full_stacks_v16.h5
