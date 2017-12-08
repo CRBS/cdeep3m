@@ -1,0 +1,1 @@
+function img = hmtransf(img, t, connectiv)img  = imcomplement(img);img = imreconstruct((img-double(t)), img, connectiv);img  = imcomplement(img);end
