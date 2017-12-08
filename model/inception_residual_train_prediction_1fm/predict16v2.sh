@@ -30,7 +30,7 @@ for idx in {1..16..1}
     mkdir -p "$predict_dir"
   fi
 
-  input_file="${in_dir}*${idx}.h5"
+  input_file="${in_dir}${idx}.h5"
   if [ ! -f $input_file ] ; then
     echo "file not found: $input_file"
   fi
