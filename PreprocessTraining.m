@@ -48,7 +48,7 @@ end
 disp('Loading:');
 disp(label_img_path); 
 [lblstack] = imageimporter(label_img_path);
-
+checkpoint_isbinary(lblstack);
 
 % ----------------------------------------------------------------------------------------
 %% Load training images
