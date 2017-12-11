@@ -21,6 +21,9 @@ pkg load image
 
 
 function create_dir(thedir)
+  % Creates directory set in argument thedir only if directory does not already exist
+  % If directory exists then code will just return
+  % If mkdir call fails error() is invoked with a message about the failure.
   if isdir(thedir) == 0;
     mkdir_result = mkdir(thedir);
     if mkdir_result(1) == 0;
@@ -32,6 +35,9 @@ function create_dir(thedir)
 endfunction
 
 function copy_model(the_model, dest_dir)
+  % Copies *txt files from model/inception_residual_train_prediction_<the_model> directory
+  % to directory specified by dest_dir argument. If copy fails error() is invoked describing
+  % the issue
   src_files = strcat('./model',filesep(),
                      'inception_residual_train_prediction_',the_model,
                      filesep(),'*txt');
@@ -44,7 +50,10 @@ endfunction
 
 
 function runtrain(arg_list)
-  
+  % Runs Deep3m train using caffe. 
+  % Usage runtrain(cell array of strings) 
+  % by first verifying first argument is path to training data and
+  % then copying over models under model/ directory to output directory
   % suffix for hdf5 files
   H_FIVE_SUFFIX='.h5';
 
