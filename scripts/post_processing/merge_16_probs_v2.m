@@ -90,7 +90,6 @@ for j = 1:8
             case 8
                 average(:,:,j) = average(:,:,j) + rot90(prob,2);
         end
-        %xxx=1;
     %end
     eight_vars=average;
 end
