@@ -1,4 +1,4 @@
-# Deep3M
+## Deep3M
 
 # Required environment:
 C++, bash shell, matlab/octave, Cuda7.5
@@ -23,8 +23,8 @@ Step 4: predict.sh
 
 # Data format
 Expected data:
-A) Training data: Images together with matching binary labels -> For steps 1&2
-B) Image data to segment -> for steps 3&4 
+- A) Training data: Images together with matching binary labels -> For steps 1&2
+- B) Image data to segment -> for steps 3&4 
 - Input data format, PNGs, TIFs or TIF stack
 - Data is converted to h5 file during augmentation
 
