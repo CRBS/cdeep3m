@@ -16,17 +16,17 @@ Step 3: PreprocessImages
 
 Step 4: predict.sh
 - Predict image segmentation
-
-Step 5: StartPostprocessing 
-Data post-processing (includes data de-augmentation and ensemble prediction)
+ - Data post-processing (data de-augmentation) directly launched by predict script
+ 
+ Step 5: Generate ensemble prediction
 
 
 # Data format
 Expected data:
 A) Training data: Images together with matching binary labels -> For steps 1&2
 B) Image data to segment -> for steps 3&4 
--Input data format, PNGs, TIFs or TIF stack
--Data is converted to h5 file during augmentation
+- Input data format, PNGs, TIFs or TIF stack
+- Data is converted to h5 file during augmentation
 
 # Further reading:
 This is an implementation developped off from the deep learning code released together with the paper published in Bioinformatics: **"DeepEM3D: Approaching human-level performance on 3D anisotropic EM image segmentation "**
