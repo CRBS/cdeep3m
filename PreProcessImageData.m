@@ -38,6 +38,7 @@ num_of_pkg = numel(packages);
 
 if num_of_pkg ==1
     [d_tr] = imageimporter(in_img_path);
+    checkpoint_nobinary(d_tr);      
     d_tr=permute(d_tr,[3 1 2]); %from tiff to h5 /xyz to z*x*y
     %% Save image data
     d_details = '/data';
@@ -64,6 +65,7 @@ elseif num_of_pkg > 1
         %define label name
         area = packages{ii};
         [d_tr] = imageimporter_large(in_img_path,area); %load only subarea here
+        checkpoint_nobinary(d_tr);      
         d_tr=permute(d_tr,[3 1 2]); %from tiff to h5 /xyz to z*x*y
         %% Save image data
         d_details = '/data';
