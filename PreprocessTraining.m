@@ -57,7 +57,7 @@ disp(label_img_path);
 disp('Loading:');
 disp(trainig_img_path); 
 [imgstack] = imageimporter(trainig_img_path);
-
+checkpoint_nobinary(imgstack);
 
 % ----------------------------------------------------------------------------------------
 %% Augment the data, generating 16 versions and save
