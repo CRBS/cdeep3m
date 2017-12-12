@@ -37,8 +37,9 @@ function create_dir(thedir)
 endfunction
 
 function copy_model(base_dir, the_model, dest_dir)
-  % Copies *txt files from model/inception_residual_train_prediction_<the_model> directory
-  % to directory specified by dest_dir argument. If copy fails error() is invoked describing
+  % Copies *txt files from model/inception_residual_train_prediction_<the_model>  %directory
+  % to directory specified by dest_dir argument. If copy fails error() is 
+  % invoked describing
   % the issue
   src_files = strcat(base_dir,filesep(),'model',filesep(),
                      'inception_residual_train_prediction_',the_model,
@@ -72,7 +73,8 @@ function [onefm_dest, threefm_dest, fivefm_dest] = copy_over_allmodels(base_dir,
   copy_model(base_dir,'5fm',fivefm_dest);
 endfunction
 
-function [train_model_dest] = update_solverproto_txt_file(outdir,model,max_iterations)
+function [train_model_dest] = update_solverproto_txt_file(outdir,model,
+                                                          max_iterations)
   % Open solver.prototxt and adjust the line snapshot_prefix to be 
   % <model>_model/<model>_classifier'
   solver_prototxt = strcat(outdir,filesep(),model,filesep(), 'solver.prototxt');
@@ -99,7 +101,8 @@ endfunction
 
 function update_train_val_prototxt(outdir,model,train_file)
   % updates data_source in train_val.prototxt file
-  train_val_prototxt = strcat(outdir,filesep(),model,filesep(),'train_val.prototxt');
+  train_val_prototxt = strcat(outdir,filesep(),model,filesep(),
+                              'train_val.prototxt');
   t_data = fileread(train_val_prototxt);
   lines = strsplit(t_data,'\n');
   train_out = fopen(train_val_prototxt,"w");
@@ -123,7 +126,8 @@ function runtrain(arg_list)
   prog_name = program_name();
   base_dir = fileparts(make_absolute_filename(program_invocation_name()));
   
-  caffe_train_template=strcat(base_dir,filesep(),'scripts',filesep(),'caffetrain_template.sh');
+  caffe_train_template=strcat(base_dir,filesep(),'scripts',filesep(),
+                              'caffetrain_template.sh');
   caffe_bin='/home/ubuntu/caffe_nd_sense_segmentation/build/tools/';
 
   if numel(arg_list)<2; 
@@ -181,11 +185,12 @@ function runtrain(arg_list)
   
   models = {"1fm","3fm","5fm"};
   for i = 1:columns(models)
-    the_cmd = sprintf('%s %s %s %s\n',caffe_train,char(models(i)),caffe_bin,'all');
+    the_cmd = sprintf('%s %s %s %s\n',caffe_train,char(models(i)),
+                      caffe_bin,'all');
     res = system(the_cmd);
     if res ~= 0;
-      fprintf(stderr(),'%s training exited with non zero exit code: %d\n',char(models(i)),
-              res);
+      fprintf(stderr(),'%s training exited with non zero exit code: %d\n',
+              char(models(i)),res);
     endif
   endfor
   
