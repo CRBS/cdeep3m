@@ -86,7 +86,7 @@ elseif num_of_pkg > 1
         
         if ii ==num_of_pkg
         %save(fullfile(outdir,'packages.mat'),'packages');
-        save(fullfile(outdir,'de_augmentation_info.mat'),'packages','num_of_pkg');
+        save(fullfile(outdir,'de_augmentation_info.mat'),'packages','num_of_pkg','imagesize');
         % To do: Write a predict file that runs through all folders in outdir
         % and write a merge file for postprocessing in outdir
         end
