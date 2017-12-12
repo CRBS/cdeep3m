@@ -184,14 +184,22 @@ function runtrain(arg_list)
 
   
   models = {"1fm","3fm","5fm"};
+  all_train_file = strcat(outdir,filesep(),'run_all_train.sh');
+  t_out = fopen(all_train_file,"w");
+  fprintf(t_out,'#!/bin/bash\n\n');
+
   for i = 1:columns(models)
-    the_cmd = sprintf('%s %s %s %s\n',caffe_train,char(models(i)),
+    m_cmd = sprintf('%s %s %s %s\n',caffe_train,char(models(i)),
                       caffe_bin,'all');
-    fprintf(stdout(),'%s;',the_cmd);
+    fprintf(t_out,'%s\n',m_cmd);
   endfor
-  fprintf(stdout(),'\n');
-  
+  fclose(t_out);
+  system(sprintf('chmod a+x %s',all_train_file));
+
+  fprintf(stdout(),'To train run this: %s\n\n',all_train_file);
 endfunction
+
+
 
 runtrain(argv());
 
