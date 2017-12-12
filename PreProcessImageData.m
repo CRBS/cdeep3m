@@ -38,7 +38,8 @@ num_of_pkg = numel(packages);
 
 if num_of_pkg ==1
     [d_tr] = imageimporter(in_img_path);
-    checkpoint_nobinary(d_tr);      
+    checkpoint_nobinary(d_tr);
+    [d_tr] = add_z_padding(d_tr); %adds 2 planes i beginning and end
     d_tr=permute(d_tr,[3 1 2]); %from tiff to h5 /xyz to z*x*y
     %% Save image data
     d_details = '/data';
@@ -65,20 +66,21 @@ elseif num_of_pkg > 1
         %define label name
         area = packages{ii};
         [d_tr] = imageimporter_large(in_img_path,area); %load only subarea here
-        checkpoint_nobinary(d_tr);      
+        checkpoint_nobinary(d_tr);
+        [d_tr] = add_z_padding(d_tr); %adds 2 planes i beginning and end
         d_tr=permute(d_tr,[3 1 2]); %from tiff to h5 /xyz to z*x*y
         %% Save image data
         d_details = '/data';
         %%augment_and_save
         [data]=augment_image_data_only(d_tr);
         
-        outsubdir = fullfile(outdir, sprintf('Pkg_%s', num2str(ii)));
+        outsubdir = fullfile(outdir, sprintf('Pkg_%03', ii));
         if ~exist(outsubdir,'dir'), mkdir(outsubdir); end
         disp('Saving Hd5 files')
         for i=1:length(data)
             subdata=data{i};
             filename = fullfile(outsubdir, sprintf('test_data_full_stacks_v%s.h5', num2str(i)));
-            h5create(filename,d_details,size(subdata)); %nescessary for Matlab
+            %h5create(filename,d_details,size(subdata)); %nescessary for Matlab not for Octave
             h5write(filename,d_details,subdata);
         end
         
