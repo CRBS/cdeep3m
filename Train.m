@@ -180,25 +180,16 @@ function runtrain(arg_list)
   % ----------------------------------------------------------------------------
   % Run train 1fm, 3fm, 5fm
   % ----------------------------------------------------------------------------
-  fprintf(stdout(),'Running Training for 1fm\n');
+  fprintf(stdout(),'Run this command to train:\n\n');
 
   
   models = {"1fm","3fm","5fm"};
   for i = 1:columns(models)
     the_cmd = sprintf('%s %s %s %s\n',caffe_train,char(models(i)),
                       caffe_bin,'all');
-    try
-      res = system(the_cmd,0,'async');
-      if res == 0;
-        fprintf(stderr(),'Process id returned was zero');
-      else
-        waitpid();
-      endif
-    catch
-        fprintf(stderr(), "Caught some error, killing subprocess\n");
-        kill(res,SIG().("INT"));
-    end_try_catch
+    fprintf(stdout(),'the_cmd;');
   endfor
+  fprintf(stdout(),'\n');
   
 endfunction
 
