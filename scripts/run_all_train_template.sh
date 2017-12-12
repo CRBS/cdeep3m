@@ -1,9 +1,11 @@
 #!/bin/bash
 
-if [ $# -ne 1 ] ; then
+if [ $# -ne 2 ] ; then
   echo "$0 <caffe bin path> <# iterations>"
   echo ""
   echo "Runs caffe_train.sh for all three models in directory this script is located"
+  echo ""
+  echo "<caffe bin path> -- Directory where caffe.bin binary resides"
   echo ""
   echo "<# iterations> -- Sets number of iterations caffe should be run. This is done"
   echo "                  by passing this value to caffe_train.sh"
