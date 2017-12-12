@@ -191,8 +191,13 @@ function runtrain(arg_list)
   for i = 1:columns(models)
     m_cmd = sprintf('%s %s %s %s\n',caffe_train,char(models(i)),
                       caffe_bin,'all');
-    fprintf(t_out,'%s\n',m_cmd);
+    fprintf(t_out,'Running training for model %s with command: %s\n',
+            char(models(i)),m_cmd); 
+    fprintf(t_out,'/usr/bin/time -p %s\n',m_cmd);
   endfor
+
+  fprintf(t_out,'echo ""\necho "Training has completed. Have a nice day!"\n');
+
   fclose(t_out);
   system(sprintf('chmod a+x %s',all_train_file));
 
