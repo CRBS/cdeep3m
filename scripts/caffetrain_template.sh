@@ -36,4 +36,6 @@ if [ ! "$latest_iteration" == "" ] ; then
   snapshot_opts="--snapshot=$snap_file"
 fi
 
+pushd "$model_dir"
 GLOG_log_dir=$log_dir $caffe_path/caffe.bin train --solver=$model_dir/solver.prototxt --gpu $gpu $snapshot_opts
+popd
