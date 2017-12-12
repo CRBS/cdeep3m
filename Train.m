@@ -73,8 +73,7 @@ function [onefm_dest, threefm_dest, fivefm_dest] = copy_over_allmodels(base_dir,
   copy_model(base_dir,'5fm',fivefm_dest);
 endfunction
 
-function [train_model_dest] = update_solverproto_txt_file(outdir,model,
-                                                          max_iterations)
+function [train_model_dest] = update_solverproto_txt_file(outdir,model)
   % Open solver.prototxt and adjust the line snapshot_prefix to be 
   % <model>_model/<model>_classifier'
   solver_prototxt = strcat(outdir,filesep(),model,filesep(), 'solver.prototxt');
@@ -89,11 +88,7 @@ function [train_model_dest] = update_solverproto_txt_file(outdir,model,
     if index(char(lines(j)),'snapshot_prefix:') == 1;
       fprintf(solver_out,'snapshot_prefix: "%s"\n',train_model_dest);
     else
-      if index(char(lines(j)),'max_iter:') == 1;
-        fprintf(solver_out,'max_iter: %d\n',max_iterations); 
-      else
-        fprintf(solver_out,'%s\n',char(lines(j)));
-      endif
+      fprintf(solver_out,'%s\n',char(lines(j)));
     endif
   endfor
   fclose(solver_out);
@@ -128,6 +123,8 @@ function runtrain(arg_list)
   
   caffe_train_template=strcat(base_dir,filesep(),'scripts',filesep(),
                               'caffetrain_template.sh');
+  run_all_train_template=strcat(base_dir,filesep(),'scripts',filesep(),
+                              'run_all_train_template.sh');
   caffe_bin='/home/ubuntu/caffe_nd_sense_segmentation/build/tools/';
 
   if numel(arg_list)<2; 
@@ -148,7 +145,7 @@ function runtrain(arg_list)
   % ---------------------------------------------------------------------------
   % Examine input training data and generate list of h5 files
   % ---------------------------------------------------------------------------
-
+  fprintf(stdout(), 'Verifying input training data is valid ... ');
   train_files = glob(strcat(in_img_path, filesep(),'*', H_FIVE_SUFFIX));
 
   if rows(train_files) != 16;
@@ -161,51 +158,42 @@ function runtrain(arg_list)
     errmsg = sprintf('%s file not found',train_file);
     error(errmsg);
   endif
+  
+  fprintf(stdout(),'success\n');
 
   % ----------------------------------------------------------------------------
   % Create output directory and copy over model files and 
   % adjust configuration files
   % ----------------------------------------------------------------------------
+  fprintf(stdout(),'Copying over model files and creating run scripts ... ');
+
   [onefm_dest,threefm_dest,fivefm_dest] = copy_over_allmodels(base_dir,outdir);
   max_iterations = 10000;
-  update_solverproto_txt_file(outdir,'1fm',max_iterations);
-  update_solverproto_txt_file(outdir,'3fm',max_iterations);
-  update_solverproto_txt_file(outdir,'5fm',max_iterations);
+  update_solverproto_txt_file(outdir,'1fm');
+  update_solverproto_txt_file(outdir,'3fm');
+  update_solverproto_txt_file(outdir,'5fm');
 
   update_train_val_prototxt(outdir,'1fm',train_file);
   update_train_val_prototxt(outdir,'3fm',train_file);
   update_train_val_prototxt(outdir,'5fm',train_file);
   caffe_train = strcat(outdir,filesep(),'caffe_train.sh');
   copyfile(caffe_train_template,caffe_train);
-  % ----------------------------------------------------------------------------
-  % Run train 1fm, 3fm, 5fm
-  % ----------------------------------------------------------------------------
-  fprintf(stdout(),'Run this command to train:\n\n');
-
   
-  models = {"1fm","3fm","5fm"};
   all_train_file = strcat(outdir,filesep(),'run_all_train.sh');
-  t_out = fopen(all_train_file,"w");
-  fprintf(t_out,'#!/bin/bash\n\n');
-
-  for i = 1:columns(models)
-    m_cmd = sprintf('%s %s %s %s\n',caffe_train,char(models(i)),
-                      caffe_bin,'all');
-    fprintf(t_out,'echo "Running training for model %s with command: %s"\n',
-            char(models(i)),m_cmd); 
-    fprintf(t_out,'/usr/bin/time -p %s\n',m_cmd);
-    fprintf(t_out,'\nif [ $? != 0 ] ; then\n');
-    fprintf(t_out,'  echo "Non zero exit code from caffe. Exiting."');
-    fprintf(t_out,'  exit %d\n',i);
-    fprintf(t_out,'fi\n');
-  endfor
-
-  fprintf(t_out,'echo ""\necho "Training has completed. Have a nice day!"\n');
-
-  fclose(t_out);
+  copyfile(run_all_train_template,all_train_file);
   system(sprintf('chmod a+x %s',all_train_file));
+ 
+  fprintf(stdout(),'success\n\n');
 
-  fprintf(stdout(),'To train run this: %s\n\n',all_train_file);
+  fprintf(stdout(),'A new directory has been created: %s\n', outdir);
+  fprintf(stdout(),'In this directory are 3 directories 1fm,3fm,5fm which\n');
+  fprintf(stdout(),'correspond to 3 caffe models that need to be trained');
+  fprintf(stdout(),'as well as two scripts:\n\n');
+  fprintf(stdout(),'caffe_train.sh -- Runs caffe for a single model\n');
+  fprintf(stdout(),'run_all_train.sh -- Runs caffe_train.sh serially for all 3 models\n\n');
+
+  fprintf(stdout(),'To train all 3 models run this: %s %s 2000\n\n',all_train_file, caffe_bin);
+  
 endfunction
 
 
