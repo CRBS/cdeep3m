@@ -37,8 +37,9 @@ function create_dir(thedir)
 endfunction
 
 function copy_model(base_dir, the_model, dest_dir)
-  % Copies *txt files from model/inception_residual_train_prediction_<the_model> directory
-  % to directory specified by dest_dir argument. If copy fails error() is invoked describing
+  % Copies *txt files from model/inception_residual_train_prediction_<the_model>  %directory
+  % to directory specified by dest_dir argument. If copy fails error() is 
+  % invoked describing
   % the issue
   src_files = strcat(base_dir,filesep(),'model',filesep(),
                      'inception_residual_train_prediction_',the_model,
@@ -72,7 +73,7 @@ function [onefm_dest, threefm_dest, fivefm_dest] = copy_over_allmodels(base_dir,
   copy_model(base_dir,'5fm',fivefm_dest);
 endfunction
 
-function [train_model_dest] = update_solverproto_txt_file(outdir,model,max_iterations)
+function [train_model_dest] = update_solverproto_txt_file(outdir,model)
   % Open solver.prototxt and adjust the line snapshot_prefix to be 
   % <model>_model/<model>_classifier'
   solver_prototxt = strcat(outdir,filesep(),model,filesep(), 'solver.prototxt');
@@ -85,13 +86,9 @@ function [train_model_dest] = update_solverproto_txt_file(outdir,model,max_itera
                             filesep(),model,'_classifer');
   for j = 1:columns(lines)
     if index(char(lines(j)),'snapshot_prefix:') == 1;
-      fprintf(solver_out,'snapshot_prefix: %s\n',train_model_dest);
+      fprintf(solver_out,'snapshot_prefix: "%s"\n',train_model_dest);
     else
-      if index(char(lines(j)),'max_iter:') == 1;
-        fprintf(solver_out,'max_iter: %d\n',max_iterations); 
-      else
-        fprintf(solver_out,'%s\n',char(lines(j)));
-      endif
+      fprintf(solver_out,'%s\n',char(lines(j)));
     endif
   endfor
   fclose(solver_out);
@@ -99,7 +96,8 @@ endfunction
 
 function update_train_val_prototxt(outdir,model,train_file)
   % updates data_source in train_val.prototxt file
-  train_val_prototxt = strcat(outdir,filesep(),model,filesep(),'train_val.prototxt');
+  train_val_prototxt = strcat(outdir,filesep(),model,filesep(),
+                              'train_val.prototxt');
   t_data = fileread(train_val_prototxt);
   lines = strsplit(t_data,'\n');
   train_out = fopen(train_val_prototxt,"w");
@@ -123,11 +121,16 @@ function runtrain(arg_list)
   prog_name = program_name();
   base_dir = fileparts(make_absolute_filename(program_invocation_name()));
   
-  caffe_train_template=strcat(base_dir,filesep(),'scripts',filesep(),'caffetrain_template.sh');
+  caffe_train_template=strcat(base_dir,filesep(),'scripts',filesep(),
+                              'caffetrain_template.sh');
+  run_all_train_template=strcat(base_dir,filesep(),'scripts',filesep(),
+                              'run_all_train_template.sh');
   caffe_bin='/home/ubuntu/caffe_nd_sense_segmentation/build/tools/';
 
-  if numel(arg_list)<2; 
-    msg = sprintf('%s <Input train data directory> <output dir>\n', prog_name);
+  if numel(arg_list)~=2; 
+    fprintf('\n');
+    msg = sprintf('%s expects two command line arguments\n\n', prog_name);
+    msg = strcat(msg,sprintf('Usage: %s <Input train data directory> <output directory>\n', prog_name));
     error(msg); 
     return; 
   endif
@@ -144,7 +147,7 @@ function runtrain(arg_list)
   % ---------------------------------------------------------------------------
   % Examine input training data and generate list of h5 files
   % ---------------------------------------------------------------------------
-
+  fprintf(stdout(), 'Verifying input training data is valid ... ');
   train_files = glob(strcat(in_img_path, filesep(),'*', H_FIVE_SUFFIX));
 
   if rows(train_files) != 16;
@@ -157,39 +160,45 @@ function runtrain(arg_list)
     errmsg = sprintf('%s file not found',train_file);
     error(errmsg);
   endif
+  
+  fprintf(stdout(),'success\n');
 
   % ----------------------------------------------------------------------------
   % Create output directory and copy over model files and 
   % adjust configuration files
   % ----------------------------------------------------------------------------
+  fprintf(stdout(),'Copying over model files and creating run scripts ... ');
+
   [onefm_dest,threefm_dest,fivefm_dest] = copy_over_allmodels(base_dir,outdir);
   max_iterations = 10000;
-  update_solverproto_txt_file(outdir,'1fm',max_iterations);
-  update_solverproto_txt_file(outdir,'3fm',max_iterations);
-  update_solverproto_txt_file(outdir,'5fm',max_iterations);
+  update_solverproto_txt_file(outdir,'1fm');
+  update_solverproto_txt_file(outdir,'3fm');
+  update_solverproto_txt_file(outdir,'5fm');
 
   update_train_val_prototxt(outdir,'1fm',train_file);
   update_train_val_prototxt(outdir,'3fm',train_file);
   update_train_val_prototxt(outdir,'5fm',train_file);
   caffe_train = strcat(outdir,filesep(),'caffe_train.sh');
   copyfile(caffe_train_template,caffe_train);
-  % ----------------------------------------------------------------------------
-  % Run train 1fm, 3fm, 5fm
-  % ----------------------------------------------------------------------------
-  fprintf(stdout(),'Running Training for 1fm\n');
-
   
-  models = {"1fm","3fm","5fm"};
-  for i = 1:columns(models)
-    the_cmd = sprintf('%s %s %s %s\n',caffe_train,char(models(i)),caffe_bin,'all');
-    res = system(the_cmd);
-    if res ~= 0;
-      fprintf(stderr(),'%s training exited with non zero exit code: %d\n',char(models(i)),
-              res);
-    endif
-  endfor
+  all_train_file = strcat(outdir,filesep(),'run_all_train.sh');
+  copyfile(run_all_train_template,all_train_file);
+  system(sprintf('chmod a+x %s',all_train_file));
+ 
+  fprintf(stdout(),'success\n\n');
+
+  fprintf(stdout(),'A new directory has been created: %s\n', outdir);
+  fprintf(stdout(),'In this directory are 3 directories 1fm,3fm,5fm which\n');
+  fprintf(stdout(),'correspond to 3 caffe models that need to be trained');
+  fprintf(stdout(),'as well as two scripts:\n\n');
+  fprintf(stdout(),'caffe_train.sh -- Runs caffe for a single model\n');
+  fprintf(stdout(),'run_all_train.sh -- Runs caffe_train.sh serially for all 3 models\n\n');
+
+  fprintf(stdout(),'To train all 3 models run this: %s %s 2000\n\n',all_train_file, caffe_bin);
   
 endfunction
+
+
 
 runtrain(argv());
 
