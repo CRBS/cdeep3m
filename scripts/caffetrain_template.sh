@@ -2,8 +2,8 @@
 
 caffe_path=""
 
-if [ $# -ne 3 ] ; then
-  echo "$0 <model> <caffe bin path> <gpu>"
+if [ $# -ne 4 ] ; then
+  echo "$0 <model> <caffe bin path> <# iterations> <gpu>"
   echo ""
   echo "Runs caffe on model specified by first argument. The trained"
   echo "model will be stored in <model>/trainedmodel directory"
@@ -15,6 +15,8 @@ if [ $# -ne 3 ] ; then
   echo "<caffe bin path> -- Directory where caffe.bin binary resides"
   echo "                    If no path needed speicify \"\""
   echo ""
+  echo "<# iterations> -- # of training iterations to run, should be a"
+  echo "                  number like 1000, or 50000"
   echo "<gpu> -- The gpu to use (expects a number ie 0, or 1 or all)"
   echo ""
   exit 1
@@ -27,11 +29,24 @@ if [ "$2" != "" ] ; then
    caffe_path="${2}/"
 fi
 
-gpu=$3
+# set number of iterations
+num_iterations=$3
+
+# set gpu value
+gpu=$4
 
 base_dir=`cd "$script_dir";pwd`
 model_dir="$base_dir/$model"
 log_dir="$model_dir/log"
+
+
+# update the solver.prototxt with num_iterations value
+sed -i "s/^max_iter:.*/max_iter: $num_iterations/g" "${model_dir}/solver.prototxt"
+
+if [ $? != 0 ] ; then
+  echo "Error trying to update max_iter in $model_dir/solver.prototxt."
+  echo "Please set number of iterations directly in this file"
+fi
 
 if [ ! -d "$log_dir" ] ; then
   mkdir -p $log_dir
