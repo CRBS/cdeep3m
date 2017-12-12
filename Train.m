@@ -127,8 +127,10 @@ function runtrain(arg_list)
                               'run_all_train_template.sh');
   caffe_bin='/home/ubuntu/caffe_nd_sense_segmentation/build/tools/';
 
-  if numel(arg_list)<2; 
-    msg = sprintf('%s <Input train data directory> <output dir>\n', prog_name);
+  if numel(arg_list)~=2; 
+    fprintf('\n');
+    msg = sprintf('%s expects two command line arguments\n\n', prog_name);
+    msg = strcat(msg,sprintf('Usage: %s <Input train data directory> <output directory>\n', prog_name));
     error(msg); 
     return; 
   endif
