@@ -195,6 +195,7 @@ function runtrain(arg_list)
         waitpid();
       endif
     catch
+        fprintf(stderr(), "Caught some error, killing subprocess\n");
         kill(res,SIG().("INT"));
     end_try_catch
   endfor
