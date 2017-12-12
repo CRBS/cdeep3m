@@ -23,8 +23,14 @@ fi
 
 num_iterations=$2
 
+time_est=`perl -e "printf('%.2f',${num_iterations}*4/3600);"`
+
+echo ""
+echo "Estimating $time_est hours of processing per model (there are 3 models) on p3.2xlarge"
+echo ""
+
 for Y in `echo 1fm 3fm 5fm` ; do
-  echo "Running $Y train"
+  echo "Running $Y train, expect this model to train for $time_est hours on p3.2xlarge"
   /usr/bin/time -p $script_dir/caffe_train.sh $Y $caffe_path $num_iterations all
   if [ $? != 0 ] ; then
     echo "Non zero exit code from caffe for train of $Y model. Exiting."
