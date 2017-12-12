@@ -1,7 +1,17 @@
-function [packages] = break_large_img(imagesize)
+function [packages, z_blocks] = break_large_img(imagesize)
 %Defines how to read large images
+%Note: Packages define X/Y direction only;
+% z_blocks define splitting z direction
 
 %= 1: round(imagesize(1)/1024)
+
+%% Z-direction splitting
+if imagesize(3) >150
+z_blocks = [1:100:imagesize(3)];
+if z_blocks(end)<imagesize(3) ; z_blocks =[z_blocks, imagesize(3)]; end
+disp('Data will be split in z direction at planes:');
+disp(z_blocks);
+end
 
 %% Check for image dimensions, if large break in this direction
 if imagesize(1) > 1500
