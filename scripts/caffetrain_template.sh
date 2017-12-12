@@ -27,12 +27,12 @@ if [ ! -d "$model_dir/trainedmodel" ] ; then
   mkdir -p "$model_dir/trainedmodel"
 fi
 
-latest_iteration=`ls "$model_dir/trainedmodel" | egrep "\.solverstate$" | sed "s/^.*iter_//" | sed "s/\.solverstate//" | sort -g`
+latest_iteration=`ls "$model_dir/trainedmodel" | egrep "\.solverstate$" | sed "s/^.*iter_//" | sed "s/\.solverstate//" | sort -g | tail -n 1`
 
 snapshot_opts=""
 # we got a completed iteration lets start from that
 if [ ! "$latest_iteration" == "" ] ; then
-  snap_file=`find "$model_dir/trainedmodel -depth 1 -name "*${latest_iteration}.solverstate"`
+  snap_file=`find "$model_dir/trainedmodel" -name "*${latest_iteration}.solverstate" -type f`
   snapshot_opts="--snapshot=$snap_file"
 fi
 
