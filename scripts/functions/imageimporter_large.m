@@ -42,7 +42,12 @@ elseif isdir(img_path)
         for idx =1:size(file_list,1)
             filename = fullfile(img_path,file_list(idx).name);
             fprintf('Reading file: %s\n', filename); 
-            imgstack(:,:,idx) = imread(filename,'PixelRegion', {rows, cols});
+            if type==1
+            imgstack(:,:,idx) = imread(filename,'PixelRegion', {rows, cols}); %tif allows to read subarea
+            else
+            rect = [area(1), area(3), area(2)-area(1), area(4)-area(3)];
+            imgstack(:,:,idx) = imcrop(imread(filename),rect);    %otherwise need to crop the area here
+            end
         end
     end
     
