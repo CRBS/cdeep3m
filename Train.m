@@ -187,7 +187,7 @@ function runtrain(arg_list)
   for i = 1:columns(models)
     the_cmd = sprintf('%s %s %s %s\n',caffe_train,char(models(i)),
                       caffe_bin,'all');
-    fprintf(stdout(),'the_cmd;');
+    fprintf(stdout(),'%s;',the_cmd);
   endfor
   fprintf(stdout(),'\n');
   
