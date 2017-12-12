@@ -87,7 +87,7 @@ function [train_model_dest] = update_solverproto_txt_file(outdir,model,
                             filesep(),model,'_classifer');
   for j = 1:columns(lines)
     if index(char(lines(j)),'snapshot_prefix:') == 1;
-      fprintf(solver_out,'snapshot_prefix: %s\n',train_model_dest);
+      fprintf(solver_out,'snapshot_prefix: "%s"\n',train_model_dest);
     else
       if index(char(lines(j)),'max_iter:') == 1;
         fprintf(solver_out,'max_iter: %d\n',max_iterations); 
