@@ -51,10 +51,10 @@ if [ ! "$latest_iteration" == "" ] ; then
   echo "Resuming run from snapshot file: $snap_file"
 fi
 
-pushd "$model_dir"
+pushd "$model_dir" > /dev/null
 GLOG_log_dir=$log_dir $caffe_path/caffe.bin train --solver=$model_dir/solver.prototxt --gpu $gpu $snapshot_opts > "${model_dir}/log/out.log" 2>&1
 exitcode=$?
-popd
+popd > /dev/null
 
 if [ $exitcode != 0 ] ; then
   echo "ERROR: caffe had a non zero exit code: $exitcode"
