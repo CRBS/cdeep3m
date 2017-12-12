@@ -187,12 +187,16 @@ function runtrain(arg_list)
   for i = 1:columns(models)
     the_cmd = sprintf('%s %s %s %s\n',caffe_train,char(models(i)),
                       caffe_bin,'all');
-    res = system(the_cmd,0,'async');
-    if res == 0;
-      fprintf(stderr(),'Process id returned was zero');
-    else
-      waitpid();
-    endif
+    try
+      res = system(the_cmd,0,'async');
+      if res == 0;
+        fprintf(stderr(),'Process id returned was zero');
+      else
+        waitpid();
+      endif
+    catch
+        kill(res,SIG().("INT"));
+    end_try_catch
   endfor
   
 endfunction
