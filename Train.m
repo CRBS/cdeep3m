@@ -187,10 +187,11 @@ function runtrain(arg_list)
   for i = 1:columns(models)
     the_cmd = sprintf('%s %s %s %s\n',caffe_train,char(models(i)),
                       caffe_bin,'all');
-    res = system(the_cmd);
-    if res ~= 0;
-      fprintf(stderr(),'%s training exited with non zero exit code: %d\n',
-              char(models(i)),res);
+    res = system(the_cmd,0,'async');
+    if res == 0;
+      fprintf(stderr(),'Process id returned was zero');
+    else
+      waitpid();
     endif
   endfor
   
