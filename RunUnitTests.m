@@ -1,8 +1,13 @@
 #!/usr/bin/octave -qf
 
-test_files = glob('*.m');
 
-test_files = vertcat(test_files, glob('*/*.m'));
+script_dir = fileparts(make_absolute_filename(program_invocation_name()));
+
+addpath(genpath(script_dir));
+addpath(genpath(strcat(script_dir,filesep(),'scripts',filesep())));
+addpath(genpath(strcat(script_dir,filesep(),'scripts',filesep(),'functions')));
+
+test_files = vertcat(glob('*.m'), glob('*/*.m'),glob('*/*/*.m'));
 
 for x = 1:rows(test_files)
   t_file = char(test_files(x));
