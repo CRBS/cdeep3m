@@ -6,9 +6,11 @@ if [ $# -ne 2 ] ; then
   echo "Runs caffe_train.sh for all three models in directory this script is located"
   echo ""
   echo "<caffe bin path> -- Directory where caffe.bin binary resides"
+  echo "                    On AWS EC2 AMI its usually"
+  echo "                    /home/ubuntu/caffe_nd_sense_segmentation/build/tools/" 
   echo ""
-  echo "<# iterations> -- Sets number of iterations caffe should be run. This is done"
-  echo "                  by passing this value to caffe_train.sh"
+  echo "<# iterations> -- Sets number of iterations caffe should be run."
+  echo "                  Ex: 1000 for 1,000 iterations"
   echo ""
   exit 1
 fi
