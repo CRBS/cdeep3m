@@ -125,12 +125,20 @@ function runtrain(arg_list)
   in_img_path = make_absolute_filename(arg_list{1});
 
   if isdir(in_img_path) == 0;
-    disp('First argument is not a directory and its supposed to be')
-    return;
+    error('First argument is not a directory and its supposed to be');
   endif
 
   outdir = make_absolute_filename(arg_list{2});
 
+  all_train_file = strcat(outdir,filesep(),'run_all_train.sh');
+
+  if exist(all_train_file) == 2;
+     fprintf('\n');
+     msg = sprintf('Train.m appears to already have been run in %s directory',
+                   outdir);
+     msg = strcat(msg,sprintf('\nRun %s to run training\n',all_train_file));
+     error(msg);
+  endif
   % ---------------------------------------------------------------------------
   % Examine input training data and generate list of h5 files
   % ---------------------------------------------------------------------------
@@ -168,7 +176,6 @@ function runtrain(arg_list)
   caffe_train = strcat(outdir,filesep(),'caffe_train.sh');
   copyfile(caffe_train_template,caffe_train);
   
-  all_train_file = strcat(outdir,filesep(),'run_all_train.sh');
   copyfile(run_all_train_template,all_train_file);
   system(sprintf('chmod a+x %s',all_train_file));
  
