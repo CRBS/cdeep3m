@@ -15,26 +15,13 @@
 % ------------------------------------------------------------------------------
 
 script_dir = fileparts(make_absolute_filename(program_invocation_name()));
-
+addpath(genpath(script_dir));
 addpath(genpath(strcat(script_dir,filesep(),'scripts',filesep())));
+addpath(genpath(strcat(script_dir,filesep(),'scripts',filesep(),'functions')));
 tic
 pkg load hdf5oct
 pkg load image
 
-
-function create_dir(thedir)
-  % Creates directory set in argument thedir only if directory does not already exist
-  % If directory exists then code will just return
-  % If mkdir call fails error() is invoked with a message about the failure.
-  if isdir(thedir) == 0;
-    mkdir_result = mkdir(thedir);
-    if mkdir_result(1) == 0;
-      errmsg = sprintf('Error making directory: %s : %s\n', mkdir_result(1),
-                       mkdir_result(2));
-      error(errmsg);
-    endif
-  endif
-endfunction
 
 function copy_model(base_dir, the_model, dest_dir)
   % Copies *txt files from model/inception_residual_train_prediction_<the_model>  %directory
@@ -202,8 +189,3 @@ endfunction
 
 runtrain(argv());
 
-%!error runtrain()
-
-%!error runtrain({'./nonexistdir'})
-
-%!error runtrain({'./nonexistdir','./yo'})
