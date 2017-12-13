@@ -26,7 +26,7 @@ arg_list = argv ();
 if numel(arg_list)<2; disp('Use -> PreProcessImageData /ImageData/EMdata1/ /ImageData/AugmentedEMData/'); return; end
 in_img_path = arg_list{1};
 outdir = arg_list{2};
-
+if ~exist(outdir,'dir'), mkdir(outdir); end
 
 % ----------------------------------------------------------------------------------------
 %% Load image data / Check if large data first
@@ -46,7 +46,6 @@ if num_of_pkg==1 && numel(z_blocks)==2
     d_details = '/data';
     %%augment_and_save
     [data]=augment_image_data_only(d_tr);
-    if ~exist(outdir,'dir'), mkdir(outdir); end
     disp('Saving Hd5 files')
     for i=1:length(data)
         d_tr=data{i};
