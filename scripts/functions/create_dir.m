@@ -6,10 +6,10 @@
 
 function create_dir(thedir)
   if isdir(thedir) == 0;
-    mkdir_result = mkdir(thedir);
-    if mkdir_result(1) == 0;
-      errmsg = sprintf('Error making directory: %s : %s\n', mkdir_result(1),
-                       mkdir_result(2));
+    [status,msg,msgid] = mkdir(thedir);
+    if status == 0;
+      errmsg = sprintf('Error making directory: %s : %s\n', status,
+                       msg);
       error(errmsg);
     endif
   endif
