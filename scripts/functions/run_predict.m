@@ -58,7 +58,9 @@ function run_predict(arg_list)
   % ---------------------------------------------------------------------------
   % Examine input image data, validate, and get list of pkg folders
   % ---------------------------------------------------------------------------
-
+  fprintf(stdout(), 'Verifying image data and getting Pkg folders ... ');
+  pkg_folders = get_pkg_folders(img_data);  
+  fprintf(stdout(),'skipping check, TODO need to fix this.\n');
 
   % ----------------------------------------------------------------------------
   % Create output directories with 1fm,3fm,5fm model folder and packages
@@ -66,11 +68,13 @@ function run_predict(arg_list)
   % ----------------------------------------------------------------------------
   fprintf(stdout(),'Creating output directories and creating run scripts ... ');
 
-  caffe_predict = strcat(outdir,filesep(),'caffe_predict.sh');
-  copyfile(caffe_predict_template,caffe_predict);
+  create_dir(outdir);
+
+%  caffe_predict = strcat(outdir,filesep(),'caffe_predict.sh');
+%  copyfile(caffe_predict_template,caffe_predict);
   
-  copyfile(run_all_predict_template,all_predict_file);
-  system(sprintf('chmod a+x %s',all_predict_file));
+%  copyfile(run_all_predict_template,all_predict_file);
+%  system(sprintf('chmod a+x %s',all_predict_file));
  
   fprintf(stdout(),'success\n\n');
 
@@ -81,7 +85,7 @@ function run_predict(arg_list)
   fprintf(stdout(),'caffe_predict.sh -- Runs caffe prediction single model\n');
   fprintf(stdout(),'run_all_predict.sh -- Runs caffe_predict.sh serially for all 3 models\n\n');
 
-  fprintf(stdout(),'To run prediction for all 3 models run this: %s %s\n\n',all_predict_file, caffe_bin);
+%  fprintf(stdout(),'To run prediction for all 3 models run this: %s %s\n\n',all_predict_file, caffe_bin);
   
 endfunction
 
