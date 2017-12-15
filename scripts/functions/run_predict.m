@@ -24,9 +24,9 @@ function run_predict(arg_list)
     return; 
   endif
 
-  in_img_path = make_absolute_filename(arg_list{1});
+  train_model_path = make_absolute_filename(arg_list{1});
 
-  if isdir(in_img_path) == 0;
+  if isdir(train_model_path) == 0;
     error('First argument is not a directory and its supposed to be');
   endif
 
@@ -52,7 +52,7 @@ function run_predict(arg_list)
   % Examine input training data and generate list of h5 files
   % ---------------------------------------------------------------------------
   fprintf(stdout(), 'Verifying input training data is valid ... ');
-  
+  train_model_names = get_train_basemodel_names(train_model_path);
   fprintf(stdout(),'skipping check, TODO need to fix this.\n');
 
   % ---------------------------------------------------------------------------
@@ -67,11 +67,12 @@ function run_predict(arg_list)
   % also copy over de_augment.m files.
   % ----------------------------------------------------------------------------
   fprintf(stdout(),'Creating output directories and creating run scripts ... ');
-
-  create_dir(outdir);
-
-%  caffe_predict = strcat(outdir,filesep(),'caffe_predict.sh');
-%  copyfile(caffe_predict_template,caffe_predict);
+  
+  de_augment_file = strcat(img_data,filesep(),'de_augmentation_info.mat');
+  create_predict_outdir(pkg_folders,train_model_names,de_augment_file,outdir);
+  copyfile(de_augment_file,strcat(outdir,filesep(),'de_augmentation_info.mat'));
+  caffe_predict = strcat(outdir,filesep(),'caffe_predict.sh');
+  copyfile(caffe_predict_template,caffe_predict);
   
 %  copyfile(run_all_predict_template,all_predict_file);
 %  system(sprintf('chmod a+x %s',all_predict_file));
