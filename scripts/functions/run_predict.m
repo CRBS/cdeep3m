@@ -73,20 +73,22 @@ function run_predict(arg_list)
   copyfile(de_augment_file,strcat(outdir,filesep(),'de_augmentation_info.mat'));
   caffe_predict = strcat(outdir,filesep(),'caffe_predict.sh');
   copyfile(caffe_predict_template,caffe_predict);
-  
-%  copyfile(run_all_predict_template,all_predict_file);
-%  system(sprintf('chmod a+x %s',all_predict_file));
+
+  all_predict_file = strcat(outdir,filesep(),'run_all_predict.sh');  
+  copyfile(run_all_predict_template,all_predict_file);
+  system(sprintf('chmod a+x %s',all_predict_file));
  
   fprintf(stdout(),'success\n\n');
 
   fprintf(stdout(),'A new directory has been created: %s\n', outdir);
   fprintf(stdout(),'In this directory are 3 directories 1fm,3fm,5fm which\n');
-  fprintf(stdout(),'correspond to 3 caffe models used to predict features');
-  fprintf(stdout(),'in images passed in There are also two scripts:\n\n');
+  fprintf(stdout(),'will contain the results from running prediction with caffe');
+  fprintf(stdout(),'There are also two scripts:\n\n');
   fprintf(stdout(),'caffe_predict.sh -- Runs caffe prediction single model\n');
   fprintf(stdout(),'run_all_predict.sh -- Runs caffe_predict.sh serially for all 3 models\n\n');
 
-%  fprintf(stdout(),'To run prediction for all 3 models run this: %s %s\n\n',all_predict_file, caffe_bin);
+  fprintf(stdout(),'To run prediction for all 3 models run this: %s %s %s %s\n\n',
+          all_predict_file, train_model_path,img_data,caffe_bin);
   
 endfunction
 
