@@ -1,9 +1,13 @@
 #!/bin/bash
 
-if [ $# -ne 3 ] ; then
+
+if [ $# -ne 5 ] ; then
+  echo "Expected 5 arguments got: $*"
+  echo ""
   echo "$0 <model> <caffe bin> <input dir with prefix id /data/test> <gpu> <output dir>"
   echo ""
-  echo "<model> -- path to .caffemodel file"
+  echo "<model> -- path to .caffemodel file or directory with caffe"
+  echo "           models in which case the latest is used"
   echo ""
   echo "<caffe bin path> -- Directory where caffe.bin binary resides"
   echo "                    If no path needed specify \"\""
@@ -19,6 +23,15 @@ if [ $# -ne 3 ] ; then
 fi
 
 model=$1
+
+if [ -d "$model" ] ; then
+  latest_iteration=`ls "$model" | egrep "\.caffemodel$" | sed "s/^.*iter_//" | sed "s/\.caffemodel//" | sort -g | tail -n 1`
+  if [ "$latest_iteration" == "" ] ; then
+     echo "Error no #.caffemodel files found"
+     exit 2
+  fi
+  model=`find "$model" -name "*${latest_iteration}.caffemodel" -type f`
+fi
 
 if [ "$2" != "" ] ; then
    caffe_path="${2}/"
@@ -45,7 +58,7 @@ for idx in {1..16..1}
     mkdir -p "$predict_dir"
   fi
 
-  input_file="${in_dir}${idx}.h5"
+  input_file=`find "${in_dir}" -name "*_v${idx}.h5" -type f`
   if [ ! -f $input_file ] ; then
     echo "file not found: $input_file"
   fi
