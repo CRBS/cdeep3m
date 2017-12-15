@@ -12,8 +12,9 @@ disp(img_path);
 % check if a folder of png/tif files or a single stack to load
 [Dir,name,ext] = fileparts(img_path);
 rows = [area(1), area(2)];
-cols = [area(3), area(4)];
+cols= [area(3), area(4)];
 all_zs =  [z_stack(1):z_stack(2)];
+
 if ~isempty(ext)
     if ~isempty(strfind(ext,'h5'))
         fprintf('Reading H5 image file %s\n', img_path);
@@ -48,8 +49,8 @@ elseif isdir(img_path)
             if type==1
             imgstack(:,:,iii) = imread(filename,'PixelRegion', {rows, cols}); %tif allows to read subarea
             else
-            rect = [area(1), area(3), area(2)-area(1), area(4)-area(3)];
-            imgstack(:,:,iii) = imcrop(imread(filename),rect);    %otherwise need to crop the area here
+            temp_im = imread(filename);
+            imgstack(:,:,iii) = temp_im(area(1):area(2),area(3):area(4));    %otherwise need to crop the area here
             end
         end
     end
@@ -59,6 +60,32 @@ else
     return
 end
 
+%% Add padding
+%% Left and upper side
+if area(1)==1; %first in y 
+    imgstack = cat(1,flipud(imgstack(2:13,:,:)),imgstack);
+end
+if area(3)==1; %then in x
+    imgstack = cat(2,fliplr(imgstack(:,2:13,:)),imgstack);
+end
+x_size=size(imgstack,1);y_size=size(imgstack,2);
+%% Right and lower end
+if x_size<1024
+    max_padsize = 1024 - x_size;max_padsize = min(max_padsize,12);
+    imgstack = cat(1,imgstack,flipud(imgstack(x_size-max_padsize:x_size-1,:,:)));
+end 
+if y_size<1024
+    max_padsize = 1024 - y_size;max_padsize = min(max_padsize,12);
+    imgstack = cat(2,imgstack,fliplr(imgstack(:,y_size-max_padsize:y_size-1,:)));
 end
 
 
+%% Add zeros to fill 1024*1024 Image size
+x_size=size(imgstack,1);y_size=size(imgstack,2);
+if x_size<1024 || y_size<1024
+    temp_img = zeros(1024,1024,size(imgstack,3));
+    temp_img(1:size(imgstack,1),1:size(imgstack,2),:) = imgstack;
+    imgstack = temp_img;
+end
+
+end
