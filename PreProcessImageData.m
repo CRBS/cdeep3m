@@ -38,20 +38,19 @@ num_of_pkg = numel(packages);
 %num_of_pkg =1;  %Change here to enable large image files
 
 if num_of_pkg==1 && numel(z_blocks)==2
-    [d_tr] = imageimporter(in_img_path);
-    checkpoint_nobinary(d_tr);
-    [d_tr] = add_z_padding(d_tr); %adds 2 planes i beginning and end
-    d_tr=permute(d_tr,[3 1 2]); %from tiff to h5 /xyz to z*x*y
-    %% Save image data
-    d_details = '/data';
-    %%augment_and_save
-    [data]=augment_image_data_only(d_tr);
-    disp('Saving Hd5 files')
-    for i=1:length(data)
-        d_tr=data{i};
-        filename = fullfile(outdir, sprintf('test_data_full_stacks_v%s.h5', num2str(i)));
-        h5write(filename,d_details,d_tr);
-    end
+    [stack] = imageimporter(in_img_path);
+    checkpoint_nobinary(stack);
+    disp('Padding images');
+    [stack] = add_z_padding(stack); %adds 2 planes i beginning and end
+    stack=permute(stack,[3 1 2]); %from tiff to h5 /xyz to z*x*y
+    %% Augment and save:
+    augment_image_data_only(stack,outdir);
+    %disp('Saving Hd5 files')
+    %for i=1:length(augdata)
+    %    stack=augdata{i};
+    %    filename = fullfile(outdir, sprintf('test_data_full_stacks_v%s.h5', num2str(i)));
+    %    h5write(filename,d_details,stack);
+    %end
     
     
 else
@@ -74,28 +73,21 @@ else
             end
             %define label name
             area = packages{ii};
-            [d_tr] = imageimporter_large(in_img_path,area,z_stack); %load only subarea here
-            checkpoint_nobinary(d_tr);
-            [d_tr] = add_z_padding(d_tr); %adds 2 planes i beginning and end
-            d_tr=permute(d_tr,[3 1 2]); %from tiff to h5 /xyz to z*x*y
-            %% Save image data
-            d_details = '/data';
-            %%augment_and_save
-            [data]=augment_image_data_only(d_tr);
+            [stack] = imageimporter_large(in_img_path,area,z_stack); %load only subarea here
+            checkpoint_nobinary(stack);
+            disp('Padding images');
+            [stack] = add_z_padding(stack); %adds 2 planes i beginning and end
+            stack=permute(stack,[3 1 2]); %from tiff to h5 /xyz to z*x*y
             
+            %% augment_and_saveSave image data
             outsubdir = fullfile(outdir, sprintf('Pkg%03d_Z%02d',ii, zz));
-            if ~exist(outsubdir,'dir'), mkdir(outsubdir); end
-            disp('Saving Hd5 files')
-            for i=1:length(data)
-                subdata=data{i};
-                filename = fullfile(outsubdir, sprintf('test_data_full_stacks_v%s.h5', num2str(i)));
-                h5create(filename,d_details,size(subdata)); %nescessary for Matlab not for Octave
-                h5write(filename,d_details,subdata);
-            end
-            
+            if ~exist(outsubdir,'dir'), mkdir(outsubdir); end            
+            augment_image_data_only(stack, outsubdir);
+            clear -v stack
+            clear -v data
             if ii ==num_of_pkg
                 %save(fullfile(outdir,'packages.mat'),'packages');
-                save(fullfile(outdir,'de_augmentation_info.mat'),'packages','num_of_pkg','imagesize');
+                save(fullfile(outdir,'de_augmentation_info.mat'),'packages','num_of_pkg','imagesize','z_blocks');
                 % To do: Write a predict file that runs through all folders in outdir
                 % and write a merge file for postprocessing in outdir
             end
