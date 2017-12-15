@@ -1,5 +1,4 @@
 function output_folder_name = merge_16_probs_v2(folder)
-%addpath('../../script')
 output_folder_name=fullfile(folder, 'de_augmented');
 mkdir(output_folder_name);
 %% Changed to do plane by plane and save as .png each plane
@@ -14,11 +13,12 @@ for  fff = 0: numel(all_files)-1
     
     loadfile = [filebasename,num2str(fff),'.h5'];
     fprintf('Merging 16 variations of file %s ... number %s of %s\n', filebasename, num2str(fff), num2str(numel(all_files)));
-    for i=1:8
+    for i=1:8  %File 1:8 are 1:100
         folder_name=[folder filesep 'v' num2str(i)];
         filename = fullfile(folder_name,loadfile);
         %fileinfo = h5info(filename);              
         load_im = h5read(filename, '/data');
+        disp('H5 Dimensions:');disp(size(load_im));
         %scale = max(max(load_im(:,:,2)));
         b{i} = load_im(:,:,2);
         %prob=combinePredicctionSlice_v2(folder_name);
@@ -27,7 +27,7 @@ for  fff = 0: numel(all_files)-1
     eight_vars=recover8Variation(b); %Now rotate first 8 back into normal space
 %Variations 9-16 are inverse organized    
     loadfile_revert = [filebasename,num2str(numel(all_files) - (fff+1)),'.h5'];
-    for i=1:8
+    for i=1:8 %File 9:16 are 100:1
         var = i+8;
         folder_name=[folder filesep 'v' num2str(var)];
         filename = fullfile(folder_name,loadfile_revert);
@@ -38,13 +38,16 @@ for  fff = 0: numel(all_files)-1
     next_vars=recover8Variation(b); %Now rotate next 8 back into normal space
     sixteen_vars = cat(3,eight_vars, next_vars);
     
+    %{
+    %To check if 16 variations are good uncomment here
     output_filename=fullfile(output_folder_name , sprintf('%s_%04d.tiff', filebasename,(fff+1)));
     for z = 1:16
         imwrite(sixteen_vars(:,:,z),output_filename,'WriteMode','append');
         fprintf('Saving: %s ... Image #%s   \n', output_filename, num2str(z));
     end
-
+    %}
     image = mean(sixteen_vars,3);
+    
     %image_stack=de_augment_data(b);    
     output_filename=fullfile(output_folder_name , sprintf('%s_%04d.png', filebasename,(fff+1)));
     %delete(filename);
@@ -52,6 +55,14 @@ for  fff = 0: numel(all_files)-1
     imwrite(image,output_filename);
     %tiff_file_save=[folder filesep 'ave_16.tiff'];
     
+    image2 = mode(sixteen_vars,3);
+    outdir2=fullfile(folder,'de_augmented_mode_weighting');
+    mkdir(outdir2);
+    output_filename2=fullfile(outdir2, sprintf('%s_%04d.png', filebasename,(fff+1)));
+    %delete(filename);
+    disp(['write: ' output_filename2]);
+    imwrite(image2,output_filename2);    
+
 end
 %{
 if exist(tiff_file_save, 'file'),delete(tiff_file_save); end
