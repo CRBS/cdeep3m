@@ -17,8 +17,6 @@ function create_predict_outdir(pkgdirs,models,de_augment_file,outdir)
       create_dir(dir_to_make);
     endfor
   endfor
-%  dest_de_augment = strcat(outdir,filesep(),'de_augmentation_info.mat');
-%  copyfile(de_augment_file,dest_de_augment);
 endfunction
 
 %!test
