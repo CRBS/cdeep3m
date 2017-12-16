@@ -55,6 +55,8 @@ for  fff = 0: numel(all_files)-1
     imwrite(image,output_filename);
     %tiff_file_save=[folder filesep 'ave_16.tiff'];
     
+    %%tried different weighting of 16v predictions, using mode instead of average -> need to test if better but currently slow
+    %{
     image2 = mode(sixteen_vars,3);
     outdir2=fullfile(folder,'de_augmented_mode_weighting');
     mkdir(outdir2);
@@ -62,7 +64,7 @@ for  fff = 0: numel(all_files)-1
     %delete(filename);
     disp(['write: ' output_filename2]);
     imwrite(image2,output_filename2);    
-
+    %}
 end
 %{
 if exist(tiff_file_save, 'file'),delete(tiff_file_save); end
