@@ -24,6 +24,8 @@ fi
 
 model=$1
 
+deploy_dir="$model/.."
+
 if [ -d "$model" ] ; then
   latest_iteration=`ls "$model" | egrep "\.caffemodel$" | sed "s/^.*iter_//" | sed "s/\.caffemodel//" | sort -g | tail -n 1`
   if [ "$latest_iteration" == "" ] ; then
@@ -66,6 +68,6 @@ for idx in {1..16..1}
   echo "Input: $input_file"
   echo "Output: $predict_dir"
 
-  GLOG_logtostderr="$log_dir" /usr/bin/time -p $caffe_path/predict_seg_new.bin --model=deploy.prototxt --weights=${model} --data=${input_file} --predict=$predict_dir/test.h5 --shift_axis=2 --shift_stride=1 --gpu=0
+  GLOG_logtostderr="$log_dir" /usr/bin/time -p $caffe_path/predict_seg_new.bin --model=${deploy_dir}/deploy.prototxt --weights=${model} --data=${input_file} --predict=$predict_dir/test.h5 --shift_axis=2 --shift_stride=1 --gpu=0
 
 done
