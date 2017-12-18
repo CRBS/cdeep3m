@@ -76,6 +76,9 @@ for i=1:size(average,3)
     disp(['write #' num2str(i) '  image ... ' tiff_file_save]);
 end
 %}
+disp('Deleting intermediate .h5 files');
+removefolders=[folder,filesep,'v*'];
+rmdir(removefolders,'s');
 end
 
 function eight_vars=recover8Variation(x)
