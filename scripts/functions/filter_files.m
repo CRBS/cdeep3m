@@ -8,6 +8,6 @@ if isempty(list(i).fileformat)
 end    
 fileformats(i) = double(list(i).fileformat);
 end
-fileformats_in_folder = find(fileformats);
+fileformats_in_folder = find(fileformat);
 list = list(fileformats_in_folder);
 end
