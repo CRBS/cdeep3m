@@ -52,8 +52,8 @@ tic
          combined_folder = fullfile(parentdir, sprintf('Pkg_%03d',x_y_num));
          mkdir(combined_folder);
          for z_plane = 1:(numel(z_blocks)-1)
-             in_folder = filter_files(fullfile(parentdir, sprintf('Pkg%03d_Z%02d',x_y_num, z_plane)),'.png');
-             imlist =  read_files_in_folder(in_folder);             
+             in_folder = fullfile(parentdir, sprintf('Pkg%03d_Z%02d',x_y_num, z_plane));
+             imlist =  filter_files(read_files_in_folder(in_folder),'png');             
              for file = 1:numel(imlist)
                  imcounter = imcounter + 1;
                  in_filename = fullfile(in_folder,imlist(file).name);
