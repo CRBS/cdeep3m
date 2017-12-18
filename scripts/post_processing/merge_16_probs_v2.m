@@ -12,7 +12,7 @@ filebasename = NAME(1:end-1); %drop the last is the digit
 for  fff = 2: (numel(all_files)-3)
     
     loadfile = [filebasename,num2str(fff),'.h5'];
-    fprintf('Merging 16 variations of file %s ... number %s of %s\n', filebasename, num2str(fff-1), num2str(numel(all_files-3)));
+    fprintf('Merging 16 variations of file %s ... number %s of %s\n', filebasename, num2str(fff-1), num2str(numel(all_files)-3));
     for i=1:8  %File 1:8 are 1:100
         folder_name=[folder filesep 'v' num2str(i)];
         filename = fullfile(folder_name,loadfile);
