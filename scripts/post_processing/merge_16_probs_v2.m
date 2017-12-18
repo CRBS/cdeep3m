@@ -77,8 +77,12 @@ for i=1:size(average,3)
 end
 %}
 disp('Deleting intermediate .h5 files');
-removefolders=[folder,filesep,'v*'];
-rmdir(removefolders,'s');
+for i = 1:16
+removefolders=[folder,filesep,'v',num2str(i)];
+fprintf('Deleting %s\n', removefolders);
+rmdir(removefolders, 's');
+end
+
 end
 
 function eight_vars=recover8Variation(x)
