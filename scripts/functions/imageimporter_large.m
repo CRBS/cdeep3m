@@ -36,8 +36,8 @@ if ~isempty(ext)
     
 elseif isdir(img_path)
     file_list = read_files_in_folder(img_path);
-    png_list = filter_files(file_list,'png');
-    tif_list = filter_files(file_list,'tif');
+    png_list = filter_files(file_list,'.png');
+    tif_list = filter_files(file_list,'.tif');
     if size(tif_list,1)+size(png_list,1) == 0, disp('No Tifs or PNGs found in training directory');return;
     else
         [~, type] = max([size(tif_list,1),size(png_list,1)]); %only read tif or pngs if ambiguous
