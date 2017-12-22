@@ -9,10 +9,10 @@ first_file = all_files(1).name;
 %digits = regexpi(NAME, '\d');
 filebasename = NAME(1:end-1); %drop the last is the digit
 
-for  fff = 0: numel(all_files)-1
+for  fff = 2: (numel(all_files)-3)
     
     loadfile = [filebasename,num2str(fff),'.h5'];
-    fprintf('Merging 16 variations of file %s ... number %s of %s\n', filebasename, num2str(fff), num2str(numel(all_files)));
+    fprintf('Merging 16 variations of file %s ... number %s of %s\n', filebasename, num2str(fff-1), num2str(numel(all_files)-3));
     for i=1:8  %File 1:8 are 1:100
         folder_name=[folder filesep 'v' num2str(i)];
         filename = fullfile(folder_name,loadfile);
@@ -49,12 +49,14 @@ for  fff = 0: numel(all_files)-1
     image = mean(sixteen_vars,3);
     
     %image_stack=de_augment_data(b);    
-    output_filename=fullfile(output_folder_name , sprintf('%s_%04d.png', filebasename,(fff+1)));
+    output_filename=fullfile(output_folder_name , sprintf('%s_%04d.png', filebasename,(fff-2)));
     %delete(filename);
     disp(['write: ' output_filename]);
     imwrite(image,output_filename);
     %tiff_file_save=[folder filesep 'ave_16.tiff'];
     
+    %%tried different weighting of 16v predictions, using mode instead of average -> need to test if better but currently slow
+    %{
     image2 = mode(sixteen_vars,3);
     outdir2=fullfile(folder,'de_augmented_mode_weighting');
     mkdir(outdir2);
@@ -62,7 +64,7 @@ for  fff = 0: numel(all_files)-1
     %delete(filename);
     disp(['write: ' output_filename2]);
     imwrite(image2,output_filename2);    
-
+    %}
 end
 %{
 if exist(tiff_file_save, 'file'),delete(tiff_file_save); end
@@ -74,6 +76,13 @@ for i=1:size(average,3)
     disp(['write #' num2str(i) '  image ... ' tiff_file_save]);
 end
 %}
+disp('Deleting intermediate .h5 files');
+for i = 1:16
+removefolders=[folder,filesep,'v',num2str(i)];
+fprintf('Deleting %s\n', removefolders);
+rmdir(removefolders, 's');
+end
+
 end
 
 function eight_vars=recover8Variation(x)
