@@ -25,7 +25,7 @@ if ~isempty(ext)
     elseif ~isempty(strfind(ext,'tif'))
         info = imfinfo(img_path);
         fprintf('Reading image stack with %d images\n',size(info,1));
-        imagesize = [info(1).Width, info(1).Height, size(info,1)];
+        imagesize = [info(1).Height, info(1).Width, size(info,1)];
         
     end
     
@@ -41,7 +41,7 @@ elseif isdir(img_path)
             filename = fullfile(img_path,file_list(idx).name);
             fprintf('Reading file: %s\n', filename); 
             info = imfinfo(filename);
-            imagesize = [info(1).Width, info(1).Height, size(file_list,1)];
+            imagesize = [info(1).Height, info(1).Width, size(file_list,1)];
         end
     end
     
