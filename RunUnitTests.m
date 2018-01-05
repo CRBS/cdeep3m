@@ -3,6 +3,8 @@
 
 script_dir = fileparts(make_absolute_filename(program_invocation_name()));
 
+old_dir = cd(script_dir);
+
 addpath(genpath(script_dir));
 addpath(genpath(strcat(script_dir,filesep(),'scripts',filesep())));
 addpath(genpath(strcat(script_dir,filesep(),'scripts',filesep(),'functions')));
@@ -26,3 +28,4 @@ for x = 1:rows(test_files)
   endif
 endfor
 
+cd(old_dir);
