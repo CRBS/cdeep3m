@@ -26,7 +26,7 @@ endfunction
 %!error <copyfile: no files to move> copy_model('.','weroijef','.');
 
 %!test
-%! test_fname = tempname()
+%! test_fname = tempname();
 %! mkdir(test_fname);
 %! copy_model('.','1fm',test_fname);
 %! test_dir = strcat(test_fname,filesep());
