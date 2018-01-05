@@ -18,7 +18,7 @@ function run_predict(arg_list)
 
   if numel(arg_list)~=3; 
     fprintf('\n');
-    msg = sprintf('%s expects two command line arguments\n\n', prog_name);
+    msg = sprintf('%s expects three command line arguments\n\n', prog_name);
     msg = strcat(msg,sprintf('Usage: %s <Output of Train.m after training run> <augmented image data> <output directory>\n', prog_name));
     error(msg); 
     return; 
@@ -91,4 +91,25 @@ function run_predict(arg_list)
           all_predict_file, train_model_path,img_data,caffe_bin);
   
 endfunction
+
+%!error <expects three command> run_predict([]);
+
+%!function x = get_args_with_all_bad_paths();
+%! x = cell(3,1);
+%! x(1) = ['Predict.m'];
+%! x(2) = ['asdfasdf'];
+%! x(3) = ['xxxx'];
+%!endfunction
+
+%!error <First argument is not> run_predict(get_args_with_all_bad_paths());
+
+%!function x = get_args_second_path_bad();
+%! x = cell(3,1);
+%! x(1) = [make_absolute_filename('.')];
+%! x(2) = ['asdfasdf'];
+%! x(3) = ['asdfasdf'];
+%!endfunction
+
+%!error <Second argument is not> run_predict(get_args_second_path_bad());
+
 
