@@ -23,7 +23,6 @@ for x = 1:rows(test_files)
     endif
   endfor
   if run_test == 1;
-    fprintf(stdout(),'%s -- ',t_file);
     test(t_file,"quiet",stdout());
   endif
 endfor
