@@ -34,7 +34,7 @@ endfunction
 %!error <undefined near> copy_over_allmodels();
 
 %!test
-%! test_fname = tempname()
+%! test_fname = tempname();
 %! mkdir(test_fname);
 %! [one, three, five] = copy_over_allmodels('.', test_fname);
 %! one_dir = strcat(one,filesep());
