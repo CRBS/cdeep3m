@@ -23,43 +23,6 @@ pkg load hdf5oct
 pkg load image
 
 
-function copy_model(base_dir, the_model, dest_dir)
-  % Copies *txt files from model/inception_residual_train_prediction_<the_model>  %directory
-  % to directory specified by dest_dir argument. If copy fails error() is 
-  % invoked describing
-  % the issue
-  src_files = strcat(base_dir,filesep(),'model',filesep(),
-                     'inception_residual_train_prediction_',the_model,
-                     filesep(),'*txt');
-  res = copyfile(src_files,dest_dir);
-  if res(1) == 0;
-    errmsg = sprintf('Error copying model %s : %s\n',the_model,res(2));
-    error(errmsg);
-  endif 
-endfunction
-
-function [onefm_dest, threefm_dest, fivefm_dest] = copy_over_allmodels(base_dir, outdir)
-  % ----------------------------------------------------------------------------
-  % Create output directory and copy over model files and 
-  % adjust configuration files
-  % ----------------------------------------------------------------------------
-
-  create_dir(outdir);
-
-  % copy over 1fm, 3fm, and 5fm model data to separate directories
-  onefm_dest = strcat(outdir,filesep(),'1fm');
-  create_dir(onefm_dest);
-  copy_model(base_dir,'1fm',onefm_dest);
-
-  threefm_dest = strcat(outdir,filesep(),'3fm');
-  create_dir(threefm_dest);
-  copy_model(base_dir,'3fm',threefm_dest);
-
-  fivefm_dest = strcat(outdir,filesep(),'5fm');
-  create_dir(fivefm_dest);
-  copy_model(base_dir,'5fm',fivefm_dest);
-endfunction
-
 function [train_model_dest] = update_solverproto_txt_file(outdir,model)
   % Open solver.prototxt and adjust the line snapshot_prefix to be 
   % <model>_model/<model>_classifier'
