@@ -1,3 +1,0 @@
-[submodule "caffe_nd_sense_segmentation"]
-	path = caffe_nd_sense_segmentation
-	url = https://github.com/Xiaomi2008/caffe_nd_sense_segmentation
