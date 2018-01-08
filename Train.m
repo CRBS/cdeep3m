@@ -22,28 +22,6 @@ tic
 pkg load hdf5oct
 pkg load image
 
-
-function [train_model_dest] = update_solverproto_txt_file(outdir,model)
-  % Open solver.prototxt and adjust the line snapshot_prefix to be 
-  % <model>_model/<model>_classifier'
-  solver_prototxt = strcat(outdir,filesep(),model,filesep(), 'solver.prototxt');
-  s_data = fileread(solver_prototxt);
-  solver_out = fopen(solver_prototxt,"w");
-  lines = strsplit(s_data,'\n');
-  model_dir = strcat(outdir,filesep(),model,filesep(),'trainedmodel');
-  create_dir(model_dir);
-  train_model_dest = strcat(model_dir,
-                            filesep(),model,'_classifer');
-  for j = 1:columns(lines)
-    if index(char(lines(j)),'snapshot_prefix:') == 1;
-      fprintf(solver_out,'snapshot_prefix: "%s"\n',train_model_dest);
-    else
-      fprintf(solver_out,'%s\n',char(lines(j)));
-    endif
-  endfor
-  fclose(solver_out);
-endfunction
-
 function update_train_val_prototxt(outdir,model,train_file)
   % updates data_source in train_val.prototxt file
   train_val_prototxt = strcat(outdir,filesep(),model,filesep(),
