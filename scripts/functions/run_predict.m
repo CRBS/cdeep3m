@@ -1,11 +1,11 @@
-#!/usr/bin/octave -qf
+## Usage run_predict(arg_list)
+## Runs Deep3m prediction using caffe. 
+## by first verifying first argument is path to training data and
+## then copying over models under model/ directory to output directory
+## suffix for hdf5 files
+
 
 function run_predict(arg_list)
-  % Runs Deep3m train using caffe. 
-  % Usage runtrain(cell array of strings) 
-  % by first verifying first argument is path to training data and
-  % then copying over models under model/ directory to output directory
-  % suffix for hdf5 files
   H_FIVE_SUFFIX='.h5';
   prog_name = program_name();
   base_dir = fileparts(make_absolute_filename(program_invocation_name()));
