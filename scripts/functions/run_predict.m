@@ -69,7 +69,7 @@ function run_predict(arg_list)
   fprintf(stdout(),'Creating output directories and creating run scripts ... ');
   
   de_augment_file = strcat(img_data,filesep(),'de_augmentation_info.mat');
-  create_predict_outdir(pkg_folders,train_model_names,de_augment_file,outdir);
+  create_predict_outdir(pkg_folders,train_model_names,outdir);
   copyfile(de_augment_file,strcat(outdir,filesep(),'de_augmentation_info.mat'));
   caffe_predict = strcat(outdir,filesep(),'caffe_predict.sh');
   copyfile(caffe_predict_template,caffe_predict);

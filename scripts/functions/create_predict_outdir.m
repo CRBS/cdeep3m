@@ -1,10 +1,10 @@
-## Usage create_predict_outdir (pkgdirs,models,de_augment_file,outdir)
+## Usage create_predict_outdir (pkgdirs,models,outdir)
 ##
 ## Creates predict out directory 
 ## If there is an error creating directory then error() is
 ## invoked with message
 
-function create_predict_outdir(pkgdirs,models,de_augment_file,outdir)
+function create_predict_outdir(pkgdirs,models,outdir)
   create_dir(outdir);
 
   for i = 1:rows(models)
@@ -31,7 +31,7 @@ endfunction
 %! pkgnames = cell(2,1);
 %! pkgnames(1) = ['Pkg001'];
 %! pkgnames(2) = ['Pkg002'];
-%! create_predict_outdir(pkgdirs,models,'hi',test_fname);
+%! create_predict_outdir(pkgdirs,models,test_fname);
 %! for i = 1:rows(models)
 %!   model_dir = strcat(test_fname,filesep(),char(models(i)));
 %!   for j = 1:rows(pkgnames)
