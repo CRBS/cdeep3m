@@ -67,10 +67,16 @@ function run_predict(arg_list)
   % also copy over de_augment.m files.
   % ----------------------------------------------------------------------------
   fprintf(stdout(),'Creating output directories and creating run scripts ... ');
-  
-  de_augment_file = strcat(img_data,filesep(),'de_augmentation_info.mat');
+
   create_predict_outdir(pkg_folders,train_model_names,outdir);
-  copyfile(de_augment_file,strcat(outdir,filesep(),'de_augmentation_info.mat'));
+
+  % if found copy over de_augmentation_info.mat file
+  de_augment_file = strcat(img_data,filesep(),'de_augmentation_info.mat');
+  if exist(de_augment_file, 'file') == 2;
+      copyfile(de_augment_file,strcat(outdir,filesep(),
+               'de_augmentation_info.mat'));
+  endif
+
   caffe_predict = strcat(outdir,filesep(),'caffe_predict.sh');
   copyfile(caffe_predict_template,caffe_predict);
 
