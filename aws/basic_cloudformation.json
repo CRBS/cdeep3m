@@ -30,7 +30,7 @@
     },
     "Mappings" : {
        "RegionMap" : {
-           "ap-south-1"    : { "AMI" : "ami-6a024a05"}
+           "ap-south-1"    : { "AMI" : "ami-6a024a05"},
            "eu-west-1"    : { "AMI" : "ami-2e269e57"},
            "ap-northeast-2"    : { "AMI" : "ami-3097315e"},
            "ap-northeast-1"    : { "AMI" : "ami-fff07199"},
@@ -61,7 +61,11 @@
                     "Fn::FindInMap": [ "RegionMap",
                         { "Ref": "AWS::Region" }, "AMI" ]
                     
-                }
+                },
+                "UserData"    : { "Fn::Base64" : { "Fn::Join" : [ "", [
+                     "#!/bin/bash -xe\n",
+                     "echo hi > /root/yo.txt\n"
+                       ]]}}
             }, 
             "Metadata": {
                 "AWS::CloudFormation::Designer": {
