@@ -1,6 +1,6 @@
 {
     "AWSTemplateFormatVersion": "2010-09-09",
-    "Description": "AWS CloudFormation Sample Template EC2InstanceWithSecurityGroupSample: Create an Amazon EC2 instance running the Amazon Linux AMI. The AMI is chosen based on the region in which the stack is run. This example creates an EC2 security group for the instance to give you SSH access. **WARNING** This template creates an Amazon EC2 instance. You will be billed for the AWS resources used if you create a stack from this template.",
+    "Description": "AWS CloudFormation Deep3m template. Creates an EC2 ubuntu instance off of a base Amazon Deep Learning AMI and installs necessary software to run Deep3M image segmentation. This template provides ssh access to the machine created. **WARNING** This template creates an Amazon EC2 instance. You will be billed for the AWS resources used if you create a stack from this template.",
     "Parameters": {
         "KeyName": {
             "Description": "Name of an existing EC2 KeyPair to enable SSH access to the instance",
@@ -63,18 +63,33 @@
                     
                 },
                 "UserData"    : { "Fn::Base64" : { "Fn::Join" : [ "", [
-                     "#!/bin/bash -xe\n\n",
-                     "i='0'\n",
-                     "while [ $i -lt 15 ]\n",
+                     "#!/bin/bash\n\n",
+                     "echo 'Installing octave'\n",
+                     "apt-get update\n",
+                     "ecode=100\n",
+                     "while [ $ecode -ne 0 ]\n",
                      "do\n",
-                     "if [ $(fuser /var/lib/dpkg/lock) ]; then\n",
-                     " i='0'\n",
-                     "fi\n",
-                     "sleep 1\n",
-                     "i=$[$i+1]\n",
+                     "  apt-get install octave octave-image octave-pkg-dev git -y\n",
+                     "  ecode=$?\n",
+                     "  echo 'Sleeping 1 second'\n",
+                     "  sleep 1\n",
                      "done\n\n",
-                     "apt install octave octave-image octave-pkg-dev -y\n",
-                     "echo hi > /root/yo.txt\n"
+                     "echo 'Done installing octave'\n",
+                     "cd /home/ubuntu\n",
+                     "sudo -u ubuntu git clone https://github.com/coleslaw481/caffe_nd_sense_segmentation.git\n",
+                     "cd /home/ubuntu/caffe_nd_sense_segmentation\n",
+                     "sudo -u ubuntu cp Makefile.config.example Makefile.config\n",
+                     "sudo -u ubuntu sed -i 's/ \\/usr\\/local\\/include/\\/usr\\/local\\/include \\/usr\\/include\\/hdf5\\/serial\\//g' Makefile.config\n",
+                     "sudo -u ubuntu sed -i 's/^# OPENCV_VERSION := 3/OPENCV_VERSION := 3/g' Makefile.config\n",
+                     "sudo -u ubuntu sed -i 's/hdf5/hdf5_serial/g' Makefile\n",
+                     "sudo -u ubuntu make -j 2 all\n",
+                     "cd ..\n",
+                     "sudo -u ubuntu wget https://github.com/stegro/hdf5oct/archive/0.4.0.tar.gz\n",
+                     "sudo -u ubuntu tar -zxf 0.4.0.tar.gz\n",
+                     "cd hdf5oct-0.4.0\n",
+                     "sudo -u ubuntu make\n",
+                     "make install\n",
+                     "echo 'Done with update'\n"
                        ]]}}
             }, 
             "Metadata": {
