@@ -13,7 +13,8 @@
             "Default": "p2.xlarge",
             "AllowedValues": [
                 "p2.xlarge",
-                "p3.2xlarge"
+                "p3.2xlarge",
+                "m5.xlarge"
             ],
             "ConstraintDescription": "must be a valid EC2 GPU instance type."
         },
@@ -43,7 +44,7 @@
        }       
     },
     "Resources": {
-        "EC2Instance": {
+        "GPUInstance": {
             "Type": "AWS::EC2::Instance",
             "Properties": {
                 "InstanceType": {
@@ -69,12 +70,13 @@
                      "ecode=100\n",
                      "while [ $ecode -ne 0 ]\n",
                      "do\n",
-                     "  apt-get install octave octave-image octave-pkg-dev git -y\n",
+                     "  apt-get install octave octave-image octave-pkg-dev git python-pip -y\n",
                      "  ecode=$?\n",
                      "  echo 'Sleeping 1 second'\n",
                      "  sleep 1\n",
                      "done\n\n",
                      "echo 'Done installing octave'\n",
+                     "pip install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz -y\n",
                      "cd /home/ubuntu\n",
                      "sudo -u ubuntu git clone https://github.com/coleslaw481/caffe_nd_sense_segmentation.git\n",
                      "cd /home/ubuntu/caffe_nd_sense_segmentation\n",
@@ -89,7 +91,8 @@
                      "cd hdf5oct-0.4.0\n",
                      "sudo -u ubuntu make\n",
                      "make install\n",
-                     "echo 'Done with update'\n"
+                     "echo 'Done with update'\n",
+                     "/usr/local/bin/cfn-signal --exit-code 0 -i gpu1 '", { "Ref" : "WaitHandle" }, "'\n"
                        ]]}}
             }, 
             "Metadata": {
@@ -118,20 +121,33 @@
                     "id": "85d8cb29-8b24-41c8-bca9-498f219d2b6e"
                 }
             }
+        },
+        "WaitHandle" : {
+            "Type" : "AWS::CloudFormation::WaitConditionHandle",
+            "Properties" : {
+            }
+        },
+        "WaitCondition" : {
+            "Type" : "AWS::CloudFormation::WaitCondition",
+            "DependsOn" : "GPUInstance",
+            "Properties" : {
+                "Handle" : { "Ref" : "WaitHandle" },
+                "Timeout" : "4500"
+            }
         }
     },
     "Outputs": {
         "InstanceId": {
             "Description": "InstanceId of the newly created EC2 instance",
             "Value": {
-                "Ref": "EC2Instance"
+                "Ref": "GPUInstance"
             }
         },
         "AZ": {
             "Description": "Availability Zone of the newly created EC2 instance",
             "Value": {
                 "Fn::GetAtt": [
-                    "EC2Instance",
+                    "GPUInstance",
                     "AvailabilityZone"
                 ]
             }
@@ -140,7 +156,7 @@
             "Description": "Public DNSName of the newly created EC2 instance",
             "Value": {
                 "Fn::GetAtt": [
-                    "EC2Instance",
+                    "GPUInstance",
                     "PublicDnsName"
                 ]
             }
@@ -149,7 +165,7 @@
             "Description": "Public IP address of the newly created EC2 instance",
             "Value": {
                 "Fn::GetAtt": [
-                    "EC2Instance",
+                    "GPUInstance",
                     "PublicIp"
                 ]
             }
