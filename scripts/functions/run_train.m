@@ -31,7 +31,9 @@ function run_train(arg_list)
   if numel(arg_list)~=2; 
     fprintf('\n');
     msg = sprintf('%s expects two command line arguments\n\n', prog_name);
-    msg = strcat(msg,sprintf('Usage: %s <Input train data directory> <output directory>\n', prog_name));
+    msg = strcat(msg,
+                 sprintf('Usage: %s <Input train data directory> <output directory>\n',
+                         prog_name));
     error(msg); 
     return; 
   endif
@@ -48,7 +50,7 @@ function run_train(arg_list)
 
   if exist(all_train_file) == 2;
      fprintf('\n');
-     msg = sprintf('Train.m appears to already have been run in %s directory',
+     msg = sprintf('CreateTrainJob.m appears to already have been run in %s directory',
                    outdir);
      msg = strcat(msg,sprintf('\nRun %s to run training\n',all_train_file));
      error(msg);
@@ -57,19 +59,12 @@ function run_train(arg_list)
   % Examine input training data and generate list of h5 files
   % ---------------------------------------------------------------------------
   fprintf(stdout(), 'Verifying input training data is valid ... ');
-  train_files = glob(strcat(in_img_path, filesep(),'*', H_FIVE_SUFFIX));
+  [status, errmsg, train_file] = verify_and_create_train_file(in_img_path, outdir);
 
-  if rows(train_files) != 16;
-    fprintf(stderr(),'Expecting 16 .h5 files, but found a different count.\n');
-    return;
-  endif
-
-  train_file = strcat(in_img_path,filesep(),'train_file.txt');
-  if ~exist(train_file);
-    errmsg = sprintf('%s file not found',train_file);
+  if status != 0;
     error(errmsg);
   endif
-  
+
   fprintf(stdout(),'success\n');
 
   % ----------------------------------------------------------------------------
