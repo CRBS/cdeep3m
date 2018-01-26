@@ -1,4 +1,5 @@
 #!/usr/bin/octave -qf
+
 % CreateTrainJob
 % Generates Training job that uses caffe on3 models, 1fm, 3fm, and 5fm
 % -> Outputs trained caffe model to output directory
