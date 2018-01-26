@@ -21,8 +21,12 @@
 disp('Starting Training data Preprocessing');
 pkg load hdf5oct
 pkg load image
-addpath(genpath('./scripts/'));
-addpath(genpath('/home/ubuntu/deep3m/scripts/'));
+script_dir = fileparts(make_absolute_filename(program_invocation_name()));
+addpath(genpath(script_dir));
+addpath(genpath(strcat(script_dir,filesep(),'scripts',filesep())));
+addpath(genpath(strcat(script_dir,filesep(),'scripts',filesep(),'functions')));
+
+
 
 arg_list = argv ();
 if numel(arg_list)<3; disp('Use -> PreprocessTraining /ImageData/training/images/ /ImageData/training/labels/ /ImageData/augmentedtraining/'); return; end
@@ -35,12 +39,6 @@ disp('Training Label Path:');disp(label_img_path);
 outdir = arg_list{3};
 disp('Output Path:');disp(outdir); 
 
-
-
-if exist('train_file.txt','file');  reply = input('Do you want delete existing <train_file.txt> File? Y/N [Y]:','s'); 
-if isempty(reply); reply = 'Y'; end
-if reply == 'Y'; delete('train_file.txt'); end
-end
 % ----------------------------------------------------------------------------------------
 %% Load train data
 % ----------------------------------------------------------------------------------------
@@ -98,17 +96,6 @@ end
 %% Completed
 % ----------------------------------------------------------------------------------------
 
-copyfile('~/deep3m/model/inception_residual_train_prediction_1fm/train1fm.sh',outdir);
-copyfile('~/deep3m/model/inception_residual_train_prediction_3fm/train3fm.sh',outdir);
-copyfile('~/deep3m/model/inception_residual_train_prediction_5fm/train5fm.sh',outdir);
 disp('Image Augmentation completed');
 toc
-%if exist('txts.save')
-%load('txts.save','-mat','training_info_text');
-%fprintf(training_info_text);
-disp('For training your model please run one of the following commands:');
-fprintf([outdir '/train1fm.sh \n', outdir, '/train3fm.sh \n', outdir, '/train5fm.sh\n']);
-%end
-    
-%savefile= fullfile((save_dir, 'training_full_stacks_v16.mat');
-%save(savefile,'data','labels','-v7.3');
+disp('For training your model please run Train.m');
