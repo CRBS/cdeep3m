@@ -18,6 +18,13 @@
             ],
             "ConstraintDescription": "must be a valid EC2 GPU instance type."
         },
+        "GPUDiskSize": {
+            "Description": "Size of GPU EC2 instance disk in gigabytes",
+            "Type": "Number",
+            "Default": "100",
+            "MinValue": "50",
+            "ConstraintDescription": "must be a whole number 50 or larger"
+        },
         "SSHLocation": {
             "Description": "The IP address range that can be used to SSH to the EC2 instances",
             "Type": "String",
@@ -63,6 +70,12 @@
                         { "Ref": "AWS::Region" }, "AMI" ]
                     
                 },
+                "BlockDeviceMappings" : [
+                    {
+                      "DeviceName" : "/dev/sda1",
+                      "Ebs" : { "VolumeSize" : { "Ref": "GPUDiskSize" } }
+                    }
+                ],
                 "UserData"    : { "Fn::Base64" : { "Fn::Join" : [ "", [
                      "#!/bin/bash\n\n",
                      "echo 'Installing octave'\n",
