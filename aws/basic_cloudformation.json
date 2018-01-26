@@ -76,7 +76,10 @@
                 "BlockDeviceMappings" : [
                     {
                       "DeviceName" : "/dev/sda1",
-                      "Ebs" : { "VolumeSize" : { "Ref": "GPUDiskSize" } }
+                      "Ebs" : { 
+                                 "VolumeSize" : { "Ref": "GPUDiskSize" },
+                                 "VolumeType" : "gp2"
+                              }
                     }
                 ],
                 "Tags" : [ 
