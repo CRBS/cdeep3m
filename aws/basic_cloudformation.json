@@ -7,14 +7,17 @@
             "Type": "AWS::EC2::KeyPair::KeyName",
             "ConstraintDescription": "must be the name of an existing EC2 KeyPair."
         },
-        "InstanceType": {
+        "GPUInstanceType": {
             "Description": "GPU EC2 instance type",
             "Type": "String",
             "Default": "p2.xlarge",
             "AllowedValues": [
                 "p2.xlarge",
                 "p3.2xlarge",
-                "m5.xlarge"
+                "m5.2xlarge",
+                "m4.2xlarge",
+                "r3.xlarge",
+                "i3.xlarge"
             ],
             "ConstraintDescription": "must be a valid EC2 GPU instance type."
         },
@@ -55,7 +58,7 @@
             "Type": "AWS::EC2::Instance",
             "Properties": {
                 "InstanceType": {
-                    "Ref": "InstanceType"
+                    "Ref": "GPUInstanceType"
                 },
                 "SecurityGroups": [
                     {
@@ -74,6 +77,11 @@
                     {
                       "DeviceName" : "/dev/sda1",
                       "Ebs" : { "VolumeSize" : { "Ref": "GPUDiskSize" } }
+                    }
+                ],
+                "Tags" : [ 
+                    {
+                      "Key" : "Name", "Value" : { "Ref": "AWS::StackName" } 
                     }
                 ],
                 "UserData"    : { "Fn::Base64" : { "Fn::Join" : [ "", [
