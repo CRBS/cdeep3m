@@ -83,13 +83,8 @@ for i=1:length(data)
     l_tr=labels{i};
     filename = fullfile(outdir, sprintf('training_full_stacks_v%s%s', num2str(i), ext));
     disp(filename); 
-    %h5create(filename,'empty',[1]); 
     h5write(filename,d_details,d_tr);
     h5write(filename,l_details,l_tr); 
-    
-    fid = fopen('train_file.txt', 'a');
-    fprintf(fid, [filename, '\n']);
-    fclose(fid);
 end
 
 % ----------------------------------------------------------------------------------------
