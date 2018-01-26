@@ -1,9 +1,9 @@
 #!/usr/bin/octave -qf
-% Predict
+% CreatePredictJob
 % Sets up prediction of user image dataset with 3 models, 1fm, 3fm, and 5fm using caffe
 % -> Sets up prediction jobs in  output directory
 %
-% Syntax : Predict.m <Output of Train.m after training run> <augmented image data> <output directory>
+% Syntax : CreatePredictJOb.m <Output of CreateTrainJob.m after training run> <augmented image data> <output directory>
 %
 %
 %-------------------------------------------------------------------------------
