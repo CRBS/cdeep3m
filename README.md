@@ -3,7 +3,22 @@
 ## Required environment:
 C++, bash shell, matlab/octave, Cuda7.5
 
+## Quickstart
+
+Step 1: Create AWS account
+
+Step 2: Launch Deep3m via EC2 cloud instance 
+
+**WARNING: ** Running this will cause AWS charges!!!!
+
+[![Launch Deep3m AWS CloudFormation link](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home/stacks/new?stackName=deep3m_stack&templateURL=https://s3-us-west-2.amazonaws.com/deep3m-releases/0.1.0/deep3m_v0.1.0_basic_cloudformation.json)
+
+Step 3: Run Deep3m
+
+Step 4: Be sure to Delete/Terminate stack
+
 ## Code
+
 Step 1: PreprocessTraining
 - Makes augmented hdf5 datafiles from raw and label images
 - Syntax : PreprocessTraining /example/training/images/ /example/training/labels/ /savedirectory/
