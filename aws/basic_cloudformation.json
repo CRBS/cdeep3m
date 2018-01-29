@@ -115,6 +115,12 @@
                      "cd hdf5oct-0.4.0\n",
                      "sudo -u ubuntu make\n",
                      "make install\n",
+                     "cd /home/ubuntu\n",
+                     "wget https://s3-us-west-2.amazonaws.com/deep3m-releases/latest-version\n",
+                     "export DEEP3M_VERSION=`cat latest-version`\n",
+                     "wget https://s3-us-west-2.amazonaws.com/deep3m-releases/${DEEP3M_VERSION}/deep3m-${DEEP3M_VERSION}.tar.gz\n",
+                     "tar -xf deep3m-${DEEP3M_VERSION}.tar.gz\n",
+                     "ln -s /home/ubuntu/deep3m-${DEEP3M_VERSION} /home/ubuntu/deep3m\n",
                      "echo 'Done with update'\n",
                      "/usr/local/bin/cfn-signal --exit-code 0 -i gpu1 '", { "Ref" : "WaitHandle" }, "'\n"
                        ]]}}
