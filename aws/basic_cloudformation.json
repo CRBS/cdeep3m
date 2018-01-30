@@ -117,7 +117,7 @@
                      "make install\n",
                      "cd /home/ubuntu\n",
                      "wget https://s3-us-west-2.amazonaws.com/deep3m-releases/latest-version\n",
-                     "export DEEP3M_VERSION=`cat latest-version`\n",
+                     "export DEEP3M_VERSION='@@VERSION@@'\n",
                      "wget https://s3-us-west-2.amazonaws.com/deep3m-releases/${DEEP3M_VERSION}/deep3m-${DEEP3M_VERSION}.tar.gz\n",
                      "tar -xf deep3m-${DEEP3M_VERSION}.tar.gz\n",
                      "ln -s /home/ubuntu/deep3m-${DEEP3M_VERSION} /home/ubuntu/deep3m\n",
