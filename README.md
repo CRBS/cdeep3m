@@ -1,3 +1,5 @@
+[aws]: https://aws.amazon.com/
+
 # Deep3M
 
 ## Required environment:
@@ -5,17 +7,9 @@ C++, bash shell, matlab/octave, Cuda7.5
 
 ## Quickstart
 
-Step 1: Create AWS account
+Click here for quick start instructions:
 
-Step 2: Launch Deep3m via EC2 cloud instance 
-
-**WARNING: ** Running this will cause AWS charges!!!!
-
-[![Launch Deep3m AWS CloudFormation link](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=deep3m-stack-v0-2-0&templateURL=https://s3-us-west-2.amazonaws.com/deep3m-releases/0.2.0/deep3m_v0.2.0_basic_cloudformation.json)
-
-Step 3: Run Deep3m
-
-Step 4: Be sure to Delete/Terminate stack
+https://github.com/slash-segmentation/deep3m/wiki/Running-Deep3m-via-AWS-using-Cloud-formation
 
 ## Code
 
