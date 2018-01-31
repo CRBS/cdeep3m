@@ -25,8 +25,9 @@ end
 
 function [D,L]=create8Variation(x,y,idx)
 for j = 1:8
+fprintf('\nCreate variation %s\n',num2str(j+idx));	
 	for i = 1:size(x,1)
-        fprintf('\nCreate variation %s\n',num2str(j+idx));
+	fprintf('.');
 		original = squeeze(x(i,:,:));
 		lb = squeeze(y(i,:,:));
 		switch(j)
