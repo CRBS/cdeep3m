@@ -93,4 +93,4 @@ end
 
 disp('Image Augmentation completed');
 toc
-disp('For training your model please run Train.m');
+fprintf('For training your model please run ./CreateTrainJob.m %s < ~/outputdirectory >\n', outdir);
