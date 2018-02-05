@@ -52,7 +52,7 @@ tic
          combined_folder = fullfile(parentdir, sprintf('Pkg_%03d',x_y_num));
          mkdir(combined_folder);
          for z_plane = 1:(numel(z_blocks)-1)
-             in_folder = fullfile(parentdir, sprintf('Pkg%03d_Z%02d',x_y_num, z_plane),'de_augmented');
+             in_folder = fullfile(parentdir, sprintf('Pkg%03d_Z%02d',x_y_num, z_plane));
              disp(['Reading:', in_folder]);
              imlist =  read_files_in_folder(in_folder);
              imlist =  filter_files(imlist,'.png');
