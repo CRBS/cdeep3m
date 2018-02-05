@@ -36,7 +36,7 @@ imagesize = check_image_size(in_img_path);
 [packages,z_blocks] = break_large_img(imagesize);
 num_of_pkg = numel(packages);
 %num_of_pkg =1;  %Change here to enable large image files
-
+%{
 if num_of_pkg==1 && numel(z_blocks)==2
     [stack] = imageimporter(in_img_path);
     checkpoint_nobinary(stack);
@@ -54,7 +54,7 @@ if num_of_pkg==1 && numel(z_blocks)==2
     
     
 else
-    
+ %}   
     for zz = 1:numel(z_blocks)-1
         if zz == 1
             z_stack = [z_blocks(zz), z_blocks(zz+1)]
@@ -77,7 +77,6 @@ else
             checkpoint_nobinary(stack);
             disp('Padding images');
             [stack] = add_z_padding(stack); %adds 2 planes i beginning and end
-            stack=permute(stack,[3 1 2]); %from tiff to h5 /xyz to z*x*y
             
             %% augment_and_saveSave image data
             outsubdir = fullfile(outdir, sprintf('Pkg%03d_Z%02d',ii, zz));
@@ -93,14 +92,17 @@ else
             end
         end % pkgs
     end %z-block
-end
+%end
 
 % ----------------------------------------------------------------------------------------
 %% Completed
 % ----------------------------------------------------------------------------------------
 
-disp('Image Augmentation completed');
 toc
+disp('Image Augmentation completed');
+fprintf('Created %s packages in x/y with %s z-stacks\n', num2str(num_of_pkg),num2str((numel(z_blocks))-1));
+fprintf('Data stored in:\n %\n', outdir);
+
 if exist('txts.save','file')
     load('txts.save','-mat','image_info_text');
     fprintf(image_info_text);
