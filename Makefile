@@ -53,7 +53,7 @@ dist: clean ## builds source and wheel package
 	tar -C dist/ -cz $$deep3mdirname > $$distdir.tar.gz
 	ls -l dist
 
-updateversion:
+updateversion: ## Updates version by updating VERSION file
 	@cv=`cat VERSION`; \
 	read -p "Current ($$cv) enter new version: " vers; \
 	echo "Updating VERSION with new version: $$vers"; \
