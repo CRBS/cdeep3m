@@ -91,16 +91,16 @@ for i=1:8
     lb=permute(lb,[3 1 2]); %from tiff to h5 /100*1000*1000
     filename = fullfile(outdir, sprintf('training_full_stacks_v%s%s', num2str(i), ext));
     fprintf('Saving: %s\n', filename);
-    %h5write(filename,d_details,img);
-    %h5write(filename,l_details,lb);
+    h5write(filename,d_details,img);
+    h5write(filename,l_details,lb);
     clear img lb
     %% v9-16
     inv_img = permute(inv_img,[3 1 2]); %from tiff to h5 /100*1000*1000
     inv_lb  = permute(inv_lb,[3 1 2]);  %from tiff to h5 /100*1000*1000
     filename = fullfile(outdir, sprintf('training_full_stacks_v%s%s', num2str(i+8), ext));
      fprintf('Saving: %s\n', filename);
-    %h5write(filename,d_details,inv_img);
-    %h5write(filename,l_details,inv_lb); 
+    h5write(filename,d_details,inv_img);
+    h5write(filename,l_details,inv_lb); 
     clear inv_img inv_lb
 end
 
