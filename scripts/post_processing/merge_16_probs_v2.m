@@ -1,5 +1,5 @@
 function output_folder_name = merge_16_probs_v2(folder)
-output_folder_name=fullfile(folder, 'de_augmented');
+output_folder_name=fullfile(folder);
 mkdir(output_folder_name);
 %% Changed to do plane by plane and save as .png each plane
 folder_name=fullfile(folder, 'v1');
@@ -9,7 +9,7 @@ first_file = all_files(1).name;
 %digits = regexpi(NAME, '\d');
 filebasename = NAME(1:end-1); %drop the last is the digit
 
-for  fff = 2: (numel(all_files)-3)
+for  fff = 2: (numel(all_files)-3) %predictions start with 0; Ignore 0&1 and last two, since they are z-padding 
     
     loadfile = [filebasename,num2str(fff),'.h5'];
     fprintf('Merging 16 variations of file %s ... number %s of %s\n', filebasename, num2str(fff-1), num2str(numel(all_files)-3));
