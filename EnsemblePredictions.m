@@ -18,11 +18,11 @@ tic
 
 arg_list = argv ();
 
-if ~exist to_process
 if numel(arg_list) < 3
-  fprintf('Please specify more then one input directory to average: EnsemblePredictions ./inputdir1 ./inputdir2 ./inputdir3 ./outputdir\n',arg_list{i});
+  fprintf('Please specify more than one input directory to average: EnsemblePredictions ./inputdir1 ./inputdir2 ./inputdir3 ./outputdir\n',arg_list{i});
   return
 end
+
 for i = 1:(numel(arg_list)-1)
     to_process{i} = arg_list{i};
     if ~isdir(arg_list{i})
@@ -32,17 +32,14 @@ for i = 1:(numel(arg_list)-1)
     list{i} = read_files_in_folder(to_process{i});
 end
 outputdir = arg_list{numel(arg_list)};
-raw_image_full_path = arg_list{end};
-else
-to_process = inputdir;
-end
+mkdir(outputdir);
+%raw_image_full_path = arg_list{end};
+
 %% =============== Generate ensemble predictions =================================
-% To scale for larger datasets, ensemble for each z-Plane
 
 %merged_file_save=fullfile(outfolder, 'EnsemblePredict.tiff');
 %if exist(merged_file_save, 'file'),delete(merged_file_save); end
 %outputdir =  fileparts(to_process{1}); % Writes automatically in the parent directory of the first prediction folder 
-mkdir(outputdir);
 total_zplanes = size(list{1},1);
 for z = 1:total_zplanes
     for proc = 1:numel(to_process)                
