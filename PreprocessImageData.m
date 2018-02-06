@@ -101,7 +101,7 @@ else
 toc
 disp('Image Augmentation completed');
 fprintf('Created %s packages in x/y with %s z-stacks\n', num2str(num_of_pkg),num2str((numel(z_blocks))-1));
-fprintf('Data stored in:\n %\n', outdir);
+fprintf('Data stored in:\n %s\n', outdir);
 
 if exist('txts.save','file')
     load('txts.save','-mat','image_info_text');
