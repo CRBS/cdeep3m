@@ -13,7 +13,10 @@
 pkg load hdf5oct
 pkg load image
 
-addpath(genpath('./scripts/'));
+script_dir = fileparts(make_absolute_filename(program_invocation_name()));
+addpath(genpath(script_dir));
+addpath(genpath(strcat(script_dir,filesep(),'scripts',filesep())));
+addpath(genpath(strcat(script_dir,filesep(),'scripts',filesep(),'functions')));
 tic
 
 arg_list = argv ();
