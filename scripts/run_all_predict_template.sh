@@ -32,7 +32,7 @@ if [ "$3" != "" ] ; then
    caffe_path="${3}/"
 fi
 
-for Y in `find "$script_dir" -name "*fm" -type d` ; do
+for Y in `find "$script_dir" -name "*fm" -type d | sort` ; do
   model_name=`basename $Y`
   echo "Running $model_name predict"
   for Z in `find "$Y" -name "Pkg*" -type d` ; do
