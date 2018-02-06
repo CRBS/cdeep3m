@@ -88,19 +88,3 @@ end
 disp('Merging large image dataset completed');
 toc
 fprintf('Your results are in: %s\n', fm_dir);
-small_patch = imread(filename);
-area = packages{x_y_num};
-image_patch(area(1):area(2),area(3):area(4)) = small_patch; %insert image onto NaN blank image
-image_stack(:,:,x_y_packg) = image_patch;
-end
-
-%image_stack = cat(3,images);
-combined_plane = nanmean(image_stack,3);
-outfile = fullfile(outdir, sprintf('Segmented_%04d.png',z_plane));
-fprintf('Saving image %s\n', outfile);
-imwrite(combined_plane,outfile);
-
-end
-disp('Merging large image dataset completed');
-toc
-fprintf('Your results are in: %s\n', outdir);
