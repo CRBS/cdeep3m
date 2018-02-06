@@ -18,8 +18,10 @@
 disp('Starting to merge large image dataset');
 %pkg load hdf5oct
 pkg load image
-addpath(genpath('./scripts/'));
-addpath(genpath('/home/ubuntu/deep3m/scripts/'));
+script_dir = fileparts(make_absolute_filename(program_invocation_name()));
+addpath(genpath(script_dir));
+addpath(genpath(strcat(script_dir,filesep(),'scripts',filesep())));
+addpath(genpath(strcat(script_dir,filesep(),'scripts',filesep(),'functions')));
 
 arg_list = argv ();
 
