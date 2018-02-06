@@ -71,3 +71,7 @@ for idx in {1..16..1}
   GLOG_logtostderr="$log_dir" /usr/bin/time -p $caffe_path/predict_seg_new.bin --model=${deploy_dir}/deploy.prototxt --weights=${model} --data=${input_file} --predict=$predict_dir/test.h5 --shift_axis=2 --shift_stride=1 --gpu=0
 
 done
+
+StartPostprocessing.m "$out_dir" "$out_dir/yo"
+
+exit $?
