@@ -27,7 +27,7 @@ addpath(genpath(strcat(script_dir,filesep(),'scripts',filesep(),'functions')));
 arg_list = argv ();
 
 if numel(arg_list) == 0;
-disp('Use -> Merge_LargeData /folder'); 
+disp('Use -> Merge_LargeData ~/prediction/1fm'); 
 return;
 else  
  fm_dir = arg_list{1};   
