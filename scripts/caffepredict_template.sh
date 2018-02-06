@@ -72,6 +72,6 @@ for idx in {1..16..1}
 
 done
 
-StartPostprocessing.m "$out_dir" "$out_dir/yo"
+StartPostprocessing.m "$out_dir"
 
 exit $?
