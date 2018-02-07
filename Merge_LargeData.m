@@ -65,6 +65,8 @@ load(de_aug_file,'packages','num_of_pkg','imagesize','zplanes','z_blocks');
 z_found = numel(filter_files(read_files_in_folder(fullfile(fm_dir, sprintf('Pkg_001'))),'.png'));
 fprintf('Expected number of planes: %s ... Found: %s planes\n', num2str(z_blocks(end)),num2str(z_found));
 %% Now stitch individual sections
+z_found = numel(filter_files(read_files_in_folder(fullfile(fm_dir, sprintf('Pkg_001'))),'.png'));
+fprintf('Expected number of planes: %s ... Found: %s planes\n', num2str(z_blocks(end)),num2str(z_found));
 for z_plane = 1:z_found %one z-plane at a time
 fprintf('Merging image no. %s\n', num2str(z_plane));
 clear -v images
@@ -75,7 +77,7 @@ image_patch = NaN(imagesize(1:2)); %Initialize empty image inx/y not z
 small_patch = imread(filename);
 area = packages{x_y_num};
 image_patch(area(1):area(2),area(3):area(4)) = small_patch; %insert image onto NaN blank image
-image_stack(:,:,x_y_packg) = image_patch;
+image_stack(:,:,x_y_num) = image_patch;
 end
 
 %image_stack = cat(3,images);
