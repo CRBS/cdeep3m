@@ -93,8 +93,8 @@ function run_predict(arg_list)
   fprintf(stdout(),'caffe_predict.sh -- Runs caffe prediction single model\n');
   fprintf(stdout(),'run_all_predict.sh -- Runs caffe_predict.sh serially for all 3 models\n\n');
 
-  fprintf(stdout(),'To run prediction for all 3 models run this: %s %s %s %s\n\n',
-          all_predict_file, train_model_path,img_data,caffe_bin);
+  fprintf(stdout(),'To run prediction for all 3 models run this: %s %s %s\n\n',
+          all_predict_file, train_model_path,img_data);
   
 endfunction
 

@@ -98,8 +98,8 @@ function run_train(arg_list)
   fprintf(stdout(),'run_all_train.sh -- Runs caffe_train.sh serially for ');
   fprintf(stdout(),'all 3 models\n\n');
 
-  fprintf(stdout(),'To train all 3 models run this: %s %s 2000\n\n',
-          all_train_file, caffe_bin);
+  fprintf(stdout(),'To train all 3 models run this: %s 2000\n\n',
+          all_train_file);
   
 endfunction
 

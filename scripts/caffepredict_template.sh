@@ -1,16 +1,13 @@
 #!/bin/bash
 
 
-if [ $# -ne 5 ] ; then
-  echo "Expected 5 arguments got: $*"
+if [ $# -ne 4 ] ; then
+  echo "Expected 4 arguments got: $*"
   echo ""
-  echo "$0 <model> <caffe bin> <input dir with prefix id /data/test> <gpu> <output dir>"
+  echo "$0 <model> <input dir with prefix id /data/test> <gpu> <output dir>"
   echo ""
   echo "<model> -- path to .caffemodel file or directory with caffe"
   echo "           models in which case the latest is used"
-  echo ""
-  echo "<caffe bin path> -- Directory where caffe.bin binary resides"
-  echo "                    If no path needed specify \"\""
   echo ""
   echo "<input dir..> -- directory path with prefix to 16 .h5 files that end" 
   echo "                 with v#.h5"
@@ -35,16 +32,12 @@ if [ -d "$model" ] ; then
   model=`find "$model" -name "*${latest_iteration}.caffemodel" -type f`
 fi
 
-if [ "$2" != "" ] ; then
-   caffe_path="${2}/"
-fi
-
-in_dir=$3
+in_dir=$2
 
 # set gpu value
-gpu=$4
+gpu=$3
 
-out_dir=$5
+out_dir=$4
 
 log_dir="$out_dir/log"
 
@@ -68,7 +61,7 @@ for idx in {1..16..1}
   echo "Input: $input_file"
   echo "Output: $predict_dir"
 
-  GLOG_logtostderr="$log_dir" /usr/bin/time -p $caffe_path/predict_seg_new.bin --model=${deploy_dir}/deploy.prototxt --weights=${model} --data=${input_file} --predict=$predict_dir/test.h5 --shift_axis=2 --shift_stride=1 --gpu=0
+  GLOG_logtostderr="$log_dir" /usr/bin/time -p predict_seg_new.bin --model=${deploy_dir}/deploy.prototxt --weights=${model} --data=${input_file} --predict=$predict_dir/test.h5 --shift_axis=2 --shift_stride=1 --gpu=0
 
 done
 

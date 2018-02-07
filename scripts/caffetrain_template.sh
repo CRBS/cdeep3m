@@ -1,9 +1,8 @@
 #!/bin/bash
 
-caffe_path=""
 
-if [ $# -ne 4 ] ; then
-  echo "$0 <model> <caffe bin path> <# iterations> <gpu>"
+if [ $# -ne 3 ] ; then
+  echo "$0 <model> <# iterations> <gpu>"
   echo ""
   echo "Runs caffe on model specified by first argument. The trained"
   echo "model will be stored in <model>/trainedmodel directory"
@@ -11,9 +10,6 @@ if [ $# -ne 4 ] ; then
   echo ""
   echo "<model> -- The model to train, should be one of the following:"
   echo "           1fm, 3fm, or 5fm"
-  echo ""
-  echo "<caffe bin path> -- Directory where caffe.bin binary resides"
-  echo "                    If no path needed speicify \"\""
   echo ""
   echo "<# iterations> -- # of training iterations to run, should be a"
   echo "                  number like 1000, or 50000"
@@ -25,15 +21,11 @@ fi
 script_dir=`dirname "$0"`
 model=$1
 
-if [ "$2" != "" ] ; then
-   caffe_path="${2}/"
-fi
-
 # set number of iterations
-num_iterations=$3
+num_iterations=$2
 
 # set gpu value
-gpu=$4
+gpu=$3
 
 base_dir=`cd "$script_dir";pwd`
 model_dir="$base_dir/$model"
@@ -67,7 +59,7 @@ if [ ! "$latest_iteration" == "" ] ; then
 fi
 
 pushd "$model_dir" > /dev/null
-GLOG_log_dir=$log_dir $caffe_path/caffe.bin train --solver=$model_dir/solver.prototxt --gpu $gpu $snapshot_opts > "${model_dir}/log/out.log" 2>&1
+GLOG_log_dir=$log_dir caffe.bin train --solver=$model_dir/solver.prototxt --gpu $gpu $snapshot_opts > "${model_dir}/log/out.log" 2>&1
 exitcode=$?
 popd > /dev/null
 

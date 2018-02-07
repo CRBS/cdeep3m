@@ -1,7 +1,7 @@
 #!/bin/bash
 
-if [ $# -ne 3 ] ; then
-  echo "$0 <trained model dir> <image dir> <caffe bin path>"
+if [ $# -ne 2 ] ; then
+  echo "$0 <trained model dir> <image dir>"
   echo ""
   echo "Runs caffe_predict.sh for all three models in directory this script"
   echo "is located"
@@ -10,10 +10,6 @@ if [ $# -ne 3 ] ; then
   echo "                       models created by invocation of run_all_train.sh"
   echo ""
   echo "<image dir> -- Directory containing augmented images"
-  echo ""
-  echo "<caffe bin path> -- Directory where caffe.bin binary resides"
-  echo "                    On AWS EC2 AMI its usually"
-  echo "                    /home/ubuntu/caffe_nd_sense_segmentation/build/tools/" 
   echo ""
   exit 1
 fi
@@ -26,12 +22,6 @@ trained_model_dir=$1
 
 img_dir="$2"
 
-caffe_path=""
-
-if [ "$3" != "" ] ; then
-   caffe_path="${3}/"
-fi
-
 for Y in `find "$script_dir" -name "*fm" -type d | sort` ; do
   model_name=`basename $Y`
   echo "Running $model_name predict"
@@ -42,7 +32,7 @@ for Y in `find "$script_dir" -name "*fm" -type d | sort` ; do
      fi
      pkg_name=`basename $Z`
      outfile="$Z/out.log"
-     /usr/bin/time -p $script_dir/caffe_predict.sh "$trained_model_dir/$model_name/trainedmodel" "$caffe_path" "${img_dir}/${pkg_name}" $gpu "$Z" > "$outfile" 2>&1
+     /usr/bin/time -p $script_dir/caffe_predict.sh "$trained_model_dir/$model_name/trainedmodel" "${img_dir}/${pkg_name}" $gpu "$Z" > "$outfile" 2>&1
     if [ $? != 0 ] ; then
       echo "Non zero exit code from caffe for predict $Z model. Exiting."
       if [ -f "$outfile" ] ; then
