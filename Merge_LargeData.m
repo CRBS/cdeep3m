@@ -65,8 +65,8 @@ load(de_aug_file,'packages','num_of_pkg','imagesize','zplanes','z_blocks');
 z_found = numel(filter_files(read_files_in_folder(fullfile(fm_dir, sprintf('Pkg_001'))),'.png'));
 fprintf('Expected number of planes: %s ... Found: %s planes\n', num2str(z_blocks(end)),num2str(z_found));
 %% Now stitch individual sections
-z_found = numel(filter_files(read_files_in_folder(fullfile(fm_dir, sprintf('Pkg_001'))),'.png'));
-fprintf('Expected number of planes: %s ... Found: %s planes\n', num2str(z_blocks(end)),num2str(z_found));
+combined_folder = fullfile(fm_dir, sprintf('Pkg_%03d',1)); %read in the filenames of the first Pkg
+filelist = read_files_in_folder(combined_folder);
 for z_plane = 1:z_found %one z-plane at a time
 fprintf('Merging image no. %s\n', num2str(z_plane));
 clear -v images
