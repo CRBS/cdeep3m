@@ -38,7 +38,9 @@ release: dist ## package and upload a release to s3
 	tarfile=deep3m-$${vers}.tar.gz ;\
 	cloudform=deep3m_$${vers}_basic_cloudformation.json ;\
 	aws s3 cp dist/$$cloudform s3://deep3m-releases/$${vers}/$$cloudform --acl public-read ; \
-	aws s3 cp dist/$$tarfile s3://deep3m-releases/$${vers}/$$tarfile --acl public-read
+	aws s3 cp dist/$$tarfile s3://deep3m-releases/$${vers}/$$tarfile --acl public-read ; \
+	git tag -a v$${vers} -m 'new release' ; \
+	git push origin v$${vers}
 
 dist: clean ## builds source and wheel package
 	@vers=`cat VERSION` ; \
