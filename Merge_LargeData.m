@@ -34,7 +34,7 @@ else
 end
 
 tic
-
+if fm_dir(end)==filesep; fm_dir=fm_dir(1:end-1); end %fixing special case which can cause error
 [parent_dir,~,ext] = fileparts(fm_dir);
 de_aug_file = fullfile(parent_dir,'de_augmentation_info.mat');
 disp('Processing:');disp(de_aug_file); 
