@@ -66,5 +66,6 @@ for idx in {1..16..1}
 done
 
 StartPostprocessing.m "$out_dir"
+Merge_LargeData.m "$out_dir"
 
 exit $?

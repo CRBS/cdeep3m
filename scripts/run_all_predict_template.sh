@@ -23,8 +23,11 @@ trained_model_dir=$1
 img_dir="$2"
 
 for Y in `find "$script_dir" -name "*fm" -type d | sort` ; do
+ 
+  num_pkgs=`find "$Y" -name "Pkg*" -type d | wc -l`
   model_name=`basename $Y`
-  echo "Running $model_name predict"
+  echo "Running $model_name predict ($num_pkgs) packages to process"
+  let cntr=1
   for Z in `find "$Y" -name "Pkg*" -type d` ; do
      if [ -f "$Z/DONE" ] ; then
         echo "Found $Z/DONE. Prediction completed. Skipping..."
@@ -32,6 +35,7 @@ for Y in `find "$script_dir" -name "*fm" -type d | sort` ; do
      fi
      pkg_name=`basename $Z`
      outfile="$Z/out.log"
+     echo "  Processing $pkg_name $cntr of $num_pkgs "
      /usr/bin/time -p $script_dir/caffe_predict.sh "$trained_model_dir/$model_name/trainedmodel" "${img_dir}/${pkg_name}" $gpu "$Z" > "$outfile" 2>&1
     if [ $? != 0 ] ; then
       echo "Non zero exit code from caffe for predict $Z model. Exiting."
@@ -43,6 +47,7 @@ for Y in `find "$script_dir" -name "*fm" -type d | sort` ; do
       fi
     fi
     echo "Prediction completed: `date +%s`" > "$Z/DONE"
+    let cntr+=1
   done
 done
 
