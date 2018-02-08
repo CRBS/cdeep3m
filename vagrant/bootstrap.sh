@@ -9,3 +9,9 @@ unzip b047e6e611e874b02740e7465f5d139e74f9765f.zip
 cd hdf5oct-*
 make
 make install
+cd ~
+wget https://github.com/bats-core/bats-core/archive/v0.4.0.tar.gz
+tar -zxf v0.4.0.tar.gz
+cd bats-core-0.4.0
+./install.sh /usr/local
+cd ~
