@@ -62,10 +62,10 @@ end
 
 %% Add padding
 %% Left and upper side
-if area(1)==1; %first in y 
+if area(1)==1 && size(imgstack,1)<=1012; %first in y 
     imgstack = cat(1,flipud(imgstack(2:13,:,:)),imgstack);
 end
-if area(3)==1; %then in x
+if area(3)==1 && size(imgstack,2)<=1012 %then in x
     imgstack = cat(2,fliplr(imgstack(:,2:13,:)),imgstack);
 end
 x_size=size(imgstack,1);y_size=size(imgstack,2);
