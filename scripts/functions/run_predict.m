@@ -17,8 +17,7 @@ function run_predict(arg_list)
   caffe_bin='/home/ubuntu/caffe_nd_sense_segmentation/build/tools/';
 
   if numel(arg_list)~=3; 
-    fprintf('\n');
-    msg = sprintf('%s expects three command line arguments\n\n', prog_name);
+    msg = sprintf('\n%s expects three command line arguments\n\n', prog_name);
     msg = strcat(msg,sprintf('Usage: %s <Output of Train.m after training run> <augmented image data> <output directory>\n', prog_name));
     error(msg); 
     return; 
