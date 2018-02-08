@@ -112,5 +112,4 @@ end
 toc
 disp('-> Training data augmentation completed');
 fprintf('Training data stored in %s\n', outdir);
-%disp('For training your model please run Train.m');
-fprintf('For training your model please run ./CreateTrainJob.m %s < ~/outputdirectory >\n', outdir);
+fprintf('For training your model please run CreateTrainJob.m %s <desired output directory>\n', outdir);
