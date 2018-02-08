@@ -10,7 +10,7 @@ addpath(genpath(strcat(script_dir,filesep(),'scripts',filesep())));
 addpath(genpath(strcat(script_dir,filesep(),'scripts',filesep(),'functions')));
 
 test_files = vertcat(glob('*.m'), glob('*/*.m'),glob('*/*/*.m'));
-
+numfailed=0;
 for x = 1:rows(test_files)
   t_file = char(test_files(x));
   t_file_data = fileread(t_file);
@@ -23,8 +23,15 @@ for x = 1:rows(test_files)
     endif
   endfor
   if run_test == 1;
-    test(t_file,"quiet",stdout());
+    success = test(t_file,"quiet",stdout());
+    if success == 0;
+      numfailed+=1;
+    endif
   endif
 endfor
 
 cd(old_dir);
+
+if numfailed > 0;
+  error(sprintf('%d tests failed', numfailed));
+endif
