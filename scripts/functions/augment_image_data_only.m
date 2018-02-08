@@ -8,7 +8,7 @@ create8Variation(raw_images,idx,outsubdir);
 
 %% V9-16: sweep Z dimension
 disp('Sweep Z dimension')
-flip(raw_images,3);
+raw_images = flip(raw_images,3);
 
 idx=8;
 create8Variation(raw_images,idx,outsubdir);
