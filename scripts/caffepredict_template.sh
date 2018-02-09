@@ -60,7 +60,7 @@ for idx in {1..16..1}
     echo "file not found: $input_file" >> "$out_log"
     exit 1
   fi 
-  echo -e "."
+  echo -n "."
   echo "Input: $input_file" >> "$out_log"
   echo "Output: $predict_dir" >> "$out_log"
 
