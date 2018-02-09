@@ -24,5 +24,10 @@ endfunction
 %! create_dir(test_fname);
 %! write_predict_config(test_fname,'yoyo','bye');
 %! config_file = strcat(test_fname,filesep(),'predict.config');
-%! assert(exists(config_file));
+%! assert(exist(config_file, "file"),2);
+%! c_data = fileread(config_file);
+%! lines = strsplit(c_data,'\n');
+%! assert(char(lines(1)),'[default]');
+%! assert(char(lines(2)),'trainedmodeldir=yoyo');
+%! assert(char(lines(3)),'augimagedir=bye');
 %! rmdir(test_fname,'s');
