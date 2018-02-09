@@ -20,8 +20,12 @@ trained_model_dir=`egrep "^ *trainedmodeldir *=" "$predict_config" | sed "s/^.*=
 
 img_dir=`egrep "^ *augimagedir *=" "$predict_config" | sed "s/^.*=//" | sed "s/^ *//"`
 
+echo "Running Prediction"
+echo ""
+
 echo "Trained Model Dir: $trained_model_dir"
 echo "Image Dir: $img_dir"
+echo ""
 
 for Y in `find "$script_dir" -name "*fm" -type d | sort` ; do
  
