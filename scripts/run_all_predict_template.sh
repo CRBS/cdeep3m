@@ -16,6 +16,11 @@ script_dir=`dirname "$0"`
 
 predict_config="$script_dir/predict.config"
 
+if [ ! -s "$predict_config" ] ; then
+  echo "ERROR no $predict_config file found, which is required"
+  exit 2
+fi
+
 trained_model_dir=`egrep "^ *trainedmodeldir *=" "$predict_config" | sed "s/^.*=//" | sed "s/^ *//"`
 
 img_dir=`egrep "^ *augimagedir *=" "$predict_config" | sed "s/^.*=//" | sed "s/^ *//"`
