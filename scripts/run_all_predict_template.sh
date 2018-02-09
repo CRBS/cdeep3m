@@ -1,15 +1,11 @@
 #!/bin/bash
 
-if [ $# -ne 2 ] ; then
-  echo "$0 <trained model dir> <image dir>"
+if [ $# -ne 0 ] ; then
+  echo "$0"
   echo ""
   echo "Runs caffe_predict.sh for all three models in directory this script"
-  echo "is located"
-  echo ""
-  echo "<trained model dir> -- Directory created by Train.m with trained"
-  echo "                       models created by invocation of run_all_train.sh"
-  echo ""
-  echo "<image dir> -- Directory containing augmented images"
+  echo "is located, using config file predict.config to obtain location of"
+  echo "trained model and image data"
   echo ""
   exit 1
 fi
@@ -18,9 +14,14 @@ gpu="0"
 
 script_dir=`dirname "$0"`
 
-trained_model_dir=$1
+predict_config="$script_dir/predict.config"
 
-img_dir="$2"
+trained_model_dir=`egrep "^ *trainedmodeldir *=" "$predict_config" | sed "s/^.*=//" | sed "s/^ *//"`
+
+img_dir=`egrep "^ *augimagedir *=" "$predict_config" | sed "s/^.*=//" | sed "s/^ *//"`
+
+echo "Trained Model Dir: $trained_model_dir"
+echo "Image Dir: $img_dir"
 
 for Y in `find "$script_dir" -name "*fm" -type d | sort` ; do
  
