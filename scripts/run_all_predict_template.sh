@@ -31,7 +31,7 @@ for Y in `find "$script_dir" -name "*fm" -type d | sort` ; do
  
   num_pkgs=`find "$Y" -name "Pkg*" -type d | wc -l`
   model_name=`basename $Y`
-  echo "Running $model_name predict ($num_pkgs) packages to process"
+  echo "Running $model_name predict $num_pkgs package(s) to process"
   let cntr=1
   for Z in `find "$Y" -name "Pkg*" -type d` ; do
      if [ -f "$Z/DONE" ] ; then

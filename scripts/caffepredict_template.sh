@@ -69,10 +69,10 @@ for idx in {1..16..1}
 done
 
 echo "Running StartPostprocessing.m $out_dir"
-StartPostprocessing.m "$out_dir"
+StartPostprocessing.m "$out_dir" >> "$out_log" 2>&1
 
 fm_dir=`dirname "$out_dir"`
 echo "Running Merge_LargeData.m $fm_dir"
-Merge_LargeData.m "$fm_dir"
+Merge_LargeData.m "$fm_dir" >> "$out_log" 2>&1
 
 exit $?
