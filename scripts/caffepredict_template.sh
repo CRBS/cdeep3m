@@ -41,6 +41,8 @@ out_dir=$4
 
 log_dir="$out_dir/log"
 
+out_log="$out_dir/out.log"
+
 mkdir -p "$log_dir"
 
 for idx in {1..16..1}
@@ -49,23 +51,28 @@ for idx in {1..16..1}
 
   if [ ! -d "$predict_dir" ]; then
     # Control will enter here if $DIRECTORY doesn't exist.
-    echo "Creating directory $predict_dir"
+    echo "Creating directory $predict_dir" >> "$out_log"
     mkdir -p "$predict_dir"
   fi
 
   input_file=`find "${in_dir}" -name "*_v${idx}.h5" -type f`
   if [ ! -f $input_file ] ; then
-    echo "file not found: $input_file"
-  fi
+    echo "file not found: $input_file" >> "$out_log"
+    exit 1
+  fi 
+  echo -e "."
+  echo "Input: $input_file" >> "$out_log"
+  echo "Output: $predict_dir" >> "$out_log"
 
-  echo "Input: $input_file"
-  echo "Output: $predict_dir"
-
-  GLOG_logtostderr="$log_dir" /usr/bin/time -p predict_seg_new.bin --model=${deploy_dir}/deploy.prototxt --weights=${model} --data=${input_file} --predict=$predict_dir/test.h5 --shift_axis=2 --shift_stride=1 --gpu=0
+  GLOG_logtostderr="$log_dir" /usr/bin/time -p predict_seg_new.bin --model=${deploy_dir}/deploy.prototxt --weights=${model} --data=${input_file} --predict=$predict_dir/test.h5 --shift_axis=2 --shift_stride=1 --gpu=0 >> "$out_log" 2>&1
 
 done
 
+echo "Running StartPostprocessing.m $out_dir"
 StartPostprocessing.m "$out_dir"
-Merge_LargeData.m "$out_dir"
+
+fm_dir=`dirname "$out_dir"`
+echo "Running Merge_LargeData.m $fm_dir"
+Merge_LargeData.m "$fm_dir"
 
 exit $?
