@@ -82,7 +82,7 @@ function run_predict(arg_list)
   all_predict_file = strcat(outdir,filesep(),'run_all_predict.sh');  
   copyfile(run_all_predict_template,all_predict_file);
   system(sprintf('chmod a+x %s',all_predict_file));
- 
+  write_predict_config(outdir, train_model_path, img_data); 
   fprintf(stdout(),'success\n\n');
 
   fprintf(stdout(),'A new directory has been created: %s\n', outdir);
@@ -92,8 +92,8 @@ function run_predict(arg_list)
   fprintf(stdout(),'caffe_predict.sh -- Runs caffe prediction single model\n');
   fprintf(stdout(),'run_all_predict.sh -- Runs caffe_predict.sh serially for all 3 models\n\n');
 
-  fprintf(stdout(),'To run prediction for all 3 models run this: %s %s %s\n\n',
-          all_predict_file, train_model_path,img_data);
+  fprintf(stdout(),'To run prediction for all 3 models run this: %s\n\n',
+          all_predict_file);
   
 endfunction
 
