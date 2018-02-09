@@ -83,6 +83,7 @@ function run_predict(arg_list)
   copyfile(run_all_predict_template,all_predict_file);
   system(sprintf('chmod a+x %s',all_predict_file));
   write_predict_config(outdir, train_model_path, img_data); 
+  write_predict_readme(outdir);
   fprintf(stdout(),'success\n\n');
 
   fprintf(stdout(),'A new directory has been created: %s\n', outdir);
