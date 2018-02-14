@@ -30,7 +30,7 @@ clean: ## remove all build, test, coverage and Python artifacts
 	rm -fr dist/
 
 test: ## run tests quickly with the default Python
-	./RunUnitTests.m
+	./tests/RunUnitTests.m
 
 release: dist ## package and upload a release to s3
 	@echo "Creating new release"

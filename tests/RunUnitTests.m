@@ -3,11 +3,13 @@
 
 script_dir = fileparts(make_absolute_filename(program_invocation_name()));
 
-old_dir = cd(script_dir);
+dist_dir=make_absolute_filename(strcat(script_dir,filesep(),'..'));
 
-addpath(genpath(script_dir));
-addpath(genpath(strcat(script_dir,filesep(),'scripts',filesep())));
-addpath(genpath(strcat(script_dir,filesep(),'scripts',filesep(),'functions')));
+old_dir = cd(dist_dir);
+
+addpath(genpath(dist_dir));
+addpath(genpath(strcat(dist_dir,filesep(),'scripts',filesep())));
+addpath(genpath(strcat(dist_dir,filesep(),'scripts',filesep(),'functions')));
 
 test_files = vertcat(glob('*.m'), glob('*/*.m'),glob('*/*/*.m'));
 numfailed=0;
