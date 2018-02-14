@@ -48,6 +48,7 @@ dist: clean ## builds source and wheel package
 	distdir=dist/$$deep3mdirname ;\
 	/bin/mkdir -p $$distdir ;\
 	cp *.m $$distdir/. ;\
+	cp *.sh $$distdir/. ;\
 	cp -a scripts $$distdir/. ;\
 	cp -a model $$distdir/. ;\
         cp VERSION $$distdir/. ;\
