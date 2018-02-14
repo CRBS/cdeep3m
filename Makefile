@@ -51,6 +51,7 @@ dist: clean ## builds source and wheel package
 	cp *.sh $$distdir/. ;\
 	cp -a scripts $$distdir/. ;\
 	cp -a model $$distdir/. ;\
+	cp -a tests $$distdir/. ;\
         cp VERSION $$distdir/. ;\
         cat aws/basic_cloudformation.json | sed "s/@@VERSION@@/$${vers}/g" > dist/deep3m_$${vers}_basic_cloudformation.json ;\
 	tar -C dist/ -cz $$deep3mdirname > $$distdir.tar.gz
