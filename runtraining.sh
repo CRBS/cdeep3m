@@ -10,6 +10,8 @@ if [ -f "$script_dir/VERSION" ] ; then
    version=`cat $script_dir/VERSION`
 fi
 
+numiterations="2000"
+
 function usage()
 {
     echo "usage: $script_name [-h] [--1fmonly] [--numiterations NUMITERATIONS]
@@ -28,7 +30,7 @@ positional arguments:
 optional arguments:
   -h, --help           show this help message and exit
   --1fmonly            Only train 1fm model
-  --numiterations      Number of training iterations to run (default 2000)
+  --numiterations      Number of training iterations to run (default $numiterations)
 
     " 1>&2;
    exit 1;
@@ -74,7 +76,7 @@ if [ $ecode != 0 ] ; then
   exit 3
 fi
 
-"$train_out"/run_all_train.sh $num_iterations
+"$train_out"/run_all_train.sh $numiterations
 ecode=$?
 if [ $? != 0 ] ; then
   echo "ERROR, a non-zero exit code ($ecode) was received from: \"$train_out\"/run_all_train.sh $num_iterations"
