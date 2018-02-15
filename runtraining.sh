@@ -11,6 +11,7 @@ if [ -f "$script_dir/VERSION" ] ; then
 fi
 
 numiterations="2000"
+one_fmonly=""
 
 function usage()
 {
@@ -23,8 +24,7 @@ function usage()
               passed into script. 
     
 positional arguments:
-  trainimages          Directory of images, or TIF stack of images
-  trainlabels          Directory of label images, or TIF stack of label images
+  augtrainimages       Augmented training data from PreprocessTrainingData.m
   trainoutdir          Desired output directory
 
 optional arguments:
@@ -42,50 +42,38 @@ eval set -- "$TEMP"
 while true ; do
     case "$1" in
         -h ) usage ;; 
-        --1fmonly ) one_fmonly=true ; shift ;;
+        --1fmonly ) one_fmonly="--1fmonly " ; shift ;;
         --numiterations ) numiterations=$2 ; shift 2 ;;
         --) shift ; break ;;
     esac
 done
 
 
-if [ $# -ne 3 ] ; then
+if [ $# -ne 2 ] ; then
   usage 
 fi
 
-declare -r train_images=$1
-declare -r train_labels=$2
-declare -r train_out=$3
-
-declare -r aug_train="$train_out/augtrain_images"
-
-PreprocessTrainingData.m "$train_images" "$train_labels" "$aug_train"
-
-ecode=$?
-if [ $ecode != 0 ] ; then
-  echo "ERROR, a non-zero exit code ($ecode) was received from: PreprocessTrainingData.m \"$train_images\" \"$train_labels\" \"$aug_train\""
-  echo ""
-  exit 2
-fi
+declare -r aug_train=$1
+declare -r train_out=$2
 
 CreateTrainJob.m "$aug_train" "$train_out"
 ecode=$?
 if [ $ecode != 0 ] ; then
   echo "Error, a non-zero exit code ($ecode) was received from: CreateTrainJob.m \"$aug_train\" \"$train_out\""
   echo ""
-  exit 3
+  exit 2
 fi
 
 if [ ! -x "$train_out/run_all_train.sh" ] ; then
   echo "ERROR, either $train_out/run_all_train.sh is missing or non-executable"
-  exit 4
+  exit 3
 fi
 
-"$train_out"/run_all_train.sh $numiterations
+"$train_out"/run_all_train.sh ${one_fmonly}--numiterations $numiterations
 ecode=$?
 if [ $? != 0 ] ; then
-  echo "ERROR, a non-zero exit code ($ecode) was received from: \"$train_out\"/run_all_train.sh $num_iterations"
-  exit 5
+  echo "ERROR, a non-zero exit code ($ecode) was received from: \"$train_out\"/run_all_train.sh --numiterations $numiterations"
+  exit 4
 fi
 
 echo ""
