@@ -46,6 +46,21 @@ teardown() {
    export PATH=$A_TEMP_PATH
 }
 
+@test "runtraining.sh run_all_train.sh fails" {
+   ln -s /bin/true "$TEST_TMP_DIR/CreateTrainJob.m"
+   mkdir -p "$TEST_TMP_DIR/trainoutdir"
+   ln -s /bin/false "$TEST_TMP_DIR/trainoutdir/run_all_train.sh"
+   export A_TEMP_PATH=$PATH
+   export PATH=$TEST_TMP_DIR:$PATH
+   run $RUNTRAINING_SH trainimages "$TEST_TMP_DIR/trainoutdir"
+   [ "$status" -eq 4 ]
+   echo "$output" 1>&2
+   [ "${lines[0]}" = "ERROR, a non-zero exit code (1) was received from: \"$TEST_TMP_DIR/trainoutdir/run_all_train.sh\" --numiterations 2000" ]
+
+   export PATH=$A_TEMP_PATH
+}
+
+
 @test "runtraining.sh success custom --numiterations" {
    ln -s /bin/true "$TEST_TMP_DIR/CreateTrainJob.m"
    mkdir -p "$TEST_TMP_DIR/trainoutdir"

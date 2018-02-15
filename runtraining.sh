@@ -69,10 +69,10 @@ if [ ! -x "$train_out/run_all_train.sh" ] ; then
   exit 3
 fi
 
-"$train_out"/run_all_train.sh ${one_fmonly}--numiterations $numiterations
+"$train_out/run_all_train.sh" ${one_fmonly}--numiterations $numiterations
 ecode=$?
-if [ $? != 0 ] ; then
-  echo "ERROR, a non-zero exit code ($ecode) was received from: \"$train_out\"/run_all_train.sh --numiterations $numiterations"
+if [ $ecode != 0 ] ; then
+  echo "ERROR, a non-zero exit code ($ecode) was received from: \"$train_out/run_all_train.sh\" --numiterations $numiterations"
   exit 4
 fi
 
