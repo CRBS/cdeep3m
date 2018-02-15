@@ -30,7 +30,9 @@ clean: ## remove all build, test, coverage and Python artifacts
 	rm -fr dist/
 
 test: ## run tests quickly with the default Python
+	@echo Running unit tests on Octave scripts \(.m\)
 	./tests/RunUnitTests.m
+	bats tests
 
 release: dist ## package and upload a release to s3
 	@echo "Creating new release"
