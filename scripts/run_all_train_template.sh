@@ -43,15 +43,12 @@ while true ; do
     esac
 done
 
+# time_est=`perl -e "printf('%.2f',${num_iterations}*8/3600);"`
 
-time_est=`perl -e "printf('%.2f',${num_iterations}*8/3600);"`
-
-echo ""
-echo "Estimating $time_est hours of processing per model (there are 3 models) on p3.2xlarge"
 echo ""
 
 for Y in `echo 1fm 3fm 5fm` ; do
-  echo "Running $Y train, expect this model to train for $time_est hours on p3.2xlarge"
+  echo "Running $Y train, expect each iteration for this model to take a few minutes"
   /usr/bin/time -p $script_dir/caffe_train.sh $Y $numiterations $gpu
   if [ $? != 0 ] ; then
     echo "Non zero exit code from caffe for train of $Y model. Exiting."
