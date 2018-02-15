@@ -16,7 +16,7 @@ one_fmonly=""
 function usage()
 {
     echo "usage: $script_name [-h] [--1fmonly] [--numiterations NUMITERATIONS]
-                      trainimages trainlabels trainoutdir
+                      augtrainimages trainoutdir
 
               Version: $version
 
