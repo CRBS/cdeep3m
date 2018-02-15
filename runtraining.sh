@@ -44,7 +44,7 @@ while true ; do
         -h ) usage ;; 
         --1fmonly ) one_fmonly=true ; shift ;;
         --numiterations ) numiterations=$2 ; shift 2 ;;
-        --) break ;;
+        --) shift ; break ;;
     esac
 done
 
@@ -76,11 +76,16 @@ if [ $ecode != 0 ] ; then
   exit 3
 fi
 
+if [ ! -x "$train_out/run_all_train.sh" ] ; then
+  echo "ERROR, either $train_out/run_all_train.sh is missing or non-executable"
+  exit 4
+fi
+
 "$train_out"/run_all_train.sh $numiterations
 ecode=$?
 if [ $? != 0 ] ; then
   echo "ERROR, a non-zero exit code ($ecode) was received from: \"$train_out\"/run_all_train.sh $num_iterations"
-  exit 4
+  exit 5
 fi
 
 echo ""
