@@ -10,6 +10,7 @@ fi
 
 numiterations="2000"
 gpu="all"
+one_fmonly=false
 function usage()
 {
     echo "usage: $script_name [-h] [--1fmonly] [--numiterations NUMITERATIONS]
@@ -30,7 +31,7 @@ optional arguments:
    exit 1;
 }
 
-TEMP=`getopt -o h --long "1fmonly,numiterations:" -n '$0' -- "$@"`
+TEMP=`getopt -o h --long "1fmonly,numiterations:,gpu:" -n '$0' -- "$@"`
 eval set -- "$TEMP"
 
 while true ; do
@@ -38,7 +39,7 @@ while true ; do
         -h ) usage ;;
         --1fmonly ) one_fmonly=true ; shift ;;
         --numiterations ) numiterations=$2 ; shift 2 ;;
-        --gpu ) gpu=$2 shift 2 ;;
+        --gpu ) gpu=$2 ; shift 2 ;;
         --) break ;;
     esac
 done
@@ -48,7 +49,11 @@ done
 echo ""
 
 for Y in `echo 1fm 3fm 5fm` ; do
-  echo "Running $Y train, expect each iteration for this model to take a few minutes"
+  if [ ! -d "$script_dir/$Y" ] ; then
+    echo "ERROR, no $script_dir/$Y directory found."
+    exit 2
+  fi
+  echo "Running $Y train, this could take a while"
   /usr/bin/time -p $script_dir/caffe_train.sh $Y $numiterations $gpu
   if [ $? != 0 ] ; then
     echo "Non zero exit code from caffe for train of $Y model. Exiting."
