@@ -26,12 +26,10 @@ BROWSER := python -c "$$BROWSER_PYSCRIPT"
 help:
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 
-clean: ## remove all build, test, coverage and Python artifacts
+clean: ## remove all build, and test artifacts
 	rm -fr dist/
 
-test: ## run tests quickly with the default Python
-	@echo Running unit tests on Octave scripts \(.m\)
-	./tests/RunUnitTests.m
+test: ## run tests
 	bats tests
 
 release: dist ## package and upload a release to s3
@@ -44,7 +42,7 @@ release: dist ## package and upload a release to s3
 	git tag -a v$${vers} -m 'new release' ; \
 	git push origin v$${vers}
 
-dist: clean ## builds source and wheel package
+dist: clean ## creates distributable package
 	@vers=`cat VERSION` ; \
 	deep3mdirname=deep3m-$$vers ;\
 	distdir=dist/$$deep3mdirname ;\
