@@ -34,7 +34,7 @@ optional arguments:
    exit 1;
 }
 
-TEMP=`getopt -o h --long "1fmonly,gpu:" -n '$0' -- "$@"`
+TEMP=`getopt -o h --long "1fmonly" -n '$0' -- "$@"`
 eval set -- "$TEMP"
 
 while true ; do
