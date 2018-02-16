@@ -1,51 +1,88 @@
 #!/bin/bash
 
+script_dir=`dirname "$0"`
+script_name=`basename $0`
+version="???"
 
-if [ $# -ne 3 ] ; then
-  echo "$0 <model> <# iterations> <gpu>"
-  echo ""
-  echo "Runs caffe on model specified by first argument. The trained"
-  echo "model will be stored in <model>/trainedmodel directory"
-  echo "Output from caffe will be redirected to <mode>/log/out.log"
-  echo ""
-  echo "<model> -- The model to train, should be one of the following:"
-  echo "           1fm, 3fm, or 5fm"
-  echo ""
-  echo "<# iterations> -- # of training iterations to run, should be a"
-  echo "                  number like 1000, or 50000"
-  echo "<gpu> -- The gpu to use (expects a number ie 0, or 1 or all)"
-  echo ""
-  exit 1
+if [ -f "$script_dir/VERSION" ] ; then
+   version=`cat $script_dir/VERSION`
 fi
 
-script_dir=`dirname "$0"`
+numiterations="2000"
+gpu="all"
+
+function usage()
+{
+    echo "usage: $script_name [-h] [--numiterations NUMITERATIONS] [--gpu GPU]
+                      model
+
+              Version: $version
+
+              Runs caffe on Deep3m model specified by model argument 
+              to perform training. The trained model will be stored in
+              <model>/trainedmodel directory
+              Output from caffe will be redirected to <model>/log/out.log
+    
+positional arguments:
+  model                The model to train, should be one of the following:
+                       1fm, 3fm, 5fm
+
+optional arguments:
+  -h, --help           show this help message and exit
+  --gpu                Which GPU to use, can be a number ie 0 or 1 or
+                       all to use all GPUs (default $gpu)
+  --numiterations      Number of training iterations to run (default $numiterations)
+
+    " 1>&2;
+   exit 1;
+}
+
+TEMP=`getopt -o h --long "1fmonly,numiterations:" -n '$0' -- "$@"`
+eval set -- "$TEMP"
+
+while true ; do
+    case "$1" in
+        -h ) usage ;;
+        --gpu ) gpu=$2 ; shift 2 ;;
+        --numiterations ) numiterations=$2 ; shift 2 ;;
+        --) shift ; break ;;
+    esac
+done
+
+
+if [ $# -ne 1 ] ; then
+  usage
+fi
+
 model=$1
-
-# set number of iterations
-num_iterations=$2
-
-# set gpu value
-gpu=$3
 
 base_dir=`cd "$script_dir";pwd`
 model_dir="$base_dir/$model"
 log_dir="$model_dir/log"
 
 
-# update the solver.prototxt with num_iterations value
-sed -i "s/^max_iter:.*/max_iter: $num_iterations/g" "${model_dir}/solver.prototxt"
+# update the solver.prototxt with numiterations value
+sed -i "s/^max_iter:.*/max_iter: $numiterations/g" "${model_dir}/solver.prototxt"
 
 if [ $? != 0 ] ; then
-  echo "Error trying to update max_iter in $model_dir/solver.prototxt."
-  echo "Please set number of iterations directly in this file"
+  echo "ERROR trying to update max_iter in $model_dir/solver.prototxt"
+  exit 2
 fi
 
 if [ ! -d "$log_dir" ] ; then
-  mkdir -p $log_dir
+  mkdir -p "$log_dir"
+  if [ $? != 0 ] ; then
+     echo "ERROR unable to make $log_dir directory"
+     exit 3
+  fi
 fi
 
 if [ ! -d "$model_dir/trainedmodel" ] ; then 
   mkdir -p "$model_dir/trainedmodel"
+  if [ $? != 0 ] ; then
+     echo "ERROR unable to make $model_dir/trainedmodel directory"
+     exit 4
+  fi
 fi
 
 latest_iteration=`ls "$model_dir/trainedmodel" | egrep "\.solverstate$" | sed "s/^.*iter_//" | sed "s/\.solverstate//" | sort -g | tail -n 1`
