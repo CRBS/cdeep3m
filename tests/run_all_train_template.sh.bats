@@ -29,11 +29,11 @@ teardown() {
     echo "$status $output" 1>&2
     [ "$status" -eq 0 ]
     [ "${lines[0]}" = "Running 1fm train, this could take a while" ]    
-    [ "${lines[1]}" = "1fm 2000 all" ]
+    [ "${lines[1]}" = "--numiterations 2000 --gpu all 1fm" ]
     [ "${lines[5]}" = "Running 3fm train, this could take a while" ]
-    [ "${lines[6]}" = "3fm 2000 all" ]
+    [ "${lines[6]}" = "--numiterations 2000 --gpu all 3fm" ]
     [ "${lines[10]}" = "Running 5fm train, this could take a while" ]
-    [ "${lines[11]}" = "5fm 2000 all" ]
+    [ "${lines[11]}" = "--numiterations 2000 --gpu all 5fm" ]
     [ "${lines[15]}" = "Training has completed. Have a nice day!" ]
 }
 
@@ -55,11 +55,11 @@ teardown() {
     echo "$status $output" 1>&2
     [ "$status" -eq 0 ]
     [ "${lines[0]}" = "Running 1fm train, this could take a while" ]        
-    [ "${lines[1]}" = "1fm 2500 yo" ]
+    [ "${lines[1]}" = "--numiterations 2500 --gpu yo 1fm" ]
     [ "${lines[5]}" = "Running 3fm train, this could take a while" ]
-    [ "${lines[6]}" = "3fm 2500 yo" ]
+    [ "${lines[6]}" = "--numiterations 2500 --gpu yo 3fm" ]
     [ "${lines[10]}" = "Running 5fm train, this could take a while" ]
-    [ "${lines[11]}" = "5fm 2500 yo" ]
+    [ "${lines[11]}" = "--numiterations 2500 --gpu yo 5fm" ]
     [ "${lines[15]}" = "Training has completed. Have a nice day!" ]
 }
 
@@ -70,7 +70,7 @@ teardown() {
     echo "$status $output" 1>&2
     [ "$status" -eq 0 ]
     [ "${lines[0]}" = "Running 1fm train, this could take a while" ]        
-    [ "${lines[1]}" = "1fm 2000 all" ]
+    [ "${lines[1]}" = "--numiterations 2000 --gpu all 1fm" ]
     [ "${lines[5]}" = "--1fmonly flag set, skipping 3fm and 5fm models." ]
     [ "${lines[6]}" = "Training has completed. Have a nice day!" ]
 }

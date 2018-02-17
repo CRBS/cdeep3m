@@ -54,7 +54,7 @@ for Y in `echo 1fm 3fm 5fm` ; do
     exit 2
   fi
   echo "Running $Y train, this could take a while"
-  /usr/bin/time -p $script_dir/caffe_train.sh $Y $numiterations $gpu
+  /usr/bin/time -p $script_dir/caffe_train.sh --numiterations $numiterations --gpu $gpu $Y
   if [ $? != 0 ] ; then
     echo "Non zero exit code from caffe for train of $Y model. Exiting."
     outfile="$script_dir/$Y/log/out.log"
