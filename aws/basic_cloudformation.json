@@ -101,6 +101,7 @@
                      "done\n\n",
                      "echo 'Done installing octave'\n",
                      "pip install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz -y\n",
+                     "sudo -u ubuntu echo 'export PATH=$PATH:/home/ubuntu/deep3m:/home/ubuntu/caffe_nd_sense_segmentation/build/tools' >> /home/ubuntu/.bashrc\n",
                      "cd /home/ubuntu\n",
                      "sudo -u ubuntu git clone https://github.com/coleslaw481/caffe_nd_sense_segmentation.git\n",
                      "cd /home/ubuntu/caffe_nd_sense_segmentation\n",
@@ -121,7 +122,6 @@
                      "wget https://s3-us-west-2.amazonaws.com/deep3m-releases/${DEEP3M_VERSION}/deep3m-${DEEP3M_VERSION}.tar.gz\n",
                      "tar -xf deep3m-${DEEP3M_VERSION}.tar.gz\n",
                      "ln -s /home/ubuntu/deep3m-${DEEP3M_VERSION} /home/ubuntu/deep3m\n",
-                     "sudo -u ubuntu echo 'export PATH=$PATH:/home/ubuntu/deep3m:/home/ubuntu/caffe_nd_sense_segmentation/build/tools' >> /home/ubuntu/.bashrc\n",
                      "echo 'Done with update'\n",
                      "/usr/local/bin/cfn-signal --exit-code 0 -i gpu1 '", { "Ref" : "WaitHandle" }, "'\n"
                        ]]}}
