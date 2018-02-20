@@ -84,7 +84,7 @@ for Y in `find "$script_dir" -name "*fm" -type d | sort` ; do
      pkg_name=`basename $Z`
      outfile="$Z/out.log"
      echo -n "  Processing $pkg_name $cntr of $num_pkgs "
-     /usr/bin/time -p $script_dir/caffe_predict.sh "$trained_model_dir/$model_name/trainedmodel" "${img_dir}/${pkg_name}" $gpu "$Z"
+     /usr/bin/time -p $script_dir/caffe_predict.sh --gpu $gpu "$trained_model_dir/$model_name/trainedmodel" "${img_dir}/${pkg_name}" "$Z"
     if [ $? != 0 ] ; then
       echo "Non zero exit code from caffe for predict $Z model. Exiting."
       if [ -f "$outfile" ] ; then
