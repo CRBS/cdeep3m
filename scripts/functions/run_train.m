@@ -87,7 +87,7 @@ function run_train(arg_list)
   
   copyfile(run_all_train_template,all_train_file);
   system(sprintf('chmod a+x %s',all_train_file));
- 
+  write_train_readme(outdir); 
   fprintf(stdout(),'success\n\n');
 
   fprintf(stdout(),'A new directory has been created: %s\n', outdir);
@@ -97,9 +97,6 @@ function run_train(arg_list)
   fprintf(stdout(),'caffe_train.sh -- Runs caffe for a single model\n');
   fprintf(stdout(),'run_all_train.sh -- Runs caffe_train.sh serially for ');
   fprintf(stdout(),'all 3 models\n\n');
-
-  fprintf(stdout(),'To train all 3 models run this: %s 2000\n\n',
-          all_train_file);
   
 endfunction
 
