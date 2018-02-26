@@ -12,7 +12,7 @@ This is the code for the paper submitted to Nature methods titled:
 
 "CDeep3M - Plug-and-Play cloud based deep learning for image segmentation of light, electron and X-ray microscopy"
 
-## Quickstart
+# Run CDeep3M in the cloud
 
 Click link below to spin up CDeep3M on the cloud:
 
@@ -25,7 +25,10 @@ Click link below to spin up CDeep3M on the cloud:
 
 [Click here for detailed instructions][deep3mviaaws]
 
-## Installation requirements for local install
+
+## For advanced users/developers, installation requirements for local install
+
+**NOTE:** Getting the following software and configuration setup is not trivial. To try out CDeep3M it is suggested one try CDeep3M in the cloud, desribed above, which eliminates all the following steps.
 
 * Nvidia K40 GPU or better (needs 12gb+ ram)
 
@@ -39,7 +42,7 @@ Click link below to spin up CDeep3M on the cloud:
 
 * bats (for testing): https://github.com/bats-core/bats-core/archive/v0.4.0.tar.gz
 
-## Install locally
+## For advanced users/developers, install locally
 
 ### Step 1) Download release tarball
 
