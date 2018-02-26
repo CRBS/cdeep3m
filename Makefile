@@ -37,8 +37,8 @@ release: dist ## package and upload a release to s3
 	@vers=`cat VERSION` ; \
 	tarfile=cdeep3m-$${vers}.tar.gz ;\
 	cloudform=cdeep3m_$${vers}_basic_cloudformation.json ;\
-	aws s3 cp dist/$$cloudform s3://deep3m-releases/$${vers}/$$cloudform --acl public-read ; \
-	aws s3 cp dist/$$tarfile s3://deep3m-releases/$${vers}/$$tarfile --acl public-read ; \
+	aws s3 cp dist/$$cloudform s3://cdeep3m-releases/$${vers}/$$cloudform --acl public-read ; \
+	aws s3 cp dist/$$tarfile s3://cdeep3m-releases/$${vers}/$$tarfile --acl public-read ; \
 	git tag -a v$${vers} -m 'new release' ; \
 	git push origin v$${vers}
 
@@ -51,10 +51,12 @@ dist: clean ## creates distributable package
 	cp *.sh $$distdir/. ;\
 	cp -a scripts $$distdir/. ;\
 	cp -a mito_testsample $$distdir/. ;\
+	cp -a README.md $$distdir/. ;\
+	cp -a LICENSE $$distdir/. ;\
 	cp -a model $$distdir/. ;\
 	cp -a tests $$distdir/. ;\
         cp VERSION $$distdir/. ;\
-        cat aws/basic_cloudformation.json | sed "s/@@VERSION@@/$${vers}/g" > dist/deep3m_$${vers}_basic_cloudformation.json ;\
+        cat aws/basic_cloudformation.json | sed "s/@@VERSION@@/$${vers}/g" > dist/cdeep3m_$${vers}_basic_cloudformation.json ;\
 	tar -C dist/ -cz $$deep3mdirname > $$distdir.tar.gz
 	ls -l dist
 
