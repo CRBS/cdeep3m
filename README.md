@@ -19,9 +19,10 @@ https://github.com/slash-segmentation/cdeep3m/wiki/Running-Deep3m-via-AWS-CloudF
 
 ## License
 
-Contents of **model/** directory are copyright by Divelab see [model/LICENSE][divelablicense] for more information
+[LICENSE for CDeep3M][license]
 
-[LICENSE][license]
+Contents of **model/** directory are copyright by Divelab see [model/LICENSE file][divelablicense] for more information
+
 
 ## Acknowledgements
 
