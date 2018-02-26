@@ -1,5 +1,7 @@
 [aws]: https://aws.amazon.com/
 [deepem3d]: https://github.com/divelab/deepem3d
+[divelablicense]: https://github.com/slash-segmentation/cdeep3m/blob/master/model/LICENSE
+[license]: https://github.com/slash-segmentation/cdeep3m/blob/master/LICENSE
 
 # CDeep3M
 
@@ -15,6 +17,11 @@ Click link below to spin up CDeep3M on the cloud:
 
 https://github.com/slash-segmentation/cdeep3m/wiki/Running-Deep3m-via-AWS-CloudFormation
 
+## License
+
+Contents of **model/** directory are copyright by Divelab see [model/LICENSE][divelablicense] for more information
+
+[LICENSE][license]
 
 ## Acknowledgements
 
