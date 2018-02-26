@@ -25,6 +25,47 @@ Click link below to spin up CDeep3M on the cloud:
 
 [Click here for detailed instructions][deep3mviaaws]
 
+## Installation requirements for local install
+
+* Nvidia K40 GPU or better (needs 12gb+ ram)
+
+* Special forked version of caffe found here: https://github.com/Xiaomi2008/caffe_nd_sense_segmentation
+
+* Linux OS, preferably Ubuntu
+
+* Octave 4.0+
+
+* hdf5oct: https://github.com/stegro/hdf5oct/archive/b047e6e611e874b02740e7465f5d139e74f9765f.zip
+
+* bats (for testing): https://github.com/bats-core/bats-core/archive/v0.4.0.tar.gz
+
+## Install locally
+
+### Step 1) Download release tarball
+
+```Bash
+wget https://github.com/slash-segmentation/cdeep3m/releases/download/v0.12.0rc/cdeep3m-0.12.0rc.tar.gz
+```
+
+### Step 2) Uncompress 
+
+```Bash
+tar -zxf cdeep3m-0.12.0rc.tar.gz
+cd cdeep3m-0.12.0rc
+```
+
+### Step 3) Add to path
+
+```Bash
+export PATH=$PATH:`pwd`
+```
+
+### Step 4) Verify
+
+```Bash
+runtraining.sh --version
+```
+
 ## License
 
 [LICENSE for CDeep3M][license]
