@@ -9,7 +9,7 @@ C++, bash shell, matlab/octave, Cuda7.5
 
 Click here for quick start instructions:
 
-https://github.com/slash-segmentation/deep3m/wiki/Running-Deep3m-via-AWS-using-Cloud-formation
+https://github.com/slash-segmentation/deep3m/wiki/Running-Deep3m-via-AWS-CloudFormation
 
 ## Code
 
