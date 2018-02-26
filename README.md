@@ -1,5 +1,6 @@
 [aws]: https://aws.amazon.com/
 [deepem3d]: https://github.com/divelab/deepem3d
+[deep3mviaaws]: https://github.com/slash-segmentation/cdeep3m/wiki/Running-Deep3m-via-AWS-CloudFormation
 [divelablicense]: https://github.com/slash-segmentation/cdeep3m/blob/master/model/LICENSE
 [license]: https://github.com/slash-segmentation/cdeep3m/blob/master/LICENSE
 
@@ -15,7 +16,14 @@ This is the code for the paper submitted to Nature methods titled:
 
 Click link below to spin up CDeep3M on the cloud:
 
-https://github.com/slash-segmentation/cdeep3m/wiki/Running-Deep3m-via-AWS-CloudFormation
+**WARNING: Running the CloudFormation stack described below will result in EC2 charges**
+
+**Oregon region:**
+
+[![Launch Deep3m AWS CloudFormation link](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=deep3m-stack-0-11-0rc4&templateURL=https://s3-us-west-2.amazonaws.com/deep3m-releases/0.11.0rc4/deep3m_0.11.0rc4_basic_cloudformation.json)
+
+
+[Click here for detailed instructions][deep3mviaaws]
 
 ## License
 
