@@ -29,7 +29,7 @@ Click link below to spin up CDeep3M on the cloud:
 
 [LICENSE for CDeep3M][license]
 
-Contents of **model/** directory are copyright by Divelab see [model/LICENSE file][divelablicense] for more information
+For contents of **model/** see [model/LICENSE file][divelablicense] for license
 
 
 ## Acknowledgements
