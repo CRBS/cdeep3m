@@ -30,13 +30,17 @@ Click link below to spin up CDeep3M on the cloud:
 
 **NOTE:** Getting the following software and configuration setup is not trivial. To try out CDeep3M it is suggested one try CDeep3M in the cloud, desribed above, which eliminates all the following steps.
 
-* Nvidia K40 GPU or better (needs 12gb+ ram)
+* Nvidia K40 GPU or better (needs 12gb+ ram) with CUDA 7.5 or higher
 
 * Special forked version of caffe found here: https://github.com/Xiaomi2008/caffe_nd_sense_segmentation
 
-* Linux OS, preferably Ubuntu
+* Linux OS, preferably Ubuntu with Nvidia drivers installed and working correctly
 
-* Octave 4.0+
+* Octave 4.0+ with image package
+
+```Bash
+apt install octave octave-image octave-pkg-dev
+```
 
 * hdf5oct: https://github.com/stegro/hdf5oct/archive/b047e6e611e874b02740e7465f5d139e74f9765f.zip
 
