@@ -36,11 +36,7 @@ Click link below to spin up CDeep3M on the cloud:
 
 * Linux OS, preferably Ubuntu with Nvidia drivers installed and working correctly
 
-* Octave 4.0+ with image package
-
-```Bash
-apt install octave octave-image octave-pkg-dev
-```
+* Octave 4.0+ with image package (ie under ubuntu: sudo apt install octave octave-image octave-pkg-dev)
 
 * hdf5oct: https://github.com/stegro/hdf5oct/archive/b047e6e611e874b02740e7465f5d139e74f9765f.zip
 
