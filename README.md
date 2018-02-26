@@ -13,21 +13,46 @@ https://github.com/slash-segmentation/deep3m/wiki/Running-Deep3m-via-AWS-using-C
 
 ## Code
 
-Step 1: PreprocessTraining
+#### Step 1: PreprocessTrainingData
 - Makes augmented hdf5 datafiles from raw and label images
-- Syntax : PreprocessTraining /example/training/images/ /example/training/labels/ /savedirectory/
+- Syntax : PreprocessTrainingData.m \<training images directory\> \<training labels directory\> \<save directory\>
 
-Step 2: train.sh
-- Training the ConvNet (steps 2 and 4 are run separately for 1fm, 3fm and 5fm)
+```Bash
+PreprocessTrainingData.m ~/training/images ~/training/labels ~/augtraindata
+```
 
-Step 3: PreprocessImages
+#### Step 2: runtraining.sh
+- Training the ConvNet 
+- Syntax : runtraining.sh \<output directory from PreprocessTrainingData.m\> \<output directory\>
+
+```Bash
+runtraining.sh ~/augtraindata ~/trainout
+```
+
+#### Step 3: PreprocessImageData
 - Preprocessing / Data augmentation of images to segment
+- Syntax : PreprocessImageData.m \<images to segment\> <\output directory\>
 
-Step 4: predict.sh
+```Bash
+PreprocessImageData.m ~/images ~/augimages
+```
+
+#### Step 4: runprediction.sh
 - Predict image segmentation
- - Data post-processing (data de-augmentation) directly launched by predict script
+- Data post-processing (data de-augmentation) directly launched by predict script
+- Syntax : runprediction.sh \<output directory from runtraining.sh\> <\output directory from PreprocessImageData.m\> \<output directory\>
+
+```Bash
+runprediction.sh ~/trainout ~/augimages ~/predictout
+```
  
- Step 5: Generate ensemble prediction
+#### Step 5: Generate ensemble prediction
+
+- Syntax : TODO
+
+```Bash
+EnsemblePredictions.m
+```
 
 
 ## Data format
