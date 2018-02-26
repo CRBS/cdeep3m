@@ -35,8 +35,8 @@ test: ## run tests
 release: dist ## package and upload a release to s3
 	@echo "Creating new release"
 	@vers=`cat VERSION` ; \
-	tarfile=deep3m-$${vers}.tar.gz ;\
-	cloudform=deep3m_$${vers}_basic_cloudformation.json ;\
+	tarfile=cdeep3m-$${vers}.tar.gz ;\
+	cloudform=cdeep3m_$${vers}_basic_cloudformation.json ;\
 	aws s3 cp dist/$$cloudform s3://deep3m-releases/$${vers}/$$cloudform --acl public-read ; \
 	aws s3 cp dist/$$tarfile s3://deep3m-releases/$${vers}/$$tarfile --acl public-read ; \
 	git tag -a v$${vers} -m 'new release' ; \
@@ -44,12 +44,13 @@ release: dist ## package and upload a release to s3
 
 dist: clean ## creates distributable package
 	@vers=`cat VERSION` ; \
-	deep3mdirname=deep3m-$$vers ;\
+	deep3mdirname=cdeep3m-$$vers ;\
 	distdir=dist/$$deep3mdirname ;\
 	/bin/mkdir -p $$distdir ;\
 	cp *.m $$distdir/. ;\
 	cp *.sh $$distdir/. ;\
 	cp -a scripts $$distdir/. ;\
+	cp -a mito_testsample $$distdir/. ;\
 	cp -a model $$distdir/. ;\
 	cp -a tests $$distdir/. ;\
         cp VERSION $$distdir/. ;\
