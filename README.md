@@ -14,7 +14,7 @@ This is the code for the paper submitted to Nature methods titled:
 
 # Run CDeep3M in the cloud
 
-Click link below to spin up CDeep3M on the cloud:
+Click link below to spin up CDeep3M on the cloud (10 minute spin up time):
 
 **WARNING: Running the CloudFormation stack described below will result in EC2 charges**
 
