@@ -9,14 +9,13 @@
 CDeep3M provides a plug-and-play cloud based deep learning solution for image segmentation of light, electron and X-ray microscopy. CDeep3M was developped on the convolutional neural network implemented in [DeepEM3D][deepem3d]
 
 This code is for a manuscript under revision, titled: 
-
 "CDeep3M - Plug-and-Play cloud based deep learning for image segmentation of light, electron and X-ray microscopy"
 
 # Run CDeep3M on the cloud
 
 Click link below to spin up CDeep3M on the cloud (10 minute spin up time):
 
-**NOTE: Running the CloudFormation stack described below requires AWS account and will result in EC2 charges (~1-3$ per h runtime)**
+**NOTE: Running CloudFormation stack requires AWS account and will result in EC2 charges (0.9-3$ per hour runtime)**
 
 **Oregon region:**
 
@@ -78,6 +77,5 @@ For contents of **model/** see [model/LICENSE file][divelablicense] for license
 
 ## Acknowledgements
 
-* Tao Zen for making [DeepEM3D][deepem3d] publicly available.
-
-* Support from NIH grants 5P41GM103412-29 (NCMIR), 5p41GM103426-24 (NBCR), 5R01GM082949-10 (CIL)
+Support from NIH grants 5P41GM103412-29 (NCMIR), 5p41GM103426-24 (NBCR), 5R01GM082949-10 (CIL)
+The DIVE lab for making [DeepEM3D][deepem3d] publicly available.
