@@ -39,11 +39,17 @@ release: dist ## package and upload a release to s3
 	cloudform=cdeep3m_$${vers}_basic_cloudformation.json ;\
 	aws s3 cp dist/$$cloudform s3://cdeep3m-releases/$${vers}/$$cloudform --acl public-read ; \
 	aws s3 cp dist/$$tarfile s3://cdeep3m-releases/$${vers}/$$tarfile --acl public-read ; \
+	deep3mdirname=cdeep3m-$$vers ;\
+	distdir=dist/$$deep3mdirname ;\
+	cp $$distdir/README.md . ;\
+	git commit -m 'updated launch stack link' README.md ;\
+	git push origin master ;\
 	git tag -a v$${vers} -m 'new release' ; \
 	git push origin v$${vers}
 
 dist: clean ## creates distributable package
 	@vers=`cat VERSION` ; \
+	hvers=`cat VERSION | sed "s/\./-/g"` ;\
 	deep3mdirname=cdeep3m-$$vers ;\
 	distdir=dist/$$deep3mdirname ;\
 	/bin/mkdir -p $$distdir ;\
@@ -52,6 +58,8 @@ dist: clean ## creates distributable package
 	cp -a scripts $$distdir/. ;\
 	cp -a mito_testsample $$distdir/. ;\
 	cp -a README.md $$distdir/. ;\
+	sed -i "s/cdeep3m-stack-.*template/cdeep3m-stack-$$hvers\&template/g" $$distdir/README.md ;\
+	sed -i "s/releases\/.*\/cdeep3m.*\.json/releases\/$$vers\/cdeep3m\_$$vers\_basic\_cloudformation.json/g" $$distdir/README.md ;\
 	cp -a LICENSE $$distdir/. ;\
 	cp -a model $$distdir/. ;\
 	cp -a tests $$distdir/. ;\
