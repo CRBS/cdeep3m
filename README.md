@@ -1,8 +1,8 @@
 [aws]: https://aws.amazon.com/
 [deepem3d]: https://github.com/divelab/deepem3d
-[cdeep3mviaaws]: https://github.com/slash-segmentation/cdeep3m/wiki/Running-CDeep3m-via-AWS-CloudFormation
-[divelablicense]: https://github.com/slash-segmentation/cdeep3m/blob/master/model/LICENSE
-[license]: https://github.com/slash-segmentation/cdeep3m/blob/master/LICENSE
+[cdeep3mviaaws]: https://github.com/CRBS/cdeep3m/wiki/Running-CDeep3m-via-AWS-CloudFormation
+[divelablicense]: https://github.com/CRBS/cdeep3m/blob/master/model/LICENSE
+[license]: https://github.com/CRBS/cdeep3m/blob/master/LICENSE
 
 # CDeep3M
 
