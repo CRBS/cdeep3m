@@ -49,7 +49,7 @@ for z = 1:total_zplanes
         image_name = fullfile(to_process{proc}, list{proc}(z).name);
         cumul_plane(:,:,proc) = imread(image_name);   %Cumulate all average predictions of this plane
     end    
-        prob_map = mean(cumul_plane,3);
+        prob_map = uint8(mean(cumul_plane,3));
         save_file_save = fullfile(outputdir, list{1}(z).name);
         fprintf('Saving Image # %s of %s: %s\n', num2str(z), num2str(total_zplanes),save_file_save);
  		imwrite(prob_map, save_file_save);   
