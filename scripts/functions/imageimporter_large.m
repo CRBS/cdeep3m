@@ -46,12 +46,12 @@ elseif isdir(img_path)
             idx = all_zs(iii);
             filename = fullfile(img_path,file_list(idx).name);
             fprintf('Reading file: %s\n', filename); 
-            if type==1
-            imgstack(:,:,iii) = imread(filename,'PixelRegion', {rows, cols}); %tif allows to read subarea
-            else
+            %if type==1
+            %imgstack(:,:,iii) = imread(filename,'PixelRegion', {rows, cols}); %tif allows to read subarea
+            %else
             temp_im = imread(filename);
             imgstack(:,:,iii) = temp_im(area(1):area(2),area(3):area(4));    %otherwise need to crop the area here
-            end
+            %end
         end
     end
     
