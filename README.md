@@ -77,5 +77,5 @@ For contents of **model/** see [model/LICENSE file][divelablicense] for license
 
 ## Acknowledgements
 
-Support from NIH grants 5P41GM103412-29 (NCMIR), 5p41GM103426-24 (NBCR), 5R01GM082949-10 (CIL)
-The DIVE lab for making [DeepEM3D][deepem3d] publicly available.
+* Support from NIH grants 5P41GM103412-29 (NCMIR), 5p41GM103426-24 (NBCR), 5R01GM082949-10 (CIL)
+* The DIVE lab for making [DeepEM3D][deepem3d] publicly available.
