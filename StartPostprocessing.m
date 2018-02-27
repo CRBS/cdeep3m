@@ -8,8 +8,12 @@
 %% New -- NCMIR/NBCR, UCSD -- Author: M Haberl -- Date: 10/2017
 %------------------------------------------------------------------
 arg_list = argv ();
-addpath(genpath('./scripts/'));
-addpath(genpath('/home/ubuntu/deep3m/scripts/'));
+script_dir = fileparts(make_absolute_filename(program_invocation_name()));
+addpath(genpath(script_dir));
+addpath(genpath(strcat(script_dir,filesep(),'scripts',filesep())));
+addpath(genpath(strcat(script_dir,filesep(),'scripts',filesep(),'functions')));
+addpath(genpath(strcat(script_dir,filesep(),'scripts',filesep(),'post_processing')));
+
 pkg load hdf5oct
 pkg load image
 
