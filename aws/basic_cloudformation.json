@@ -13,11 +13,7 @@
             "Default": "p2.xlarge",
             "AllowedValues": [
                 "p2.xlarge",
-                "p3.2xlarge",
-                "m5.2xlarge",
-                "m4.2xlarge",
-                "r3.xlarge",
-                "i3.xlarge"
+                "p3.2xlarge"
             ],
             "ConstraintDescription": "must be a valid EC2 GPU instance type."
         },
