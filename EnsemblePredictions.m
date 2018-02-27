@@ -50,9 +50,11 @@ for z = 1:total_zplanes
         cumul_plane(:,:,proc) = imread(image_name);   %Cumulate all average predictions of this plane
     end    
         prob_map = uint8(mean(cumul_plane,3));
+
         save_file_save = fullfile(outputdir, list{1}(z).name);
         fprintf('Saving Image # %s of %s: %s\n', num2str(z), num2str(total_zplanes),save_file_save);
- 		imwrite(prob_map, save_file_save);   
+	imwrite(prob_map, save_file_save);
+        clear cumul_plane prob_map;
 end
 
 fprintf('Elapsed time for merging predictions is %06d seconds.\n', round(toc));
