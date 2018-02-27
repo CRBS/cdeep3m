@@ -1,6 +1,6 @@
 [aws]: https://aws.amazon.com/
 [deepem3d]: https://github.com/divelab/deepem3d
-[deep3mviaaws]: https://github.com/slash-segmentation/cdeep3m/wiki/Running-Deep3m-via-AWS-CloudFormation
+[cdeep3mviaaws]: https://github.com/slash-segmentation/cdeep3m/wiki/Running-CDeep3m-via-AWS-CloudFormation
 [divelablicense]: https://github.com/slash-segmentation/cdeep3m/blob/master/model/LICENSE
 [license]: https://github.com/slash-segmentation/cdeep3m/blob/master/LICENSE
 
@@ -23,7 +23,7 @@ Click link below to spin up CDeep3M on the cloud (10 minute spin up time):
 [![Launch Deep3m AWS CloudFormation link](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=cdeep3m-stack-0-13-0&templateURL=https://s3-us-west-2.amazonaws.com/cdeep3m-releases/0.13.0/cdeep3m_0.13.0_basic_cloudformation.json)
 
 
-[Click here for detailed instructions][deep3mviaaws]
+[Click here for detailed instructions][cdeep3mviaaws]
 
 
 ## For advanced users/developers, installation requirements for local install
