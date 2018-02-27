@@ -88,13 +88,10 @@ function run_predict(arg_list)
 
   fprintf(stdout(),'A new directory has been created: %s\n', outdir);
   fprintf(stdout(),'In this directory are 3 directories 1fm,3fm,5fm which\n');
-  fprintf(stdout(),'will contain the results from running prediction with caffe');
+  fprintf(stdout(),'will contain the results from running prediction with caffe\n');
   fprintf(stdout(),'There are also two scripts:\n\n');
   fprintf(stdout(),'caffe_predict.sh -- Runs caffe prediction single model\n');
   fprintf(stdout(),'run_all_predict.sh -- Runs caffe_predict.sh serially for all 3 models\n\n');
-
-  fprintf(stdout(),'To run prediction for all 3 models run this: %s\n\n',
-          all_predict_file);
   
 endfunction
 
