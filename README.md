@@ -46,14 +46,14 @@ Click link below to spin up the latest release of CDeep3M on the cloud (~10 minu
 ### Step 1) Download release tarball
 
 ```Bash
-wget https://github.com/slash-segmentation/cdeep3m/releases/download/v0.12.0rc/cdeep3m-0.12.0rc.tar.gz
+wget https://github.com/CRBS/cdeep3m/releases/download/v0.14.1/cdeep3m-0.14.1.tar.gz
 ```
 
 ### Step 2) Uncompress 
 
 ```Bash
-tar -zxf cdeep3m-0.12.0rc.tar.gz
-cd cdeep3m-0.12.0rc
+tar -zxf cdeep3m-0.14.1.tar.gz
+cd cdeep3m-0.14.1
 ```
 
 ### Step 3) Add to path

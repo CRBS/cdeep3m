@@ -60,6 +60,9 @@ dist: clean ## creates distributable package
 	cp -a README.md $$distdir/. ;\
 	sed -i "s/cdeep3m-stack-.*template/cdeep3m-stack-$$hvers\&template/g" $$distdir/README.md ;\
 	sed -i "s/releases\/.*\/cdeep3m.*\.json/releases\/$$vers\/cdeep3m\_$$vers\_basic\_cloudformation.json/g" $$distdir/README.md ;\
+	sed -i "s/download\/.*\/cdeep3m.*gz/download\/v$$vers\/cdeep3m-$$vers.tar.gz/g" $$distdir/README.md ;\
+	sed -i "s/^tar -zxf cdeep3m-.*tar.gz/tar -zxf cdeep3m-$$vers.tar.gz/g" $$distdir/README.md ;\
+	sed -i "s/^cd cdeep3m-.*/cd cdeep3m-$$vers/g" $$distdir/README.md ;\
 	cp -a LICENSE $$distdir/. ;\
 	cp -a model $$distdir/. ;\
 	cp -a tests $$distdir/. ;\
