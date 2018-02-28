@@ -19,7 +19,7 @@ Click link below to spin up CDeep3M on the cloud (10 minute spin up time):
 
 **Oregon region:**
 
-[![Launch Deep3m AWS CloudFormation link](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=cdeep3m-stack-0-14-0rc1&templateURL=https://s3-us-west-2.amazonaws.com/cdeep3m-releases/0.14.0rc1/cdeep3m_0.14.0rc1_basic_cloudformation.json)
+[![Launch Deep3m AWS CloudFormation link](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=cdeep3m-stack-0-14-1&templateURL=https://s3-us-west-2.amazonaws.com/cdeep3m-releases/0.14.1/cdeep3m_0.14.1_basic_cloudformation.json)
 
 
 [Click here for detailed instructions][cdeep3mviaaws]
