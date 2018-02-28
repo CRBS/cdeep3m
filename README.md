@@ -13,7 +13,7 @@ This code is for a manuscript under revision, titled:
 
 # Run CDeep3M on the cloud
 
-Click link below to spin up CDeep3M on the cloud (10 minute spin up time):
+Click link below to spin up the latest release of CDeep3M on the cloud (~10 minute spin up time):
 
 **NOTE: Running CloudFormation stack requires AWS account and will result in EC2 charges (0.9-3$ per hour runtime)**
 
