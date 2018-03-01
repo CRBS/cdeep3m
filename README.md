@@ -27,6 +27,13 @@ Click link below to spin up the latest release of CDeep3M on the cloud (~10 minu
 
 * [Click here for detailed instructions on launching CDeep3M][cdeep3mviaaws]
 
+  
+## First time users
+
+Just opened your AWS account? Request access to GPU nodes before starting: [follow instructions here][gpunodeaccess]
+
+Once approved, launch cloudformation stack, see above
+
 ### Once you launched the stack:
 * [Click here for instructions of a CDeep3M demorun 1][demorun1]
   
@@ -36,9 +43,6 @@ Click link below to spin up the latest release of CDeep3M on the cloud (~10 minu
   
   Running short training and segmentation using data already loaded on the cloud (Runtime ~1h)
   
-## First time users
-
-Just opened your AWS account? Request access to GPU nodes before starting: [follow instructions here][gpunodeaccess]
   
 ## For advanced users/developers, installation requirements for local install
 
