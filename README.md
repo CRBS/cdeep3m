@@ -3,6 +3,7 @@
 [cdeep3mviaaws]: https://github.com/CRBS/cdeep3m/wiki/Launching-CDeep3m-via-AWS-CloudFormation
 [demorun1]: https://github.com/CRBS/cdeep3m/wiki/Demorun-1-Running-prediction-with-pre-trained-model
 [demorun2]: https://github.com/CRBS/cdeep3m/wiki/Demorun-2-Running-small-training-and-prediction-with-mito-testsample-dataset
+[gpunodeaccess]: https://github.com/CRBS/cdeep3m/wiki/Check-and-increase-AWS-EC2-limits
 [divelablicense]: https://github.com/CRBS/cdeep3m/blob/master/model/LICENSE
 [license]: https://github.com/CRBS/cdeep3m/blob/master/LICENSE
 
@@ -34,6 +35,10 @@ Click link below to spin up the latest release of CDeep3M on the cloud (~10 minu
 * [Click here for instructions of a CDeep3M demorun 2][demorun2]
   
   Running short training and segmentation using data already loaded on the cloud (Runtime ~1h)
+  
+## First time users
+
+Just opened your AWS account? Request access to GPU nodes before starting: [follow instructions here][gpunodeaccess]
   
 ## For advanced users/developers, installation requirements for local install
 
