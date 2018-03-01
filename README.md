@@ -1,8 +1,8 @@
 [aws]: https://aws.amazon.com/
 [deepem3d]: https://github.com/divelab/deepem3d
 [cdeep3mviaaws]: https://github.com/CRBS/cdeep3m/wiki/Launching-CDeep3m-via-AWS-CloudFormation
-[demorun1]: https://github.com/CRBS/cdeep3m/wiki/Demorun-1:-Running-prediction-with-pre-trained-model
-[demorun2]: https://github.com/CRBS/cdeep3m/wiki/Demorun-2:-Running-small-training-and-prediction-with-mito-testsample-dataset
+[demorun1]: https://github.com/CRBS/cdeep3m/wiki/Demorun-1---Running-prediction-with-pre-trained-model
+[demorun2]: https://github.com/CRBS/cdeep3m/wiki/Demorun-2---Running-small-training-and-prediction-with-mito-testsample-dataset
 [divelablicense]: https://github.com/CRBS/cdeep3m/blob/master/model/LICENSE
 [license]: https://github.com/CRBS/cdeep3m/blob/master/LICENSE
 
