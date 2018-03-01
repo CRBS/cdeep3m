@@ -75,7 +75,6 @@ teardown() {
    [ "$status" -eq 0 ]
    [ "${lines[0]}" = "................" ]
    [ "${lines[1]}" = "Running StartPostprocessing.m $TEST_TMP_DIR" ]
-   [ "${lines[2]}" = "Running Merge_LargeData.m $parent_dir" ]
    export PATH=$A_TEMP_PATH
    run cat "$TEST_TMP_DIR/out.log"
    echo "From cat out.log: $status $output" 1>&2
@@ -86,8 +85,7 @@ teardown() {
 
    run tail -n 2 "$TEST_TMP_DIR/out.log"
    echo "From tail -n 2 out.log: $status $output" 1>&2
-   [ "${lines[0]}" = "$TEST_TMP_DIR" ]
-   [ "${lines[1]}" = "$parent_dir" ]
+   [ "${lines[1]}" = "$TEST_TMP_DIR" ]
 }
 
 @test "caffepredict.sh StartPostprocessing.m fails" {
@@ -109,30 +107,6 @@ teardown() {
    [ "${lines[0]}" = "................" ]
    [ "${lines[1]}" = "Running StartPostprocessing.m $TEST_TMP_DIR" ]
    [ "${lines[2]}" = "ERROR non-zero exit code (1) from running StartPostprocessing.m" ]
-   export PATH=$A_TEMP_PATH
-}
-
-@test "caffepredict.sh Merge_LargeData.m fails" {
-   mkdir -p "$TEST_TMP_DIR/augimages"
-   ln -s /bin/true "$TEST_TMP_DIR/StartPostprocessing.m"
-   ln -s /bin/echo "$TEST_TMP_DIR/predict_seg_new.bin"
-   ln -s /bin/false "$TEST_TMP_DIR/Merge_LargeData.m"
-
-   for Y in `seq 1 16` ; do
-     touch "$TEST_TMP_DIR/augimages/blah_v${Y}.h5"
-   done
-   parent_dir=`dirname "$TEST_TMP_DIR"`
-
-   export A_TEMP_PATH=$PATH
-   export PATH=$TEST_TMP_DIR:$PATH
-
-   run $CAFFE_PREDICT_SH "$TEST_TMP_DIR/foo.caffemodel" "$TEST_TMP_DIR/augimages" "$TEST_TMP_DIR"
-   echo "$status $output" 1>&2
-   [ "$status" -eq 8 ]
-   [ "${lines[0]}" = "................" ]
-   [ "${lines[1]}" = "Running StartPostprocessing.m $TEST_TMP_DIR" ]
-   [ "${lines[2]}" = "Running Merge_LargeData.m $parent_dir" ]
-   [ "${lines[3]}" = "ERROR non-zero exit code (1) from running Merge_LargeData.m" ]
    export PATH=$A_TEMP_PATH
 }
 

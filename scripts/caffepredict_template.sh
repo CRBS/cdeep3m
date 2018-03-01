@@ -129,15 +129,4 @@ if [ $ecode != 0 ] ; then
   exit 7
 fi
 
-fm_dir=`dirname "$out_dir"`
-echo ""
-echo "Running Merge_LargeData.m $fm_dir"
-Merge_LargeData.m "$fm_dir" >> "$out_log" 2>&1
-ecode=$?
-
-if [ $ecode != 0 ] ; then
-  echo "ERROR non-zero exit code ($ecode) from running Merge_LargeData.m"
-  exit 8
-fi
-
 exit 0
