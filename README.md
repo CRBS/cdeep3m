@@ -28,8 +28,11 @@ Click link below to spin up the latest release of CDeep3M on the cloud (~10 minu
 
 ### Once you launched the stack:
 * [Click here for instructions of a CDeep3M demorun 1][demorun1]
+  
   Running segmentation with a pretrained model (Runtime ~5min)
+  
 * [Click here for instructions of a CDeep3M demorun 2][demorun2]
+  
   Running short training and segmentation using data already loaded on the cloud (Runtime ~1h)
   
 ## For advanced users/developers, installation requirements for local install
