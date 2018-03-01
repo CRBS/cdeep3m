@@ -23,9 +23,10 @@ Click link below to spin up the latest release of CDeep3M on the cloud (~10 minu
 [![Launch Deep3m AWS CloudFormation link](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=cdeep3m-stack-0-14-1&templateURL=https://s3-us-west-2.amazonaws.com/cdeep3m-releases/0.14.1/cdeep3m_0.14.1_basic_cloudformation.json)
 
 
-[Click here for detailed instructions on launching CDeep3M][cdeep3mviaaws]
+* [Click here for detailed instructions on launching CDeep3M][cdeep3mviaaws]
 
-[Click here for instructions of a CDeep3M demorun][demorun]
+### Once you launched the stack:
+* [Click here for instructions of a CDeep3M demorun][demorun]
 
 ## For advanced users/developers, installation requirements for local install
 
