@@ -2,6 +2,7 @@
 [deepem3d]: https://github.com/divelab/deepem3d
 [cdeep3mviaaws]: https://github.com/CRBS/cdeep3m/wiki/Launching-CDeep3m-via-AWS-CloudFormation
 [demorun1]: https://github.com/CRBS/cdeep3m/wiki/Demorun-1:-Running-prediction-with-pre-trained-model
+[demorun2]: https://github.com/CRBS/cdeep3m/wiki/Demorun-2:-Running-small-training-and-prediction-with-mito-testsample-dataset
 [divelablicense]: https://github.com/CRBS/cdeep3m/blob/master/model/LICENSE
 [license]: https://github.com/CRBS/cdeep3m/blob/master/LICENSE
 
@@ -27,9 +28,9 @@ Click link below to spin up the latest release of CDeep3M on the cloud (~10 minu
 
 ### Once you launched the stack:
 * [Click here for instructions of a CDeep3M demorun 1][demorun1]
-  *Running segmentation with a pretrained model (Runtime ~5min)
+  Running segmentation with a pretrained model (Runtime ~5min)
 * [Click here for instructions of a CDeep3M demorun 2][demorun2]
-  *Running short training and segmentation using data already loaded on the cloud (Runtime ~1h)
+  Running short training and segmentation using data already loaded on the cloud (Runtime ~1h)
   
 ## For advanced users/developers, installation requirements for local install
 
