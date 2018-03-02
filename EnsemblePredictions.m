@@ -32,7 +32,7 @@ for i = 1:(numel(arg_list)-1)
     fprintf('%s not a directory\nPlease use: EnsemblePredictions ./inputdir1 ./inputdir2 ./inputdir3 ./outputdir\n',arg_list{i});
     return
     end
-    list{i} = read_files_in_folder(to_process{i});
+    list{i} = filter_files(read_files_in_folder(to_process{i}),'.png');
 end
 outputdir = arg_list{numel(arg_list)};
 mkdir(outputdir);
