@@ -8,6 +8,7 @@
 [sshkey]: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html#having-ec2-create-your-key-pair
 [divelablicense]: https://github.com/CRBS/cdeep3m/blob/master/model/LICENSE
 [license]: https://github.com/CRBS/cdeep3m/blob/master/LICENSE
+[cloudaccess]: https://github.com/CRBS/cdeep3m/wiki/How-to-access-CDeep3M-cloud
 
 # CDeep3M
 
@@ -42,6 +43,10 @@ Follow the instructions on how to [link your SSH key][sshkey]. You can directly 
 ### Launch cloudformation stack
 
 Once approved, launch cloudformation stack using the launch button
+
+### Access your cloud
+
+Click here for instruction how to [access your cloudstack][cloudaccess]
 
 ### Once you launched the stack:
 * [Click here for instructions of a CDeep3M demorun 1][demorun1]
