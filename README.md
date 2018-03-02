@@ -17,7 +17,7 @@ This code is for a manuscript under revision, titled:
 
 ## Quickstart CDeep3M on the cloud
 
-Click launch button to spin up the latest release of CDeep3M on the cloud (~10 minute spin up time):
+Click launch button to spin up the latest release of CDeep3M on the cloud (~20 minute spin up time):
 
 **Oregon region:**
 
