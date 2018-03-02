@@ -4,6 +4,7 @@
 [demorun1]: https://github.com/CRBS/cdeep3m/wiki/Demorun-1-Running-prediction-with-pre-trained-model
 [demorun2]: https://github.com/CRBS/cdeep3m/wiki/Demorun-2-Running-small-training-and-prediction-with-mito-testsample-dataset
 [gpunodeaccess]: https://github.com/CRBS/cdeep3m/wiki/Check-and-increase-AWS-EC2-limits
+[deletestack]: https://github.com/CRBS/cdeep3m/wiki/Shutting-down-CDeep3M-AWS-CloudFormation
 [divelablicense]: https://github.com/CRBS/cdeep3m/blob/master/model/LICENSE
 [license]: https://github.com/CRBS/cdeep3m/blob/master/LICENSE
 
@@ -42,7 +43,10 @@ Once approved, launch cloudformation stack, see above
 * [Click here for instructions of a CDeep3M demorun 2][demorun2]
   
   Running short training and segmentation using data already loaded on the cloud (Runtime ~1h)
-  
+
+### Shutting AWS cloud down
+
+Done with your segmentation? Don't forget to [delete your Cloud Stack][deletestack]
   
 ## For advanced users/developers, installation requirements for local install
 
