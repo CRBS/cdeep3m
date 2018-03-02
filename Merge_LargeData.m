@@ -88,7 +88,7 @@ image_patch(area(1):area(2),area(3):area(4)) = small_patch(1:insertsize(1),1:ins
 else %if there is only one package
 if imagesize(1)<=1012, start(1) = 13;else, start(1) = 1;end %define where the image has been padded
 if imagesize(2)<=1012, start(2) = 13;else, start(2) = 1;end %define where the image has been padded
-image_patch = small_patch(start(1):imagesize(1),start(2):imagesize(2));    
+image_patch = small_patch(start(1):(imagesize(1)+start(1)-1),start(2):(imagesize(2)+start(2)-1));   
 end
 
 image_stack(:,:,x_y_num) = single(image_patch);
