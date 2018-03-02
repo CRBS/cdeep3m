@@ -48,9 +48,11 @@ Once approved, launch cloudformation stack, see above
 
 Done with your segmentation? Don't forget to [delete your Cloud Stack][deletestack]
   
-## For advanced users/developers, installation requirements for local install
+# Local install, for advanced users/developers only
 
-**NOTE:** Getting the following software and configuration setup is not trivial. To try out CDeep3M it is suggested one try CDeep3M in the cloud, desribed above, which eliminates all the following steps.
+## Installation requirements for local install
+
+**NOTE:** Getting the following software and configuration setup is not trivial. To try out *CDeep3M it is suggested one try CDeep3M in the cloud, desribed above, which eliminates all the following steps.
 
 * Nvidia K40 GPU or better (needs 12gb+ ram) with CUDA 7.5 or higher
 
@@ -64,28 +66,28 @@ Done with your segmentation? Don't forget to [delete your Cloud Stack][deletesta
 
 * bats (for testing): https://github.com/bats-core/bats-core/archive/v0.4.0.tar.gz
 
-## For advanced users/developers, install locally
+## How to install locally
 
-### Step 1) Download release tarball
+#### Step 1) Download release tarball
 
 ```Bash
 wget https://github.com/CRBS/cdeep3m/releases/download/v0.15.0rc3/cdeep3m-0.15.0rc3.tar.gz
 ```
 
-### Step 2) Uncompress 
+#### Step 2) Uncompress 
 
 ```Bash
 tar -zxf cdeep3m-0.15.0rc3.tar.gz
 cd cdeep3m-0.15.0rc3
 ```
 
-### Step 3) Add to path
+#### Step 3) Add to path
 
 ```Bash
 export PATH=$PATH:`pwd`
 ```
 
-### Step 4) Verify
+#### Step 4) Verify
 
 ```Bash
 runtraining.sh --version
