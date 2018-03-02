@@ -5,6 +5,7 @@
 [demorun2]: https://github.com/CRBS/cdeep3m/wiki/Demorun-2-Running-small-training-and-prediction-with-mito-testsample-dataset
 [gpunodeaccess]: https://github.com/CRBS/cdeep3m/wiki/Check-and-increase-AWS-EC2-limits
 [deletestack]: https://github.com/CRBS/cdeep3m/wiki/Shutting-down-CDeep3M-AWS-CloudFormation
+[sshkey]: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html#having-ec2-create-your-key-pair
 [divelablicense]: https://github.com/CRBS/cdeep3m/blob/master/model/LICENSE
 [license]: https://github.com/CRBS/cdeep3m/blob/master/LICENSE
 
@@ -33,6 +34,10 @@ Click launch button to spin up the latest release of CDeep3M on the cloud (~20 m
 ### Sign up for AWS Account
 
 Just opened your AWS account? Request access to GPU nodes before starting: [follow instructions here][gpunodeaccess]
+
+### SSH key
+
+Follow the instructions on how to [link your SSH key][sshkey]. You can directly create the SSH key on AWS.
 
 ### Launch cloudformation stack
 
