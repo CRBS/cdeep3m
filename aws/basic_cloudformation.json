@@ -129,6 +129,9 @@
                      "sudo -u ubuntu wget https://s3-us-west-2.amazonaws.com/cdeep3m-trainedmodels/sbem/mitochrondria/xy5.9nm40nmz/sbem_mitochrondria_xy5.9nm40nmz.tar.gz\n",
                      "sudo -u ubuntu tar -zxf sbem_mitochrondria_xy5.9nm40nmz.tar.gz\n",
                      "/bin/rm sbem_mitochrondria_xy5.9nm40nmz.tar.gz\n",
+                     "sudo -u ubuntu wget https://s3-us-west-2.amazonaws.com/cdeep3m-trainedmodels/sbem/mitochrondria/xy5.9nm40nmz/sbem_mitochrondria_xy5.9nm40nmz_30000iter_trainedmodel.tar.gz\n",
+                     "sudo -u ubuntu tar -zxf sbem_mitochrondria_xy5.9nm40nmz_30000iter_trainedmodel.tar.gz\n",
+                     "/bin/rm sbem_mitochrondria_xy5.9nm40nmz_30000iter_trainedmodel.tar.gz\n",
                      "echo 'Done with update'\n",
                      "/usr/local/bin/cfn-signal --exit-code 0 -i gpu1 '", { "Ref" : "WaitHandle" }, "'\n"
                        ]]}}
