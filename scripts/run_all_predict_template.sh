@@ -76,7 +76,7 @@ for Y in `find "$script_dir" -name "*fm" -type d | sort` ; do
   model_name=`basename $Y`
   echo "Running $model_name predict $num_pkgs package(s) to process"
   let cntr=1
-  for Z in `find "$Y" -name "Pkg*" -type d` ; do
+  for Z in `find "$Y" -name "Pkg*" -type d | sort` ; do
      if [ -f "$Z/DONE" ] ; then
         echo "Found $Z/DONE. Prediction completed. Skipping..."
         continue
@@ -97,8 +97,21 @@ for Y in `find "$script_dir" -name "*fm" -type d | sort` ; do
     echo "Prediction completed: `date +%s`" > "$Z/DONE"
     let cntr+=1
   done
+  if [ -f "$Y/DONE" ] ; then
+     echo "Found $Y/DONE. Merge completed. Skipping..."
+     continue
+  fi
+  echo ""
+  echo "Running Merge_LargeData.m $Y"
+  merge_log="$Y/merge.log"
+  Merge_LargeData.m "$Y" >> "$merge_log" 2>&1
+  ecode=$?
+  if [ $ecode != 0 ] ; then
+    echo "ERROR non-zero exit code ($ecode) from running Merge_LargeData.m"
+    exit 4
+  fi
+  echo "Merge completed: `date +%s`" > "$Y/DONE"
 done
-
 
 echo ""
 echo "Prediction has completed. Have a nice day!"

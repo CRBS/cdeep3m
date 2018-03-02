@@ -42,8 +42,9 @@ release: dist ## package and upload a release to s3
 	deep3mdirname=cdeep3m-$$vers ;\
 	distdir=dist/$$deep3mdirname ;\
 	cp $$distdir/README.md . ;\
+	branchy=`git branch --list | sed "s/^\* *//"` ;\
 	git commit -m 'updated launch stack link' README.md ;\
-	git push origin master ;\
+	git push origin $$branchy ;\
 	git tag -a v$${vers} -m 'new release' ; \
 	git push origin v$${vers}
 

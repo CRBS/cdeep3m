@@ -24,9 +24,14 @@ teardown() {
 
 @test "run_all_predict.sh success no args and no packages to process" {
     ln -s /bin/echo "$TEST_TMP_DIR/caffe_predict.sh"
+    ln -s /bin/echo "$TEST_TMP_DIR/Merge_LargeData.m"
     mkdir -p "$TEST_TMP_DIR/1fm" "$TEST_TMP_DIR/3fm" "$TEST_TMP_DIR/5fm"
     echo "trainedmodeldir=$TEST_TMP_DIR/tmodel" > $TEST_TMP_DIR/predict.config
     echo "augimagedir=$TEST_TMP_DIR/augimage" >> $TEST_TMP_DIR/predict.config
+
+    export A_TEMP_PATH=$PATH
+    export PATH=$TEST_TMP_DIR:$PATH
+
     run $RUN_ALL_PREDICT_SH
     echo "$status $output" 1>&2
     [ "$status" -eq 0 ]
@@ -34,16 +39,25 @@ teardown() {
     [ "${lines[1]}" = "Trained Model Dir: $TEST_TMP_DIR/tmodel" ]
     [ "${lines[2]}" = "Image Dir: $TEST_TMP_DIR/augimage" ]
     [ "${lines[3]}" = "Running 1fm predict 0 package(s) to process" ]
-    [ "${lines[4]}" = "Running 3fm predict 0 package(s) to process" ]
-    [ "${lines[5]}" = "Running 5fm predict 0 package(s) to process" ]
-    [ "${lines[6]}" = "Prediction has completed. Have a nice day!" ]
+    [ "${lines[4]}" = "Running Merge_LargeData.m $TEST_TMP_DIR/1fm" ]
+    [ "${lines[5]}" = "Running 3fm predict 0 package(s) to process" ]
+    [ "${lines[6]}" = "Running Merge_LargeData.m $TEST_TMP_DIR/3fm" ]
+    [ "${lines[7]}" = "Running 5fm predict 0 package(s) to process" ]
+    [ "${lines[8]}" = "Running Merge_LargeData.m $TEST_TMP_DIR/5fm" ]
+    [ "${lines[9]}" = "Prediction has completed. Have a nice day!" ]
+
+    export PATH=$A_TEMP_PATH
 }
 
 @test "run_all_predict.sh success --1fmonly and no packages to process" {
-    ln -s /bin/echo "$TEST_TMP_DIR/caffe_predict.sh" 
+    ln -s /bin/echo "$TEST_TMP_DIR/caffe_predict.sh"
+    ln -s /bin/echo "$TEST_TMP_DIR/Merge_LargeData.m" 
     mkdir -p "$TEST_TMP_DIR/1fm" "$TEST_TMP_DIR/3fm" "$TEST_TMP_DIR/5fm"
     echo "trainedmodeldir=$TEST_TMP_DIR/tmodel" > $TEST_TMP_DIR/predict.config
     echo "augimagedir=$TEST_TMP_DIR/augimage" >> $TEST_TMP_DIR/predict.config
+    
+    export A_TEMP_PATH=$PATH
+    export PATH=$TEST_TMP_DIR:$PATH
     run $RUN_ALL_PREDICT_SH --1fmonly
     echo "$status $output" 1>&2
     [ "$status" -eq 0 ]
@@ -51,19 +65,30 @@ teardown() {
     [ "${lines[1]}" = "Trained Model Dir: $TEST_TMP_DIR/tmodel" ] 
     [ "${lines[2]}" = "Image Dir: $TEST_TMP_DIR/augimage" ]
     [ "${lines[3]}" = "Running 1fm predict 0 package(s) to process" ]
-    [ "${lines[4]}" = "--1fmonly flag set skipping prediction for $TEST_TMP_DIR/3fm" ]
-    [ "${lines[5]}" = "--1fmonly flag set skipping prediction for $TEST_TMP_DIR/5fm" ]
-    [ "${lines[6]}" = "Prediction has completed. Have a nice day!" ]
+    [ "${lines[4]}" = "Running Merge_LargeData.m $TEST_TMP_DIR/1fm" ]
+    [ "${lines[5]}" = "--1fmonly flag set skipping prediction for $TEST_TMP_DIR/3fm" ]
+    [ "${lines[6]}" = "--1fmonly flag set skipping prediction for $TEST_TMP_DIR/5fm" ]
+    [ "${lines[7]}" = "Prediction has completed. Have a nice day!" ]
+
+    export PATH=$A_TEMP_PATH
 }
 
 @test "run_all_predict.sh success no args all packages done" {
     ln -s /bin/echo "$TEST_TMP_DIR/caffe_predict.sh" 
+    ln -s /bin/echo "$TEST_TMP_DIR/Merge_LargeData.m"
     mkdir -p "$TEST_TMP_DIR/1fm/Pkg001_Z01" "$TEST_TMP_DIR/3fm/Pkg002_Z01" "$TEST_TMP_DIR/5fm/Pkg003_Z01"
     touch "$TEST_TMP_DIR/1fm/Pkg001_Z01/DONE"
     touch "$TEST_TMP_DIR/3fm/Pkg002_Z01/DONE"
     touch "$TEST_TMP_DIR/5fm/Pkg003_Z01/DONE"
+    touch "$TEST_TMP_DIR/1fm/DONE"
+    touch "$TEST_TMP_DIR/3fm/DONE"
+    touch "$TEST_TMP_DIR/5fm/DONE"
     echo "trainedmodeldir=$TEST_TMP_DIR/tmodel" > $TEST_TMP_DIR/predict.config
     echo "augimagedir=$TEST_TMP_DIR/augimage" >> $TEST_TMP_DIR/predict.config
+
+    export A_TEMP_PATH=$PATH
+    export PATH=$TEST_TMP_DIR:$PATH
+
     run $RUN_ALL_PREDICT_SH
     echo "$status $output" 1>&2
     [ "$status" -eq 0 ]
@@ -72,18 +97,26 @@ teardown() {
     [ "${lines[2]}" = "Image Dir: $TEST_TMP_DIR/augimage" ]
     [ "${lines[3]}" = "Running 1fm predict 1 package(s) to process" ]
     [ "${lines[4]}" = "Found $TEST_TMP_DIR/1fm/Pkg001_Z01/DONE. Prediction completed. Skipping..." ]
-    [ "${lines[5]}" = "Running 3fm predict 1 package(s) to process" ]
-    [ "${lines[6]}" = "Found $TEST_TMP_DIR/3fm/Pkg002_Z01/DONE. Prediction completed. Skipping..." ]
-    [ "${lines[7]}" = "Running 5fm predict 1 package(s) to process" ]
-    [ "${lines[8]}" = "Found $TEST_TMP_DIR/5fm/Pkg003_Z01/DONE. Prediction completed. Skipping..." ]
-    [ "${lines[9]}" = "Prediction has completed. Have a nice day!" ]
+    [ "${lines[5]}" = "Found $TEST_TMP_DIR/1fm/DONE. Merge completed. Skipping..." ]
+    [ "${lines[6]}" = "Running 3fm predict 1 package(s) to process" ]
+    [ "${lines[7]}" = "Found $TEST_TMP_DIR/3fm/Pkg002_Z01/DONE. Prediction completed. Skipping..." ]
+    [ "${lines[8]}" = "Found $TEST_TMP_DIR/3fm/DONE. Merge completed. Skipping..." ]
+    [ "${lines[9]}" = "Running 5fm predict 1 package(s) to process" ]
+    [ "${lines[10]}" = "Found $TEST_TMP_DIR/5fm/Pkg003_Z01/DONE. Prediction completed. Skipping..." ]
+    [ "${lines[11]}" = "Found $TEST_TMP_DIR/5fm/DONE. Merge completed. Skipping..." ]
+    [ "${lines[12]}" = "Prediction has completed. Have a nice day!" ]
+    export PATH=$A_TEMP_PATH
 }
 
 @test "run_all_predict.sh success no args 1 package in each model dir" {
     ln -s /bin/echo "$TEST_TMP_DIR/caffe_predict.sh"
+    ln -s /bin/echo "$TEST_TMP_DIR/Merge_LargeData.m"
     mkdir -p "$TEST_TMP_DIR/1fm/Pkg001_Z01" "$TEST_TMP_DIR/3fm/Pkg002_Z01" "$TEST_TMP_DIR/5fm/Pkg002_Z01"
     echo "trainedmodeldir=$TEST_TMP_DIR/tmodel" > $TEST_TMP_DIR/predict.config
     echo "augimagedir=$TEST_TMP_DIR/augimage" >> $TEST_TMP_DIR/predict.config
+    export A_TEMP_PATH=$PATH
+    export PATH=$TEST_TMP_DIR:$PATH
+
     run $RUN_ALL_PREDICT_SH
     echo "$status $output" 1>&2
     [ "$status" -eq 0 ]
@@ -92,22 +125,29 @@ teardown() {
     [ "${lines[2]}" = "Image Dir: $TEST_TMP_DIR/augimage" ]
     [ "${lines[3]}" = "Running 1fm predict 1 package(s) to process" ]
     [ "${lines[4]}" = "  Processing Pkg001_Z01 1 of 1 --gpu 0 $TEST_TMP_DIR/tmodel/1fm/trainedmodel $TEST_TMP_DIR/augimage/Pkg001_Z01 $TEST_TMP_DIR/1fm/Pkg001_Z01" ]
-    [ "${lines[8]}" = "Running 3fm predict 1 package(s) to process" ]
-    [ "${lines[9]}" = "  Processing Pkg002_Z01 1 of 1 --gpu 0 $TEST_TMP_DIR/tmodel/3fm/trainedmodel $TEST_TMP_DIR/augimage/Pkg002_Z01 $TEST_TMP_DIR/3fm/Pkg002_Z01" ]
-    [ "${lines[13]}" = "Running 5fm predict 1 package(s) to process" ]
-    [ "${lines[14]}" = "  Processing Pkg002_Z01 1 of 1 --gpu 0 $TEST_TMP_DIR/tmodel/5fm/trainedmodel $TEST_TMP_DIR/augimage/Pkg002_Z01 $TEST_TMP_DIR/5fm/Pkg002_Z01" ]
-    [ "${lines[18]}" = "Prediction has completed. Have a nice day!" ]
+    [ "${lines[8]}" = "Running Merge_LargeData.m $TEST_TMP_DIR/1fm" ]
+    [ "${lines[9]}" = "Running 3fm predict 1 package(s) to process" ]
+    [ "${lines[10]}" = "  Processing Pkg002_Z01 1 of 1 --gpu 0 $TEST_TMP_DIR/tmodel/3fm/trainedmodel $TEST_TMP_DIR/augimage/Pkg002_Z01 $TEST_TMP_DIR/3fm/Pkg002_Z01" ]
+    [ "${lines[14]}" = "Running Merge_LargeData.m $TEST_TMP_DIR/3fm" ]
+    [ "${lines[15]}" = "Running 5fm predict 1 package(s) to process" ]
+    [ "${lines[16]}" = "  Processing Pkg002_Z01 1 of 1 --gpu 0 $TEST_TMP_DIR/tmodel/5fm/trainedmodel $TEST_TMP_DIR/augimage/Pkg002_Z01 $TEST_TMP_DIR/5fm/Pkg002_Z01" ]
+    [ "${lines[20]}" = "Running Merge_LargeData.m $TEST_TMP_DIR/5fm" ]
+    [ "${lines[21]}" = "Prediction has completed. Have a nice day!" ]
     [ -f "$TEST_TMP_DIR/1fm/Pkg001_Z01/DONE" ]
     [ -f "$TEST_TMP_DIR/3fm/Pkg002_Z01/DONE" ]
     [ -f "$TEST_TMP_DIR/5fm/Pkg002_Z01/DONE" ]
-
+    export PATH=$A_TEMP_PATH
 }
 
 @test "run_all_predict.sh success --gpu 1 set" {
     ln -s /bin/echo "$TEST_TMP_DIR/caffe_predict.sh"
+    ln -s /bin/echo "$TEST_TMP_DIR/Merge_LargeData.m"
     mkdir -p "$TEST_TMP_DIR/1fm/Pkg001_Z01" "$TEST_TMP_DIR/3fm/Pkg002_Z01" "$TEST_TMP_DIR/5fm/Pkg002_Z01"
     echo "trainedmodeldir=$TEST_TMP_DIR/tmodel" > $TEST_TMP_DIR/predict.config
     echo "augimagedir=$TEST_TMP_DIR/augimage" >> $TEST_TMP_DIR/predict.config
+    export A_TEMP_PATH=$PATH
+    export PATH=$TEST_TMP_DIR:$PATH
+
     run $RUN_ALL_PREDICT_SH --gpu 1
     echo "$status $output" 1>&2
     [ "$status" -eq 0 ]
@@ -116,15 +156,18 @@ teardown() {
     [ "${lines[2]}" = "Image Dir: $TEST_TMP_DIR/augimage" ]
     [ "${lines[3]}" = "Running 1fm predict 1 package(s) to process" ]
     [ "${lines[4]}" = "  Processing Pkg001_Z01 1 of 1 --gpu 1 $TEST_TMP_DIR/tmodel/1fm/trainedmodel $TEST_TMP_DIR/augimage/Pkg001_Z01 $TEST_TMP_DIR/1fm/Pkg001_Z01" ]
-    [ "${lines[8]}" = "Running 3fm predict 1 package(s) to process" ]
-    [ "${lines[9]}" = "  Processing Pkg002_Z01 1 of 1 --gpu 1 $TEST_TMP_DIR/tmodel/3fm/trainedmodel $TEST_TMP_DIR/augimage/Pkg002_Z01 $TEST_TMP_DIR/3fm/Pkg002_Z01" ]
-    [ "${lines[13]}" = "Running 5fm predict 1 package(s) to process" ]
-    [ "${lines[14]}" = "  Processing Pkg002_Z01 1 of 1 --gpu 1 $TEST_TMP_DIR/tmodel/5fm/trainedmodel $TEST_TMP_DIR/augimage/Pkg002_Z01 $TEST_TMP_DIR/5fm/Pkg002_Z01" ]
-    [ "${lines[18]}" = "Prediction has completed. Have a nice day!" ]
+    [ "${lines[8]}" = "Running Merge_LargeData.m $TEST_TMP_DIR/1fm" ]
+    [ "${lines[9]}" = "Running 3fm predict 1 package(s) to process" ]
+    [ "${lines[10]}" = "  Processing Pkg002_Z01 1 of 1 --gpu 1 $TEST_TMP_DIR/tmodel/3fm/trainedmodel $TEST_TMP_DIR/augimage/Pkg002_Z01 $TEST_TMP_DIR/3fm/Pkg002_Z01" ]
+    [ "${lines[14]}" = "Running Merge_LargeData.m $TEST_TMP_DIR/3fm" ]
+    [ "${lines[15]}" = "Running 5fm predict 1 package(s) to process" ]
+    [ "${lines[16]}" = "  Processing Pkg002_Z01 1 of 1 --gpu 1 $TEST_TMP_DIR/tmodel/5fm/trainedmodel $TEST_TMP_DIR/augimage/Pkg002_Z01 $TEST_TMP_DIR/5fm/Pkg002_Z01" ]
+    [ "${lines[20]}" = "Running Merge_LargeData.m $TEST_TMP_DIR/5fm" ]
+    [ "${lines[21]}" = "Prediction has completed. Have a nice day!" ]
     [ -f "$TEST_TMP_DIR/1fm/Pkg001_Z01/DONE" ]
     [ -f "$TEST_TMP_DIR/3fm/Pkg002_Z01/DONE" ]
     [ -f "$TEST_TMP_DIR/5fm/Pkg002_Z01/DONE" ]
-
+    export PATH=$A_TEMP_PATH
 }
 
 
