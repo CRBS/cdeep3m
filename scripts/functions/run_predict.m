@@ -18,7 +18,7 @@ function run_predict(arg_list)
 
   if numel(arg_list)~=3; 
     msg = sprintf('\n%s expects three command line arguments\n\n', prog_name);
-    msg = strcat(msg,sprintf('Usage: %s <Output of Train.m after training run> <augmented image data> <output directory>\n', prog_name));
+    msg = strcat(msg,sprintf('Usage: %s <Output of CreateTrainJob.m after training run> <augmented image data> <output directory>\n', prog_name));
     error(msg); 
     return; 
   endif
@@ -41,7 +41,7 @@ function run_predict(arg_list)
 
   if isdir(outdir) == 1;
      fprintf('\n');
-     msg = sprintf('Predict.m appears to already have been run in %s directory',
+     msg = sprintf('CreatePredictJob.m appears to already have been run in %s directory',
                    outdir);
      msg = strcat(msg,sprintf('\nRun %s to run prediction\n',all_predict_file));
      error(msg);
@@ -50,16 +50,16 @@ function run_predict(arg_list)
   % ---------------------------------------------------------------------------
   % Examine input training data and generate list of h5 files
   % ---------------------------------------------------------------------------
-  fprintf(stdout(), 'Verifying input training data is valid ... ');
+  % fprintf(stdout(), 'Verifying input training data is valid ... ');
   train_model_names = get_train_basemodel_names(train_model_path);
-  fprintf(stdout(),'skipping check, TODO need to fix this.\n');
+  % fprintf(stdout(),'skipping check, TODO need to fix this.\n');
 
   % ---------------------------------------------------------------------------
   % Examine input image data, validate, and get list of pkg folders
   % ---------------------------------------------------------------------------
-  fprintf(stdout(), 'Verifying image data and getting Pkg folders ... ');
+  % fprintf(stdout(), 'Verifying image data and getting Pkg folders ... ');
   pkg_folders = get_pkg_folders(img_data);  
-  fprintf(stdout(),'skipping check, TODO need to fix this.\n');
+  % fprintf(stdout(),'skipping check, TODO need to fix this.\n');
 
   % ----------------------------------------------------------------------------
   % Create output directories with 1fm,3fm,5fm model folder and packages
