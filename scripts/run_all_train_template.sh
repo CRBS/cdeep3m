@@ -17,7 +17,7 @@ function usage()
 
               Version: $version
 
-              Runs caffe training on Deep3M model in directory where
+              Runs caffe training on CDeep3M model in directory where
               this script resides 
 
 optional arguments:

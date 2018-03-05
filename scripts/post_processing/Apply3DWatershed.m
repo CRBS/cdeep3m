@@ -14,7 +14,7 @@
 % segmented file, and the subsequently colorized segmented file.
 %
 % -----------------------------------------------------------------------------
-%% Deep3M -- NCMIR, UCSD -- Author: M Haberl -- Data: 10/2017
+%% CDeep3M -- NCMIR, UCSD -- Author: M Haberl -- Data: 10/2017
 % -----------------------------------------------------------------------------
 %
 

@@ -17,7 +17,7 @@ function usage()
 
               Version: $version
 
-              Runs caffe prediction on Deep3M trained model using
+              Runs caffe prediction on CDeep3M trained model using
               predict.config file to obtain location of trained
               model and image data
 
