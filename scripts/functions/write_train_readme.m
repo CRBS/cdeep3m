@@ -8,7 +8,7 @@ function write_train_readme(outdir)
   readme = strcat(outdir,filesep(), 'readme.txt');
   out = fopen(readme, "w");
   fprintf(out, "\nIn this directory contains files and directories needed to\n");
-  fprintf(out, "run Deep3M training using caffe. Below is a description\n");
+  fprintf(out, "run CDeep3M training using caffe. Below is a description\n");
   fprintf(out, "of the key files and directories:\n\n");
   fprintf(out, "1fm/,3fm/,5fm/ -- Model directories that contain results from training via caffe.\n");
   fprintf(out, "<model>/trainedmodel -- Contains .caffemodel files that are the actual trained models\n");
