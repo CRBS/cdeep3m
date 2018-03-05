@@ -26,7 +26,6 @@ function run_train(arg_list)
                               'caffetrain_template.sh');
   run_all_train_template=strcat(base_dir,filesep(),'scripts',filesep(),
                               'run_all_train_template.sh');
-  caffe_bin='/home/ubuntu/caffe_nd_sense_segmentation/build/tools/';
 
   if numel(arg_list)~=2; 
     fprintf('\n');
