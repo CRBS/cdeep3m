@@ -1,6 +1,6 @@
 ## Usage run_train(arg_list)
 ##
-## Sets up directory and scripts to run training on Deep3M model by caffe. 
+## Sets up directory and scripts to run training on CDeep3M model by caffe. 
 ## arg_list should contain two a element cell array with first value 
 ## set to path to augmented training data and the second argument the 
 ## destination output directory
@@ -13,7 +13,7 @@
 ##
 
 function run_train(arg_list)
-  % Runs Deep3m train using caffe. 
+  % Runs CDeep3M train using caffe. 
   % Usage runtrain(cell array of strings) 
   % by first verifying first argument is path to training data and
   % then copying over models under model/ directory to output directory

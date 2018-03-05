@@ -8,7 +8,7 @@ function write_predict_readme(outdir)
   readme = strcat(outdir,filesep(), 'readme.txt');
   out = fopen(readme, "w");
   fprintf(out, "\nThis directory contains files and directories needed to\n");
-  fprintf(out, "run Deep3M prediction using caffe. Below is a description\n");
+  fprintf(out, "run CDeep3M prediction using caffe. Below is a description\n");
   fprintf(out, "of the key files and directories:\n\n");
   fprintf(out, "1fm/,3fm/,5fm/ -- contains results from running prediction\n");
   fprintf(out, "\npredict.config -- contains path to trained model and\n");

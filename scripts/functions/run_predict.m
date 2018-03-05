@@ -1,5 +1,5 @@
 ## Usage run_predict(arg_list)
-## Runs Deep3m prediction using caffe. 
+## Runs CDeep3M prediction using caffe. 
 ## by first verifying first argument is path to training data and
 ## then copying over models under model/ directory to output directory
 ## suffix for hdf5 files

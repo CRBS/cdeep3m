@@ -4,7 +4,7 @@ function [imgstack] = imageimporter(img_path)
 %  
 %  
 %-----------------------------------------------------------------------------
-%% Deep3M -- NCMIR/NBCR, UCSD -- Author: M Haberl -- Date: 10/2017
+%% CDeep3M -- NCMIR/NBCR, UCSD -- Author: M Haberl -- Date: 10/2017
 %-----------------------------------------------------------------------------
 disp('Image importer loading ... '); 
 disp(img_path); 

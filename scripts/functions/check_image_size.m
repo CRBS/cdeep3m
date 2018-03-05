@@ -4,7 +4,7 @@ function [imagesize] = check_image_size(img_path)
 %  
 %  
 %-----------------------------------------------------------------------------
-%% Deep3M -- NCMIR/NBCR, UCSD -- Author: M Haberl -- Date: 11/2017
+%% CDeep3M -- NCMIR/NBCR, UCSD -- Author: M Haberl -- Date: 11/2017
 %-----------------------------------------------------------------------------
 
 disp('Check image size of: '); 

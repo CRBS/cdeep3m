@@ -19,7 +19,7 @@ function usage()
 
               Version: $version
 
-              Runs caffe on Deep3m model specified by model argument 
+              Runs caffe on CDeep3M model specified by model argument 
               to perform training. The trained model will be stored in
               <model>/trainedmodel directory
               Output from caffe will be redirected to <model>/log/out.log
