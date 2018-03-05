@@ -3,6 +3,7 @@
 [cdeep3mviaaws]: https://github.com/CRBS/cdeep3m/wiki/Launching-CDeep3m-via-AWS-CloudFormation
 [demorun1]: https://github.com/CRBS/cdeep3m/wiki/Demorun-1-Running-prediction-with-pre-trained-model
 [demorun2]: https://github.com/CRBS/cdeep3m/wiki/Demorun-2-Running-small-training-and-prediction-with-mito-testsample-dataset
+[ownmodel]: https://github.com/CRBS/cdeep3m/wiki/Run-CDeep3M-training-and-prediction
 [gpunodeaccess]: https://github.com/CRBS/cdeep3m/wiki/Check-and-increase-AWS-EC2-limits
 [deletestack]: https://github.com/CRBS/cdeep3m/wiki/Shutting-down-CDeep3M-AWS-CloudFormation
 [sshkey]: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html#having-ec2-create-your-key-pair
@@ -54,6 +55,9 @@ Click here for instruction how to [access your cloudstack][cloudaccess]
 * [Click here for instructions of a CDeep3M demorun 2][demorun2]
   
   Running short training and segmentation using data already loaded on the cloud (Runtime ~1h)
+* [How to train your own model and segment with CDeep3M][ownmodel]
+
+  This will guide you step-by-step through training a network and the prediction on your own data. 
 
 ### Shutting AWS cloud down
 
