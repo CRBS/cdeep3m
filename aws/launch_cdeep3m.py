@@ -6,6 +6,7 @@ import argparse
 import boto3
 from ipify import get_ip
 
+
 def _parse_arguments(desc, theargs):
     """Parses command line arguments using argparse
     """
@@ -19,7 +20,7 @@ def _parse_arguments(desc, theargs):
                              "(default us-east-2)")
     parser.add_argument('--name', default='USERNAMEstack',
                         help='Stack name to use')
-    parser.add_argument('--cdeep3mversion', default='0.15.1'
+    parser.add_argument('--cdeep3mversion', default='0.15.1',
                         help='Version of CDeep3M to launch (default 0.15.1)')
     parser.add_argument('--keypairname', default='id_rsa',
                         help='AWS EC2 KeyPair Name')
