@@ -1,4 +1,8 @@
 vagrant/.vagrant
+vagrant/ubuntu*.log
 *.swp
+singularity/ubuntu-xenial64-sdsc-comet/.vagrant
+singularity/ubuntu-xenial64-sdsc-comet/ubuntu*.log
+singularity/ubuntu-xenial64-sdsc-comet/*.img
 dist/
 
