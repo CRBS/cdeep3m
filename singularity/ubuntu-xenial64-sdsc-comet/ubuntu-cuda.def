@@ -255,7 +255,7 @@ OSVersion: xenial
     cd caffe_nd_sense_segmentation
     cp Makefile.config.example Makefile.config
     sed -i 's/ \/usr\/local\/include/\/usr\/local\/include \/usr\/include\/hdf5\/serial\//g' Makefile.config
-    sed -i 's/^# OPENCV_VERSION := 3/OPENCV_VERSION := 3/g' Makefile.config
+    #sed -i 's/^# OPENCV_VERSION := 3/OPENCV_VERSION := 3/g' Makefile.config
     sed -i 's/hdf5/hdf5_serial/g' Makefile
     make -j 2 all
     cd /opt
