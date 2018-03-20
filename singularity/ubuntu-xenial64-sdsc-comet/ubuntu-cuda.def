@@ -4,8 +4,8 @@ OSVersion: xenial
 
 %labels
 
-    AUTHOR_NAME Marty Kandes
-    AUTHOR_EMAIL mkandes@sdsc.edu
+    AUTHOR_NAME Marty Kandes & Chris Churas
+    AUTHOR_EMAIL mkandes@sdsc.edu, churas.camera@gmail.com
     APPLICATION_NAME cuda
     APPLICATION_VERSION 8.0.44
     APPLICATION_URL https://developer.nvidia.com/cuda-zone
@@ -53,7 +53,7 @@ OSVersion: xenial
 
     # Install octave
     apt-get -y install octave octave-image octave-pkg-dev git python-pip unzip
-    apt-get -y protobuf-compiler libprotobuf-dev
+    apt-get -y protobuf-compiler libprotobuf-dev libboost-all-dev libgoogle-glog-dev
 
     # Install common packages from 'main'
     apt-get -y install autoconf
