@@ -70,7 +70,7 @@ filelist = read_files_in_folder(combined_folder);
 for z_plane = 1:z_found %one z-plane at a time
 fprintf('Merging image no. %s\n', num2str(z_plane));
 
-merger_image = image_patch = (NaN([imagesize(1:2),2],'single')); %Initialize empty image in x/y 2 in  z
+merger_image = (NaN([imagesize(1:2),2],'single')); %Initialize empty image in x/y 2 in  z
 for x_y_num = 1:numel(packages)
 packagedir = fullfile(fm_dir, sprintf('Pkg_%03d',x_y_num));
 filename = fullfile(packagedir, filelist(z_plane).name);
@@ -84,15 +84,17 @@ if area(1)==1;small_patch = small_patch(13:end,:); end
 if area(3)==1;small_patch = small_patch(:,13:end); end
 
 merger_image(area(1):area(2),area(3):area(4),2) = small_patch(1:insertsize(1),1:insertsize(2)); %insert image onto NaN blank image
+single_plane = nanmean(merger_image,3);
+merger_image = (NaN([imagesize(1:2),2],'single')); %Initialize empty image in x/y 2 in  z
+merger_image(:,:,2) = single_plane;
 
 else %if there is only one package
 if imagesize(1)<=1012, start(1) = 13;else, start(1) = 1;end %define where the image has been padded
 if imagesize(2)<=1012, start(2) = 13;else, start(2) = 1;end %define where the image has been padded
-image_patch = small_patch(start(1):(imagesize(1)+start(1)-1),start(2):(imagesize(2)+start(2)-1));
+clear merger_image;
+merger_image = small_patch(start(1):(imagesize(1)+start(1)-1),start(2):(imagesize(2)+start(2)-1));
 end
-single_plane = nanmean(merger_image,3);
-merger_image = image_patch = (NaN([imagesize(1:2),2],'single')); %Initialize empty image in x/y 2 in  z
-merger_image(:,:,2) = single_plane;
+
 end
 
 combined_plane = nanmean(merger_image,3);
