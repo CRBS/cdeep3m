@@ -5,16 +5,15 @@ help:
 	@echo "singularity - Creates singularity 2.3.2 image"
 
 clean:
-	rm -fr /home/ubuntu/build/
-	rm -f /tmp/*.deb
-	rm -f /tmp/Mini*
+	sudo rm -fr /vagrant/build/
+	sudo rm -f /tmp/*.deb
+	sudo rm -f /tmp/Mini*
 
 
 singularity: clean
 	@echo 'Creating Singularity v232 image'
-	mkdir -p /home/ubuntu/build
-	imgfile='/home/ubuntu/build/cdeep3m.img' ; \
-	sudo /usr/local/bin/singularity create -s 8092 $$imgfile ; \
+	mkdir -p /vagrant/build
+	imgfile='/vagrant/build/cdeep3m.img' ; \
+	sudo /usr/local/bin/singularity create -s 12096 $$imgfile ; \
 	sudo /usr/local/bin/singularity bootstrap $$imgfile ubuntu-cuda.def; \
 	echo 'Singularity image created $imgfile'
-	mv /home/ubuntu/build/cdeep3m.img /vagrant/.
