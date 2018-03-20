@@ -88,7 +88,7 @@ merger_image(area(1):area(2),area(3):area(4),2) = small_patch(1:insertsize(1),1:
 else %if there is only one package
 if imagesize(1)<=1012, start(1) = 13;else, start(1) = 1;end %define where the image has been padded
 if imagesize(2)<=1012, start(2) = 13;else, start(2) = 1;end %define where the image has been padded
-image_patch = small_patch(start(1):(imagesize(1)+start(1)-1),start(2):(imagesize(2)+start(2)-1));
+merger_image = small_patch(start(1):(imagesize(1)+start(1)-1),start(2):(imagesize(2)+start(2)-1),1);
 end
 single_plane = nanmean(merger_image,3);
 merger_image = image_patch = (NaN([imagesize(1:2),2],'single')); %Initialize empty image in x/y 2 in  z
