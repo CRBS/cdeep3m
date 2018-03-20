@@ -56,6 +56,7 @@ OSVersion: xenial
     apt-get -y install protobuf-compiler libprotobuf-dev libboost-all-dev
     apt-get -y install libopencv-dev python-opencv libleveldb-dev
     apt-get -y install  libgflags-dev libgoogle-glog-dev liblmdb-dev
+    apt-get -y install libsnappy-dev libatlas-base-dev
 
     # Install common packages from 'main'
     apt-get -y install autoconf
