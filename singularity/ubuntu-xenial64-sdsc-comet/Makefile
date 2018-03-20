@@ -6,6 +6,8 @@ help:
 
 clean:
 	rm -fr /home/ubuntu/build/
+	rm -f /tmp/*.deb
+	rm -f /tmp/Mini*
 
 
 singularity: clean
