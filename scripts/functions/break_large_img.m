@@ -22,7 +22,7 @@ else x_breaks = [1, imagesize(1)];
 end
 
 if imagesize(2) > 1024
-    y_breaks = [0:1000:(imagesize(1))];
+    y_breaks = [0:1000:(imagesize(2))];
     if y_breaks(end)<imagesize(2); y_breaks = [y_breaks,imagesize(2)]; end
 else y_breaks = [1, imagesize(2)];
 end
