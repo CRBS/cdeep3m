@@ -32,7 +32,16 @@ clean: ## remove all build, and test artifacts
 test: ## run tests
 	bats tests
 
-release: dist ## package and upload a release to s3
+checkrepo: ## checks if remote repo is CRBS
+	@therepo=`git remote get-url origin | sed "s/^.*://" | sed "s/\/.*//"` ;\
+	if [ "$$therepo" != "CRBS" ] ; then \
+	echo "ERROR can only do a release from master repo, not from $$therepo" ; \
+	exit 1 ;\
+	else \
+	echo "Repo appears to be master $$therepo" ; \
+	fi
+
+release: dist checkrepo ## package and upload a release to s3
 	@echo "Creating new release"
 	@vers=`cat VERSION` ; \
 	tarfile=cdeep3m-$${vers}.tar.gz ;\
