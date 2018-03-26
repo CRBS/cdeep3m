@@ -22,7 +22,7 @@ tic
 arg_list = argv ();
 
 if numel(arg_list) < 3
-  fprintf('Please specify more than one input directory to average: EnsemblePredictions ./inputdir1 ./inputdir2 ./inputdir3 ./outputdir\n',arg_list{i});
+  fprintf('Please specify more than one input directory to average: EnsemblePredictions ./inputdir1 ./inputdir2 ./inputdir3 ./outputdir\n');
   return
 end
 
