@@ -36,11 +36,18 @@ def _get_running_ec2_instances(theargs):
         respy = ec2.describe_instances()
         for reso in respy['Reservations']:
             for entry in reso['Instances']:
+                namey = ''
+                for keyval in entry['Tags']:
+                  if keyval['Key'] == 'Name':
+                     namey = keyval['Value']
+                     break
+
                 mapstr += ('\t\t' + entry['PublicDnsName'] + '\n' +
                            '\t\tLaunch Date: ' + str(entry['LaunchTime']) +
                            '\n' + 
                            '\t\tId: ' + entry['InstanceId'] + '\n' +
                            '\t\tType: ' + entry['InstanceType'] + '\n' +
+                           '\t\tName: ' + namey + '\n' +
                            '\t\tState: ' + entry['State']['Name'] + '\n\n')
     sys.stdout.write('\nResults:\n\n')
     return mapstr
