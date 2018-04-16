@@ -40,7 +40,7 @@ teardown() {
    run $RUNTRAINING_SH trainimages "$TEST_TMP_DIR/trainoutdir"
    [ "$status" -eq 0 ]
    echo "$output" 1>&2
-   [ "${lines[0]}" = "--numiterations 2000" ]
+   [ "${lines[0]}" = "--numiterations 30000" ]
    [ "${lines[1]}" = "Training has completed. Results are stored in $TEST_TMP_DIR/trainoutdir" ]
 
    export PATH=$A_TEMP_PATH
@@ -55,7 +55,7 @@ teardown() {
    run $RUNTRAINING_SH trainimages "$TEST_TMP_DIR/trainoutdir"
    [ "$status" -eq 4 ]
    echo "$output" 1>&2
-   [ "${lines[0]}" = "ERROR, a non-zero exit code (1) was received from: \"$TEST_TMP_DIR/trainoutdir/run_all_train.sh\" --numiterations 2000" ]
+   [ "${lines[0]}" = "ERROR, a non-zero exit code (1) was received from: \"$TEST_TMP_DIR/trainoutdir/run_all_train.sh\" --numiterations 30000" ]
 
    export PATH=$A_TEMP_PATH
 }

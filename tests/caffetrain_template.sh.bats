@@ -33,7 +33,7 @@ teardown() {
     mkdir -p $TEST_TMP_DIR/1fm
     echo "#blah" > $TEST_TMP_DIR/1fm/solver.prototxt
     echo "power: 0.8" >> $TEST_TMP_DIR/1fm/solver.prototxt
-    echo "snapshot: 2000" >> $TEST_TMP_DIR/1fm/solver.prototxt
+    echo "snapshot: 30000" >> $TEST_TMP_DIR/1fm/solver.prototxt
     echo "max_iter: 50000" >> $TEST_TMP_DIR/1fm/solver.prototxt
     echo "solver mode: GPU" >> $TEST_TMP_DIR/1fm/solver.prototxt
     touch $TEST_TMP_DIR/1fm/log
@@ -44,7 +44,7 @@ teardown() {
   
     [ "${lines[0]}" = "#blah" ]
     [ "${lines[1]}" = "power: 0.8" ]
-    [ "${lines[2]}" = "snapshot: 2000" ]
+    [ "${lines[2]}" = "snapshot: 30000" ]
     [ "${lines[3]}" = "max_iter: 24" ]
     [ "${lines[4]}" = "solver mode: GPU" ]
 

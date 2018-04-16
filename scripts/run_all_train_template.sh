@@ -8,7 +8,7 @@ if [ -f "$script_dir/VERSION" ] ; then
    version=`cat $script_dir/VERSION`
 fi
 
-numiterations="2000"
+numiterations="30000"
 gpu="all"
 one_fmonly=false
 function usage()
