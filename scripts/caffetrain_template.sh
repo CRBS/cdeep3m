@@ -10,6 +10,14 @@ fi
 
 numiterations="30000"
 gpu="all"
+base_lr="1e-02"
+power="0.8"
+momentum="0.9"
+weight_decay="0.0005"
+average_loss="16"
+lr_policy="poly"
+iter_size="8"
+snapshot_interval="2000"
 
 function usage()
 {
@@ -31,13 +39,29 @@ optional arguments:
   -h, --help           show this help message and exit
   --gpu                Which GPU to use, can be a number ie 0 or 1 or
                        all to use all GPUs (default $gpu)
+  --base_learn         Base learning rate (default $base_lr)
+  --power              Used in poly and sigmoid lr_policies. 
+                       (default $power) See
+                       https://github.com/BVLC/caffe/wiki/Solver-Prototxt
+  --momentum           Indicates how much of the previous weight will be 
+                       retained in the new calculation. (default $momentum)
+  --weight_decay       Factor of (regularization) penalization of large
+                       weights (default $weight_decay)
+  --average_loss       ??? (default $average_loss)
+  --lr_policy          Learning rate policy (default $lr_policy) See
+                       https://github.com/BVLC/caffe/wiki/Solver-Prototxt
+  --iter_size          Accumulate gradients across batches through the 
+                       iter_size solver field. (default $iter_size)
+                       See https://github.com/BVLC/caffe/wiki/Solver-Prototxt
+  --snapshot_interval  How often caffe should output a model and solverstate.
+                       (default $snapshot_interval)
   --numiterations      Number of training iterations to run (default $numiterations)
 
     " 1>&2;
    exit 1;
 }
 
-TEMP=`getopt -o h --long "gpu:,numiterations:" -n '$0' -- "$@"`
+TEMP=`getopt -o h --long "gpu:,numiterations:,base_learn:,power:,momentum:,weight_decay:,average_loss:,lr_policy:,iter_size:,snapshot_interval:" -n '$0' -- "$@"`
 eval set -- "$TEMP"
 
 while true ; do
@@ -45,6 +69,14 @@ while true ; do
         -h ) usage ;;
         --gpu ) gpu=$2 ; shift 2 ;;
         --numiterations ) numiterations=$2 ; shift 2 ;;
+        --base_learn ) base_lr=$2 ; shift 2 ;;
+        --power ) power=$2 ; shift 2 ;;
+        --momentum ) momentum=$2 ; shift 2 ;;
+        --weight_decay ) weight_decay=$2 ; shift 2 ;;
+        --average_loss ) average_loss=$2 ; shift 2 ;;
+        --lr_policy ) lr_policy=$2 ; shift 2 ;;
+        --iter_size ) iter_size=$2 ; shift 2 ;;
+        --snapshot_interval ) snapshot_interval=$2 ; shift 2 ;;
         --) shift ; break ;;
     esac
 done
@@ -68,6 +100,30 @@ if [ $? != 0 ] ; then
   echo "ERROR trying to update max_iter in $model_dir/solver.prototxt"
   exit 2
 fi
+
+# update solver.protoxt with base_lr value
+sed -i "s/^base_lr:.*/base_lr: $base_lr/g" "${model_dir}/solver.prototxt"
+
+# update solver.prototxt with power value
+sed -i "s/^power:.*/power: $power/g" "${model_dir}/solver.prototxt"
+
+# update solver.prototxt with momentum value
+sed -i "s/^momentum:.*/momentum: $momentum/g" "${model_dir}/solver.prototxt"
+
+# update solver.prototxt with weight_decay value
+sed -i "s/^weight_decay:.*/weight_decay: $weight_decay/g" "${model_dir}/solver.prototxt"
+
+# update solver.prototxt with average loss value
+sed -i "s/^average_loss:.*/average_loss: $average_loss/g" "${model_dir}/solver.prototxt"
+
+# update solver.prototxt with lr_policy value
+sed -i "s/^lr_policy:.*/lr_policy: \"$lr_policy\"/g" "${model_dir}/solver.prototxt"
+
+# update solver.prototxt with iter_size value
+sed -i "s/^iter_size:.*/iter_size: $iter_size/g" "${model_dir}/solver.prototxt"
+
+# update solver.prototxt with snapshot interval value
+sed -i "s/^snapshot:.*/snapshot: $snapshot_interval/g" "${model_dir}/solver.prototxt"
 
 if [ ! -d "$log_dir" ] ; then
   mkdir -p "$log_dir"

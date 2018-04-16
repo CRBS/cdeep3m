@@ -29,26 +29,72 @@ teardown() {
     [ "${lines[1]}" = "ERROR trying to update max_iter in $TEST_TMP_DIR/1fm/solver.prototxt" ]
 }
 
-@test "caffetrain.sh 1fm verify correctly updated solver.prototxt file" {
+@test "caffetrain.sh 1fm verify correctly updated solver.prototxt file no args set" {
     mkdir -p $TEST_TMP_DIR/1fm
     echo "#blah" > $TEST_TMP_DIR/1fm/solver.prototxt
-    echo "power: 0.8" >> $TEST_TMP_DIR/1fm/solver.prototxt
-    echo "snapshot: 30000" >> $TEST_TMP_DIR/1fm/solver.prototxt
-    echo "max_iter: 50000" >> $TEST_TMP_DIR/1fm/solver.prototxt
+    echo "base_lr: 1" >> $TEST_TMP_DIR/1fm/solver.prototxt 
+    echo "power: 2" >> $TEST_TMP_DIR/1fm/solver.prototxt
+    echo "momentum: 3.5" >> $TEST_TMP_DIR/1fm/solver.prototxt
+    echo "weight_decay: 4.4" >> $TEST_TMP_DIR/1fm/solver.prototxt
+    echo "average_loss: 1" >> $TEST_TMP_DIR/1fm/solver.prototxt
+    echo "lr_policy: \"foo\"" >> $TEST_TMP_DIR/1fm/solver.prototxt
+    echo "iter_size: 23" >> $TEST_TMP_DIR/1fm/solver.prototxt
+    echo "snapshot: 3" >> $TEST_TMP_DIR/1fm/solver.prototxt
+    echo "max_iter: 4" >> $TEST_TMP_DIR/1fm/solver.prototxt
     echo "solver mode: GPU" >> $TEST_TMP_DIR/1fm/solver.prototxt
+   
     touch $TEST_TMP_DIR/1fm/log
-    run $CAFFE_TRAIN_SH --numiterations 24 1fm
+    run $CAFFE_TRAIN_SH 1fm
     [ "$status" -eq 3 ]
     [ "${lines[1]}" = "ERROR unable to make $TEST_TMP_DIR/1fm/log directory" ]
     run cat $TEST_TMP_DIR/1fm/solver.prototxt
   
     [ "${lines[0]}" = "#blah" ]
-    [ "${lines[1]}" = "power: 0.8" ]
-    [ "${lines[2]}" = "snapshot: 30000" ]
-    [ "${lines[3]}" = "max_iter: 24" ]
-    [ "${lines[4]}" = "solver mode: GPU" ]
-
+    [ "${lines[1]}" = "base_lr: 1e-02" ]
+    [ "${lines[2]}" = "power: 0.8" ]
+    [ "${lines[3]}" = "momentum: 0.9" ]
+    [ "${lines[4]}" = "weight_decay: 0.0005" ]
+    [ "${lines[5]}" = "average_loss: 16" ]
+    [ "${lines[6]}" = "lr_policy: \"poly\"" ] 
+    [ "${lines[7]}" = "iter_size: 8" ]
+    [ "${lines[8]}" = "snapshot: 2000" ]
+    [ "${lines[9]}" = "max_iter: 30000" ]
+    [ "${lines[10]}" = "solver mode: GPU" ]
 }
+
+@test "caffetrain.sh 1fm verify correctly updated solver.prototxt file no args set" {
+    mkdir -p $TEST_TMP_DIR/1fm
+    echo "#blah" > $TEST_TMP_DIR/1fm/solver.prototxt
+    echo "base_lr: 1" >> $TEST_TMP_DIR/1fm/solver.prototxt
+    echo "power: 2" >> $TEST_TMP_DIR/1fm/solver.prototxt
+    echo "momentum: 3.5" >> $TEST_TMP_DIR/1fm/solver.prototxt
+    echo "weight_decay: 4.4" >> $TEST_TMP_DIR/1fm/solver.prototxt
+    echo "average_loss: 1" >> $TEST_TMP_DIR/1fm/solver.prototxt
+    echo "lr_policy: \"foo\"" >> $TEST_TMP_DIR/1fm/solver.prototxt
+    echo "iter_size: 23" >> $TEST_TMP_DIR/1fm/solver.prototxt
+    echo "snapshot: 3" >> $TEST_TMP_DIR/1fm/solver.prototxt
+    echo "max_iter: 4" >> $TEST_TMP_DIR/1fm/solver.prototxt
+    echo "solver mode: GPU" >> $TEST_TMP_DIR/1fm/solver.prototxt
+    
+    touch $TEST_TMP_DIR/1fm/log
+    run $CAFFE_TRAIN_SH --base_learn "1e-04" --power 0.2 --momentum 0.3 --weight_decay 0.4 --average_loss 0.5 --lr_policy yo --iter_size 7 --snapshot_interval 8 --numiterations 9 1fm
+    [ "$status" -eq 3 ]
+    [ "${lines[1]}" = "ERROR unable to make $TEST_TMP_DIR/1fm/log directory" ]
+    run cat $TEST_TMP_DIR/1fm/solver.prototxt
+    
+    [ "${lines[0]}" = "#blah" ]
+    [ "${lines[1]}" = "base_lr: 1e-04" ]
+    [ "${lines[2]}" = "power: 0.2" ]
+    [ "${lines[3]}" = "momentum: 0.3" ]
+    [ "${lines[4]}" = "weight_decay: 0.4" ]
+    [ "${lines[5]}" = "average_loss: 0.5" ]
+    [ "${lines[6]}" = "lr_policy: \"yo\"" ]
+    [ "${lines[7]}" = "iter_size: 7" ] 
+    [ "${lines[8]}" = "snapshot: 8" ]
+    [ "${lines[9]}" = "max_iter: 9" ] 
+    [ "${lines[10]}" = "solver mode: GPU" ]
+}
+
 
 @test "caffetrain.sh 1fm unable to create log directory" {
     mkdir -p $TEST_TMP_DIR/1fm
