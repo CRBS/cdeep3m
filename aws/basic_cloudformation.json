@@ -10,10 +10,12 @@
         "GPUInstanceType": {
             "Description": "GPU EC2 instance type",
             "Type": "String",
-            "Default": "p2.xlarge",
+            "Default": "p3.2xlarge",
             "AllowedValues": [
                 "p2.xlarge",
-                "p3.2xlarge"
+                "p3.2xlarge",
+                "p3.8xlarge",
+                "p3.16xlarge"
             ],
             "ConstraintDescription": "must be a valid EC2 GPU instance type."
         },

@@ -20,12 +20,12 @@ def _parse_arguments(desc, theargs):
                              "(default us-east-2)")
     parser.add_argument('--name', default='USERNAMEstack',
                         help='Stack name to use')
-    parser.add_argument('--cdeep3mversion', default='0.15.1',
-                        help='Version of CDeep3M to launch (default 0.15.1)')
+    parser.add_argument('--cdeep3mversion', default='0.15.2',
+                        help='Version of CDeep3M to launch (default 0.15.2)')
     parser.add_argument('--keypairname', default='id_rsa',
                         help='AWS EC2 KeyPair Name')
     parser.add_argument('--instancetype', default='p3.2xlarge',
-                        choices=['p2.xlarge', 'p3.2xlarge'],
+                        choices=['p2.xlarge', 'p3.2xlarge','p3.8xlarge','p3.16xlarge'],
                         help='GPU Instance type to launch (default p3.2xlarge')
     parser.add_argument('--disksize', default='100',
                         help='GPU Disk Size in gigabytes (default 100)')
