@@ -36,6 +36,10 @@ function usage()
 
               Trains Deep3M model using caffe with training data
               passed into script. 
+
+              For further information about parameters below please see: 
+              https://github.com/BVLC/caffe/wiki/Solver-Prototxt
+
     
 positional arguments:
   augtrainimages       Augmented training data from PreprocessTrainingData.m
@@ -45,19 +49,16 @@ optional arguments:
   -h, --help           show this help message and exit
   --1fmonly            Only train 1fm model
   --base_learn         Base learning rate (default $base_lr)
-  --power              Used in poly and sigmoid lr_policies. 
-                       (default $power) See
-                       https://github.com/BVLC/caffe/wiki/Solver-Prototxt
+  --power              Used in poly and sigmoid lr_policies. (default $power)
   --momentum           Indicates how much of the previous weight will be 
                        retained in the new calculation. (default $momentum)
   --weight_decay       Factor of (regularization) penalization of large
                        weights (default $weight_decay)
-  --average_loss       ??? (default $average_loss)
-  --lr_policy          Learning rate policy (default $lr_policy) See
-                       https://github.com/BVLC/caffe/wiki/Solver-Prototxt
+  --average_loss       Number of iterations to use to average loss
+                       (default $average_loss)
+  --lr_policy          Learning rate policy (default $lr_policy)
   --iter_size          Accumulate gradients across batches through the 
                        iter_size solver field. (default $iter_size)
-                       See https://github.com/BVLC/caffe/wiki/Solver-Prototxt
   --snapshot_interval  How often caffe should output a model and solverstate.
                        (default $snapshot_interval)
   --numiterations      Number of training iterations to run (default $numiterations)
