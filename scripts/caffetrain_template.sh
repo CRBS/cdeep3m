@@ -22,7 +22,13 @@ snapshot_interval="2000"
 function usage()
 {
     echo "usage: $script_name [-h] [--numiterations NUMITERATIONS] [--gpu GPU]
-                      model
+                              [--base_lr BASE_LR] [--power POWER] 
+                              [--momentum MOMENTUM] 
+                              [--weight_decay WEIGHT_DECAY] 
+                              [--average_loss AVERAGE_LOSS] 
+                              [--lr_policy POLICY] [--iter_size ITER_SIZE] 
+                              [--snapshot_interval SNAPSHOT_INTERVAL]
+                              model
 
               Version: $version
 

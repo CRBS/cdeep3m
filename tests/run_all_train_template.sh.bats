@@ -29,11 +29,11 @@ teardown() {
     echo "$status $output" 1>&2
     [ "$status" -eq 0 ]
     [ "${lines[0]}" = "Running 1fm train, this could take a while" ]    
-    [ "${lines[1]}" = "--numiterations 30000 --gpu all 1fm" ]
+    [ "${lines[1]}" = "--numiterations 30000 --gpu all --base_learn 1e-02 --power 0.8 --momentum 0.9 --weight_decay 0.0005 --average_loss 16 --lr_policy poly --iter_size 8 --snapshot_interval 2000 1fm" ]
     [ "${lines[5]}" = "Running 3fm train, this could take a while" ]
-    [ "${lines[6]}" = "--numiterations 30000 --gpu all 3fm" ]
+    [ "${lines[6]}" = "--numiterations 30000 --gpu all --base_learn 1e-02 --power 0.8 --momentum 0.9 --weight_decay 0.0005 --average_loss 16 --lr_policy poly --iter_size 8 --snapshot_interval 2000 3fm" ]
     [ "${lines[10]}" = "Running 5fm train, this could take a while" ]
-    [ "${lines[11]}" = "--numiterations 30000 --gpu all 5fm" ]
+    [ "${lines[11]}" = "--numiterations 30000 --gpu all --base_learn 1e-02 --power 0.8 --momentum 0.9 --weight_decay 0.0005 --average_loss 16 --lr_policy poly --iter_size 8 --snapshot_interval 2000 5fm" ]
     [ "${lines[15]}" = "Training has completed. Have a nice day!" ]
 }
 
@@ -55,11 +55,11 @@ teardown() {
     echo "$status $output" 1>&2
     [ "$status" -eq 0 ]
     [ "${lines[0]}" = "Running 1fm train, this could take a while" ]        
-    [ "${lines[1]}" = "--numiterations 2500 --gpu yo 1fm" ]
+    [ "${lines[1]}" = "--numiterations 2500 --gpu yo --base_learn 1e-02 --power 0.8 --momentum 0.9 --weight_decay 0.0005 --average_loss 16 --lr_policy poly --iter_size 8 --snapshot_interval 2000 1fm" ]
     [ "${lines[5]}" = "Running 3fm train, this could take a while" ]
-    [ "${lines[6]}" = "--numiterations 2500 --gpu yo 3fm" ]
+    [ "${lines[6]}" = "--numiterations 2500 --gpu yo --base_learn 1e-02 --power 0.8 --momentum 0.9 --weight_decay 0.0005 --average_loss 16 --lr_policy poly --iter_size 8 --snapshot_interval 2000 3fm" ]
     [ "${lines[10]}" = "Running 5fm train, this could take a while" ]
-    [ "${lines[11]}" = "--numiterations 2500 --gpu yo 5fm" ]
+    [ "${lines[11]}" = "--numiterations 2500 --gpu yo --base_learn 1e-02 --power 0.8 --momentum 0.9 --weight_decay 0.0005 --average_loss 16 --lr_policy poly --iter_size 8 --snapshot_interval 2000 5fm" ]
     [ "${lines[15]}" = "Training has completed. Have a nice day!" ]
 }
 
@@ -70,7 +70,7 @@ teardown() {
     echo "$status $output" 1>&2
     [ "$status" -eq 0 ]
     [ "${lines[0]}" = "Running 1fm train, this could take a while" ]        
-    [ "${lines[1]}" = "--numiterations 30000 --gpu all 1fm" ]
+    [ "${lines[1]}" = "--numiterations 30000 --gpu all --base_learn 1e-02 --power 0.8 --momentum 0.9 --weight_decay 0.0005 --average_loss 16 --lr_policy poly --iter_size 8 --snapshot_interval 2000 1fm" ]
     [ "${lines[5]}" = "--1fmonly flag set, skipping 3fm and 5fm models." ]
     [ "${lines[6]}" = "Training has completed. Have a nice day!" ]
 }
