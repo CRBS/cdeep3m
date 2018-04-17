@@ -35,7 +35,7 @@ def _get_running_cloudformations(theargs):
 
         for stack in respy['Stacks']:
             pp.pprint(stack)
-            mapstr += ('\t\tName: ' + stack['StackName'] + '\n' +
+            mapstr += ('\n\t\tName: ' + stack['StackName'] + '\n' +
                        '\t\tStackId: ' + stack['StackId'] + '\n' +
                        '\t\tStackStatus: ' + stack['StackStatus'] + '\n' +
                        '\t\tLaunch Date: ' + str(stack['CreationTime']) + '\n')
