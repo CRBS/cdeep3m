@@ -41,19 +41,13 @@ teardown() {
 
 @test "caffepredict.sh unable to create a v# directory" {
     touch "$TEST_TMP_DIR/foo.caffemodel"
+    touch "$TEST_TMP_DIR/test_data_full_stacks_v1.h5"
     touch "$TEST_TMP_DIR/v1"
-    run $CAFFE_PREDICT_SH "$TEST_TMP_DIR/foo.caffemodel" blah "$TEST_TMP_DIR"
+    run $CAFFE_PREDICT_SH "$TEST_TMP_DIR/foo.caffemodel" "$TEST_TMP_DIR" "$TEST_TMP_DIR"
 
     [ "$status" -eq 4 ]
     [ "${lines[1]}" = "ERROR unable to create $TEST_TMP_DIR/v1" ]
 
-}
-
-@test "caffepredict.sh unable to find a .h5 file in input" {
-   touch "$TEST_TMP_DIR/foo.caffemodel"
-   run $CAFFE_PREDICT_SH "$TEST_TMP_DIR/foo.caffemodel" "$TEST_TMP_DIR" "$TEST_TMP_DIR"
-   echo "$status $output" 1>&2
-   [ "$status" -eq 5 ]
 }
 
 @test "caffepredict.sh run success on 16 .h5 files" {

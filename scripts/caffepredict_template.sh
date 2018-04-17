@@ -88,8 +88,9 @@ if [ $? != 0 ] ; then
 fi
 
 
-for idx in {1..16..1}
+for input_file in `find "${in_dir}" -name "*.h5" -type f | sort -V` ;
   do
+  idx=`echo $input_file | sed "s/^.*_v//" | sed "s/\.h5$//"`
   predict_dir=$out_dir/v$idx;
 
   if [ ! -d "$predict_dir" ]; then
@@ -102,11 +103,6 @@ for idx in {1..16..1}
     fi
   fi
 
-  input_file=`find "${in_dir}" -name "*_v${idx}.h5" -type f`
-  if [ ! -f "$input_file" ] ; then
-    echo "ERROR file not found: $input_file" >> "$out_log"
-    exit 5
-  fi 
   echo -n "."
   echo "Input: $input_file" >> "$out_log"
   echo "Output: $predict_dir" >> "$out_log"
