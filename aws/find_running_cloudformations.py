@@ -39,6 +39,11 @@ def _get_running_cloudformations(theargs):
                        '\t\tStackId: ' + stack['StackId'] + '\n' +
                        '\t\tStackStatus: ' + stack['StackStatus'] + '\n' +
                        '\t\tLaunch Date: ' + str(stack['CreationTime']) + '\n')
+            if 'CREATE_COMPLETE' in stack['StackStatus']:
+              for output in stack['Outputs']:
+                if output['OutputKey'] == 'PublicDNS':
+                  mapstr += '\t\tPublicDNS: ' + output['OutputValue'] + '\n'
+
         """
             for entry in reso['Instances']:
                 mapstr += ('\t\t' + entry['PublicDnsName'] + '\n' +

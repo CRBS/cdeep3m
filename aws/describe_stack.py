@@ -71,10 +71,19 @@ def _describe_stack(theargs):
               u'Tags': []}]}
 
     """
-    import pprint
-    pp = pprint.PrettyPrinter()
-    pp.pprint(resp)
-    return str(resp)
+    # import pprint
+    # pp = pprint.PrettyPrinter()
+    # pp.pprint(resp)
+    str_res = ''
+
+    for stack in resp['Stacks']:
+      str_res = 'Name: ' + stack['StackName'] + '\n' 
+      str_res += 'Status: ' + stack['StackStatus'] + '\n'
+      if 'CREATE_COMPLETE' in stack['StackStatus']:
+        for output in stack['Outputs']:
+          if output['OutputKey'] == 'PublicDNS':
+            str_res += 'PublicDNS: ' + output['OutputValue'] + '\n'
+    return '\n' + str_res + '\n'
 
 
 def main(arglist):
