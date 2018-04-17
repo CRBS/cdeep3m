@@ -76,6 +76,8 @@ function run_predict(arg_list)
                'de_augmentation_info.mat'));
   endif
 
+  copy_version(base_dir, outdir);
+
   caffe_predict = strcat(outdir,filesep(),'caffe_predict.sh');
   copyfile(caffe_predict_template,caffe_predict);
 

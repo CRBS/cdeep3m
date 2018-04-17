@@ -83,7 +83,8 @@ function run_train(arg_list)
   update_train_val_prototxt(outdir,'5fm',train_file);
   caffe_train = strcat(outdir,filesep(),'caffe_train.sh');
   copyfile(caffe_train_template,caffe_train);
-  
+ 
+  copy_version(base_dir, outdir);
   copyfile(run_all_train_template,all_train_file);
   system(sprintf('chmod a+x %s',all_train_file));
   write_train_readme(outdir); 
