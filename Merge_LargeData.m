@@ -101,7 +101,7 @@ merger_image = small_patch(start(1):(imagesize(1)+start(1)-1),start(2):(imagesiz
 end
 
 end
-combined_plane = merger_image;
+%combined_plane = merger_image;
 %combined_plane = nanmean(merger_image,3);
 %bitdepth = [1 255 65535];
 [~,idx] = min(abs(bitdepth - single(max(merger_image(:)))));
