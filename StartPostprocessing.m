@@ -36,7 +36,7 @@ if ~isdir(inputdir)
 end
 
 fprintf('Generating Average Prediction of %s\n',inputdir)
-average_prob_folder = merge_16_probs_v2(inputdir);
+average_prob_folder = merge_16_probs_v3(inputdir);
 
 end
 fprintf('Elapsed runtime for data-deaugmentation: %04d seconds.\n', round(toc));
