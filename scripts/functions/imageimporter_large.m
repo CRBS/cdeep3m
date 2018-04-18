@@ -49,8 +49,9 @@ elseif isdir(img_path)
             %if type==1
             %imgstack(:,:,iii) = imread(filename,'PixelRegion', {rows, cols}); %tif allows to read subarea
             %else
-            temp_im = imread(filename);
-            imgstack(:,:,iii) = temp_im(area(1):area(2),area(3):area(4));    %otherwise need to crop the area here
+            imgstack(:,:,iii) = imread (filename, "PixelRegion", {[area(1) area(2)], [area(3) area(4)]});
+            %temp_im = imread(filename);
+            %imgstack(:,:,iii) = temp_im(area(1):area(2),area(3):area(4));    %otherwise need to crop the area here
             %end
         end
     end
