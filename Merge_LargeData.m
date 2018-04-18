@@ -74,9 +74,11 @@ merger_image = (NaN([imagesize(1:2),2],'single')); %Initialize empty image in x/
 for x_y_num = 1:numel(packages)
 packagedir = fullfile(fm_dir, sprintf('Pkg_%03d',x_y_num));
 filename = fullfile(packagedir, filelist(z_plane).name);
-
 small_patch = single(imread(filename));
-small_patch = single((255 /max(small_patch(:)))*small_patch);
+bitdepth = [1 255 65535];
+[~,idx] = min(abs(bitdepth - max(small_patch(:))));
+%save_plane = uint8((255 /bitdepth(idx))*combined_plane);
+small_patch = single((255 /bitdepth(idx))*small_patch);
 area = packages{x_y_num};
 if numel(packages)>1
 insertsize = [(area(2)+1)-area(1),(area(4)+1)-area(3)];
@@ -98,10 +100,13 @@ end
 end
 
 combined_plane = nanmean(merger_image,3);
-save_plane = uint8((255 /max(combined_plane(:)))*combined_plane);
+
+%bitdepth = [1 255 65535];
+%[~,idx] = min(abs(bitdepth - max(combined_plane(:))));
+%save_plane = uint8((255 /bitdepth(idx))*combined_plane);
 outfile = fullfile(fm_dir, sprintf('Segmented_%04d.png',z_plane));
 %fprintf('Saving image %s\n', outfile);
-imwrite(save_plane,outfile);
+imwrite(combined_plane,outfile);
 
 end
 disp('Merging large image dataset completed');
