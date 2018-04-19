@@ -9,7 +9,7 @@
 %
 %
 %----------------------------------------------------------------------------------------
-%% PreProcessImageData for CDeep3M -- NCMIR/NBCR, UCSD -- Author: M Haberl -- Date: 11/2017
+%% PreProcessImageData for CDeep3M -- NCMIR/NBCR, UCSD -- Author: M Haberl
 %----------------------------------------------------------------------------------------
 %
 % ----------------------------------------------------------------------------------------
@@ -41,3 +41,8 @@ imagesize = check_image_size(in_img_path);
 [packages,z_blocks] = break_large_img(imagesize);
 num_of_pkg = numel(packages);
 save(fullfile(outdir,'de_augmentation_info.mat'),'packages','num_of_pkg','imagesize','z_blocks');
+
+document = fullfile(outdir,'package_processing_info.txt');
+opendoc = fopen(document, "w");
+fprintf(opendoc, '\nNumber of XY Packages\n%s\nNumber of z-blocks\n%s'  num2str(num_of_pkg),num2str(numel(z_blocks)-1));
+fclose(opendoc);
