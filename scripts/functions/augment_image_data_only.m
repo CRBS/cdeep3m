@@ -46,7 +46,7 @@ for j = 1:8
         stack=permute(stack,[3 1 2]); %from tiff to h5 /xyz to z*x*y
         d_details = '/data';
         filename = fullfile(outsubdir, sprintf('test_data_full_stacks_v%s.h5', num2str(variation)));
-        fprintf('Saving: %s\n',filename)
+        %fprintf('Saving: %s\n',filename)
         %h5create(filename,d_details,size(i_stack)); %nescessary for Matlab not for Octave
         h5write(filename,d_details,stack);
         clear -v stack
