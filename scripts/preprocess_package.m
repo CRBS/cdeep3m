@@ -66,6 +66,6 @@ disp('Padding images');
 %% augment_and_saveSave image data
 outsubdir = fullfile(outdir, sprintf('Pkg%03d_Z%02d',ii, zz));
 if ~exist(outsubdir,'dir'), mkdir(outsubdir); end            
-augment_image_data_only_v2(stack, outsubdir,fmnumber,speed);
+augment_package(stack, outsubdir,fmnumber,speed);
 clear -v stack
 clear -v data
