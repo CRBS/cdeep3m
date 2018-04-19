@@ -1,5 +1,4 @@
-function augment_package(raw_images, outsubdir,fmnumber,speed)
-%
+function augment_package(original, outsubdir,fmnumber,speed);
 % Updates: 
 % removed memory limiting steps
 % All vectorized
@@ -10,7 +9,6 @@ function augment_package(raw_images, outsubdir,fmnumber,speed)
 %% augment_package for CDeep3M -- NCMIR/NBCR, UCSD
 %------------------------------------------------
 
-%% Define augmentation variations here
 allowed_speed = [1,2,4,10];
 if ~ismember(speed,allowed_speed)
 [~,I] = min(abs(allowed_speed-speed));
@@ -27,16 +25,6 @@ if speed == 10
             do_var = [4];
          endswitch
          
-elseif speed == 2 
-        switch(fmnumber)
-            case 1
-            do_var = [1, 6, 11, 15];
-            case 3
-            do_var = [1:4, 13:16];
-            case 5
-            do_var = [5:12];
-         endswitch
-         
 elseif speed == 1 
         switch(fmnumber)
             case 1
@@ -47,37 +35,32 @@ elseif speed == 1
             do_var = [1:16];
          endswitch
          
+elseif speed == 2 
+        switch(fmnumber)
+            case 1
+            do_var = [1, 6, 11, 15];
+            case 3
+            do_var = [1:4, 13:16];
+            case 5
+            do_var = [5:12];
+         endswitch        
+         
 elseif speed == 4 
         switch(fmnumber)
             case 1
-            do_var = [1:8];
+            do_var = [2, 3, 6, 7 ];
             case 3
-            do_var = [];
+            do_var = [7, 8, 10, 12];
             case 5
             do_var = [1, 6, 11, 15];
          endswitch
 end
-    
+         
 
+for i = do_var(do_var<9)
 
-
-idx=0;
-%% V1-8:
-create8Variation(raw_images,idx,outsubdir);
-
-%% V9-16: sweep Z dimension
-disp('Sweep Z dimension')
-raw_images = flip(raw_images,3);
-
-idx=8;
-create8Variation(raw_images,idx,outsubdir);
-end
-
-function [D]=create8Variation(original,idx,outsubdir)  % without any label, just data
-for j = 1:8
-    variation=j+idx;
-    fprintf('Create Hd5 file Variation %s\n',num2str(variation));     
-        switch(j)
+    fprintf('Create Hd5 file Variation %s\n',num2str(i));     
+        switch(i)
             case 1
                 stack = original;
             case 2
@@ -102,13 +85,56 @@ for j = 1:8
                 stack = rot90(original, 2);                
         end 
         
-        stack=permute(stack,[3 1 2]); %from tiff to h5 /xyz to z*x*y
+        stack_out=permute(stack,[3 1 2]); %from tiff to h5 /xyz to z*x*y
         d_details = '/data';
-        filename = fullfile(outsubdir, sprintf('test_data_full_stacks_v%s.h5', num2str(variation)));
-        %fprintf('Saving: %s\n',filename)
+        filename = fullfile(outsubdir, sprintf('image_stacks_v%s.h5', num2str(i)));
+        fprintf('Saving: %s\n',filename)
         %h5create(filename,d_details,size(i_stack)); %nescessary for Matlab not for Octave
-        h5write(filename,d_details,stack);
-        clear -v stack
+        h5write(filename,d_details,stack_out);
+        %clear -v stack   
+end
+
+if max(do_var)>8
+%% V9-16: sweep Z dimension
+disp('Sweep Z dimension')
+original = flip(original,3);
+
+
+for i = do_var(do_var>8)
+    fprintf('Create Hd5 file Variation %s\n',num2str(i));     
+        switch(i)
+            case 9
+                stack = original;
+            case 10
+                stack = flipdim(original,1);
+                
+            case 11
+                stack = flipdim(original,2);
+                
+            case 12
+                stack = rot90(original);
+                
+            case 13
+                stack = rot90(original, -1);
+                
+            case 14
+                stack = rot90(flipdim(original, 1));
+                
+            case 15
+                stack = rot90(flipdim(original,2));
+                
+            case 16
+                stack = rot90(original, 2);                
+        end 
+        
+        stack_out=permute(stack,[3 1 2]); %from tiff to h5 /xyz to z*x*y
+        d_details = '/data';
+        filename = fullfile(outsubdir, sprintf('image_stacks_v%s.h5', num2str(i)));
+        fprintf('Saving: %s\n',filename)
+        %h5create(filename,d_details,size(i_stack)); %nescessary for Matlab not for Octave
+        h5write(filename,d_details,stack_out);
+        %clear -v stack
     
 end
+endif
 end
