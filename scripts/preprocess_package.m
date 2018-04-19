@@ -5,7 +5,7 @@
 % -> Makes augmented hdf5 datafiles from raw images based on defining parameters
 %
 % Syntax : preprocess_package indir outdir xy_package z_stack augmentation speed 
-% Example: preprocess_package 15 2 1fm 10
+% Example: preprocess_package ~/EMdata1/ ~/AugmentedEMData/ 15 2 1fm 10
 %
 % Speed: supported values 1,2,4 or 10 
 % speeds up processing potentially with a negative effect on accuracy (speed of 1 equals highest accuracy)
