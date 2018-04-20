@@ -36,8 +36,10 @@ zz = str2num(arg_list{4});
 fmtype = arg_list{5};
 fmnumber = str2num(fmtype(1));
 speed = str2num(arg_list{6});
-if ~exist(outdir,'dir'), mkdir(outdir); end
 
+fmdir = fullfile(outdir,[num2str(fmnumber),'fm']);
+if ~exist(fmdir,'dir'), mkdir(fmdir); end
+load(fullfile(outdir,'de_augmentation_info.mat'),'packages','num_of_pkg','imagesize','z_blocks');
 % ----------------------------------------------------------------------------------------
 %% 
 % ----------------------------------------------------------------------------------------
@@ -56,7 +58,6 @@ end
 %end
 %define label name
 
-save(fullfile(outdir,'de_augmentation_info.mat'),'packages','num_of_pkg','imagesize','z_blocks');
 area = packages{ii};
 [stack] = imageimporter_large(in_img_path,area,z_stack); %load only subarea here
 checkpoint_nobinary(stack);
@@ -64,8 +65,8 @@ disp('Padding images');
 [stack] = add_z_padding(stack); %adds 2 planes i beginning and end
             
 %% augment_and_saveSave image data
-outsubdir = fullfile(outdir, sprintf('Pkg%03d_Z%02d',ii, zz));
+outsubdir = fullfile(fmdir, sprintf('Pkg%03d_Z%02d',ii, zz));
 if ~exist(outsubdir,'dir'), mkdir(outsubdir); end            
-augment_image_data_only_v2(stack, outsubdir,fmnumber,speed);
+augment_package(stack, outsubdir,fmnumber,speed);
 clear -v stack
 clear -v data

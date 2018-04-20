@@ -44,5 +44,5 @@ save(fullfile(outdir,'de_augmentation_info.mat'),'packages','num_of_pkg','images
 
 document = fullfile(outdir,'package_processing_info.txt');
 opendoc = fopen(document, "w");
-fprintf(opendoc, '\nNumber of XY Packages\n%s\nNumber of z-blocks\n%s'  num2str(num_of_pkg),num2str(numel(z_blocks)-1));
+fprintf(opendoc, '\nNumber of XY Packages\n%s\nNumber of z-blocks\n%s',  num2str(num_of_pkg),num2str(numel(z_blocks)-1));
 fclose(opendoc);
