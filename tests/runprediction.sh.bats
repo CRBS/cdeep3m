@@ -23,40 +23,40 @@ teardown() {
 @test "runprediction.sh invalid --augspeed value" {
   run $RUNPREDICTION_SH --augspeed 0 trainoutdir augimages predictdir
   echo "$status output" 1>&2
-  [ "$status" -eq 7 ]
+  [ "$status" -eq 2 ]
   [ "${lines[0]}" = "ERROR, --augspeed must be one of the following values 1, 2, 4, 10" ]
   run $RUNPREDICTION_SH --augspeed 3 trainoutdir augimages predictdir
   echo "$status output" 1>&2
-  [ "$status" -eq 7 ]
+  [ "$status" -eq 2 ]
   run $RUNPREDICTION_SH --augspeed haha trainoutdir augimages predictdir
   echo "$status output" 1>&2
-  [ "$status" -eq 7 ]
+  [ "$status" -eq 2 ]
 }
 
 @test "runprediction.sh valid --augspeed values" {
   #
   # in this test we are assuming the next command after checking
-  # --augspeed is valis is the directory check which fails with
-  # exit code 6. So we just check we get that exit code and not 7
-  # which is the value if the --augspeed value is not valid
+  # --augspeed is valid is the directory check which fails with
+  # exit code 3. We expect the mkdir to fail cause there is a file
+  # in the way and if we get there then --augspeed value is valid.
   #
   aug_images="$TEST_TMP_DIR/augimages"
   touch "$aug_images"
   run $RUNPREDICTION_SH --augspeed 1 trainoutdir augimages "$TEST_TMP_DIR"
   echo "$status $output" 1>&2
-  [ "$status" -eq 6 ]
+  [ "$status" -eq 3 ]
 
   run $RUNPREDICTION_SH --augspeed 2 trainoutdir augimages "$TEST_TMP_DIR"
   echo "$status $output" 1>&2
-  [ "$status" -eq 6 ]
+  [ "$status" -eq 3 ]
 
   run $RUNPREDICTION_SH --augspeed 4 trainoutdir augimages "$TEST_TMP_DIR"
   echo "$status $output" 1>&2
-  [ "$status" -eq 6 ]
+  [ "$status" -eq 3 ]
 
   run $RUNPREDICTION_SH --augspeed 10 trainoutdir augimages "$TEST_TMP_DIR"
   echo "$status $output" 1>&2
-  [ "$status" -eq 6 ]
+  [ "$status" -eq 3 ]
 
 
 
@@ -66,7 +66,7 @@ teardown() {
   touch "$aug_images"
   run $RUNPREDICTION_SH trainoutdir augimages "$TEST_TMP_DIR"
   echo "$status $output" 1>&2
-  [ "$status" -eq 6 ]
+  [ "$status" -eq 3 ]
   [ "${lines[1]}" = "ERROR, a non-zero exit code (1) was received from: mkdir -p \"$aug_images\"" ]
 }
 
@@ -76,83 +76,81 @@ teardown() {
   export PATH=$TEST_TMP_DIR:$PATH
   run $RUNPREDICTION_SH trainoutdir augimages $TEST_TMP_DIR/predictout
   echo "$status $output" 1>&2
-  [ "$status" -eq 5 ]
+  [ "$status" -eq 4 ]
   [ "${lines[0]}" = "ERROR, a non-zero exit code (1) was received from: DefDataPackages.m \"augimages\" \"$TEST_TMP_DIR/predictout/augimages\"" ]
 }
 
-@test "runprediction.sh verify correct input to CreatePredictJob.m and DefDataPakcages.m" {
-   ln -s /bin/echo "$TEST_TMP_DIR/CreatePredictJob.m"
+@test "runprediction.sh verify correct input to DefDataPakcages.m" {
    ln -s /bin/echo "$TEST_TMP_DIR/DefDataPackages.m"
    export A_TEMP_PATH=$PATH
    export PATH=$TEST_TMP_DIR:$PATH
    run $RUNPREDICTION_SH trainoutdir augimages $TEST_TMP_DIR/predictout
    echo "$status $output" 1>&2
-   [ "$status" -eq 3 ]
+   [ "$status" -eq 5 ]
    [ "${lines[0]}" = "augimages $TEST_TMP_DIR/predictout/augimages" ]
-   [ "${lines[1]}" = "trainoutdir $TEST_TMP_DIR/predictout/augimages $TEST_TMP_DIR/predictout" ]
-   [ "${lines[2]}" = "ERROR, either $TEST_TMP_DIR/predictout/run_all_predict.sh is missing or non-executable" ] 
+   export PATH=$A_TEMP_PATH
+}
+
+@test "runprediction.sh fails" {
+   ln -s /bin/true "$TEST_TMP_DIR/DefDataPackages.m"
+   mkdir -p "$TEST_TMP_DIR/predictoutdir"
+   export A_TEMP_PATH=$PATH
+   export PATH=$TEST_TMP_DIR:$PATH
+   run $RUNPREDICTION_SH trainoutdir augimages "$TEST_TMP_DIR/predictoutdir"
+   echo "$output" 1>&2
+   [ "$status" -eq 5 ]
+
    export PATH=$A_TEMP_PATH
 }
 
 @test "runprediction.sh success" {
-   ln -s /bin/true "$TEST_TMP_DIR/CreatePredictJob.m"
    ln -s /bin/true "$TEST_TMP_DIR/DefDataPackages.m"
+   ln -s /bin/echo "$TEST_TMP_DIR/run_all_predict.sh"
    mkdir -p "$TEST_TMP_DIR/predictoutdir"
-   ln -s /bin/echo "$TEST_TMP_DIR/predictoutdir/run_all_predict.sh"
    export A_TEMP_PATH=$PATH
    export PATH=$TEST_TMP_DIR:$PATH
    run $RUNPREDICTION_SH trainoutdir augimages "$TEST_TMP_DIR/predictoutdir"
-   [ "$status" -eq 0 ]
    echo "$output" 1>&2
+   [ "$status" -eq 0 ]
+   [ "${lines[0]}" = "$TEST_TMP_DIR/predictoutdir" ]
    [ "${lines[1]}" = "Prediction has completed. Results are stored in $TEST_TMP_DIR/predictoutdir" ]
+   [ "${lines[2]}" = "Have a nice day!" ]
+
+   run cat "$TEST_TMP_DIR/predictoutdir/predict.config"
+   echo "$output" 1>&2
+   [ "$status" -eq 0 ]
+   [ "${lines[0]}" = "[default]" ]
+   [ "${lines[1]}" = "trainedmodeldir=trainoutdir" ] 
+   [ "${lines[2]}" = "imagedir=augimages" ]
+   [ "${lines[3]}" = "models=1fm,3fm,5fm" ]
+   [ "${lines[4]}" = "augspeed=1" ]
 
    export PATH=$A_TEMP_PATH
 }
 
-@test "runprediction.sh success --1fmonly set" {
-   ln -s /bin/true "$TEST_TMP_DIR/CreatePredictJob.m"
+@test "runprediction.sh success --1fmonly and --augspeed set" {
    ln -s /bin/true "$TEST_TMP_DIR/DefDataPackages.m"
+   ln -s /bin/echo "$TEST_TMP_DIR/run_all_predict.sh"
    mkdir -p "$TEST_TMP_DIR/predictoutdir"
-   ln -s /bin/echo "$TEST_TMP_DIR/predictoutdir/run_all_predict.sh"
    export A_TEMP_PATH=$PATH
    export PATH=$TEST_TMP_DIR:$PATH
-   run $RUNPREDICTION_SH --1fmonly trainoutdir augimages "$TEST_TMP_DIR/predictoutdir"
-   [ "$status" -eq 0 ]
+   run $RUNPREDICTION_SH --1fmonly --augspeed 4 trainoutdir augimages "$TEST_TMP_DIR/predictoutdir"
    echo "$output" 1>&2
-   [ "${lines[0]}" = "--1fmonly --augspeed 1" ]
-   [ "${lines[1]}" = "Prediction has completed. Results are stored in $TEST_TMP_DIR/predictoutdir" ]
-
-   export PATH=$A_TEMP_PATH
-}
-
-@test "runprediction.sh success --augspeed set" {
-   ln -s /bin/true "$TEST_TMP_DIR/CreatePredictJob.m"
-   ln -s /bin/true "$TEST_TMP_DIR/DefDataPackages.m"
-   mkdir -p "$TEST_TMP_DIR/predictoutdir"
-   ln -s /bin/echo "$TEST_TMP_DIR/predictoutdir/run_all_predict.sh"
-   export A_TEMP_PATH=$PATH
-   export PATH=$TEST_TMP_DIR:$PATH
-   run $RUNPREDICTION_SH --augspeed 4 trainoutdir augimages "$TEST_TMP_DIR/predictoutdir"
    [ "$status" -eq 0 ]
-   echo "$output" 1>&2
-   [ "${lines[0]}" = "--augspeed 4" ]
+   [ "${lines[0]}" = "$TEST_TMP_DIR/predictoutdir" ]
    [ "${lines[1]}" = "Prediction has completed. Results are stored in $TEST_TMP_DIR/predictoutdir" ]
+   [ "${lines[2]}" = "Have a nice day!" ]
+
+   run cat "$TEST_TMP_DIR/predictoutdir/predict.config"
+   echo "$output" 1>&2
+   [ "$status" -eq 0 ]
+   [ "${lines[0]}" = "[default]" ]
+   [ "${lines[1]}" = "trainedmodeldir=trainoutdir" ]
+   [ "${lines[2]}" = "imagedir=augimages" ]
+   [ "${lines[3]}" = "models=1fm" ]
+   [ "${lines[4]}" = "augspeed=4" ]
 
    export PATH=$A_TEMP_PATH
 }
 
-@test "runprediction.sh run_all_predict.sh fails" {
-   ln -s /bin/true "$TEST_TMP_DIR/CreatePredictJob.m"
-   ln -s /bin/true "$TEST_TMP_DIR/DefDataPackages.m"
-   mkdir -p "$TEST_TMP_DIR/predictoutdir"
-   ln -s /bin/false "$TEST_TMP_DIR/predictoutdir/run_all_predict.sh"
-   export A_TEMP_PATH=$PATH
-   export PATH=$TEST_TMP_DIR:$PATH
-   run $RUNPREDICTION_SH trainoutdir augimages "$TEST_TMP_DIR/predictoutdir"
-   echo "$status $output" 1>&2
-   [ "$status" -eq 4 ]
-   [ "${lines[0]}" = "ERROR, a non-zero exit code (1) was received from: \"$TEST_TMP_DIR/predictoutdir/run_all_predict.sh\"  --augspeed 1" ]
-
-   export PATH=$A_TEMP_PATH
-}
 

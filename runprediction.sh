@@ -1,7 +1,6 @@
 #!/bin/bash
 
 
-
 script_name=`basename $0`
 script_dir=`dirname $0`
 version="???"
@@ -10,8 +9,7 @@ if [ -f "$script_dir/VERSION" ] ; then
    version=`cat $script_dir/VERSION`
 fi
 
-one_fmonly=""
-gpu="0"
+model_list="1fm,3fm,5fm"
 aug_speed="1"
 
 function usage()
@@ -47,7 +45,7 @@ eval set -- "$TEMP"
 while true ; do
     case "$1" in
         -h ) usage ;; 
-        --1fmonly ) one_fmonly="--1fmonly " ; shift ;;
+        --1fmonly ) model_list="1fm" ; shift ;;
         --augspeed ) aug_speed=$2 ; shift 2 ;;
         --) shift ; break ;;
     esac
@@ -62,12 +60,13 @@ declare -r train_out=$1
 declare -r images=$2
 declare -r predict_out=$3
 
+
 # check aug_speed is a valid value
 if [ "$aug_speed" -eq 1 ] || [ "$aug_speed" -eq 2 ] || [ "$aug_speed" -eq 4 ] || [ $aug_speed -eq 10 ] ; then
   : # the : is a no-op command
 else
   echo "ERROR, --augspeed must be one of the following values 1, 2, 4, 10"
-  exit 7
+  exit 2
 fi
 
 augimages="$predict_out/augimages"
@@ -77,7 +76,7 @@ ecode=$?
 
 if [ $ecode != 0 ] ; then
   echo "ERROR, a non-zero exit code ($ecode) was received from: mkdir -p \"$augimages\""
-  exit 6
+  exit 3
 fi
 
 DefDataPackages.m "$images" "$augimages"
@@ -85,30 +84,41 @@ ecode=$?
 
 if [ $ecode != 0 ] ; then
   echo "ERROR, a non-zero exit code ($ecode) was received from: DefDataPackages.m \"$images\" \"$augimages\""
-  exit 5
-fi
-
-CreatePredictJob.m "$train_out" "$augimages" "$predict_out"
-ecode=$?
-if [ $ecode != 0 ] ; then
-  echo "ERROR, a non-zero exit code ($ecode) was received from: CreatePredictJob.m \"$train_out\" \"$augimages\" \"$predict_out\""
-  echo ""
-  exit 2
-fi
-
-if [ ! -x "$predict_out/run_all_predict.sh" ] ; then
-  echo "ERROR, either $predict_out/run_all_predict.sh is missing or non-executable"
-  exit 3
-fi
-
-"$predict_out/run_all_predict.sh" ${one_fmonly} --augspeed ${aug_speed}
-ecode=$?
-if [ $ecode != 0 ] ; then
-  echo "ERROR, a non-zero exit code ($ecode) was received from: \"$predict_out/run_all_predict.sh\" ${one_fmonly} --augspeed ${aug_speed}"
   exit 4
+fi
+
+# write out readme.txt
+echo "
+This directory contains files and directories needed to
+run Cdeep3M prediction using caffe. Below is a description
+of the key files and directories:
+
+$model_list         -- Contains results from running prediction
+predict.config      -- Contains path to trained model, and input
+                       images
+caffepredict.sh     -- Runs prediction on individual .h5 file
+run_all_predict.sh  -- Runs caffepredict.sh on all .h5 files
+                       This is what you should invoke
+" > "$predict_out/readme.txt"
+
+# write out predict.config
+
+echo "[default]
+trainedmodeldir=$train_out
+imagedir=$images
+models=$model_list
+augspeed=$aug_speed" > "$predict_out/predict.config"
+
+
+run_all_predict.sh "$predict_out"
+ecode=$?
+if [ $ecode != 0 ] ; then
+  echo "ERROR, a non-zero exit code ($ecode) was received from: run_all_predict.sh \"$predict_out\""
+  exit 5
 fi
 
 echo ""
 echo "Prediction has completed. Results are stored in $predict_out"
 echo "Have a nice day!"
 echo ""
+
