@@ -17,7 +17,7 @@ teardown() {
     run $RUNPREDICTION_SH
     [ "$status" -eq 1 ]
     echo "$status $output" 1>&2
-    [ "${lines[0]}" = "usage: runprediction.sh [-h] [--1fmonly]" ]
+    [ "${lines[0]}" = "usage: runprediction.sh [-h] [--1fmonly] [--augspeed AUGSPEED]" ]
 }
 
 @test "runprediction.sh invalid --augspeed value" {

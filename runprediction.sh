@@ -16,7 +16,7 @@ aug_speed="1"
 
 function usage()
 {
-    echo "usage: $script_name [-h] [--1fmonly]
+    echo "usage: $script_name [-h] [--1fmonly] [--augspeed AUGSPEED]
                       trainoutdir imagesdir predictoutdir
 
               Version: $version
@@ -25,7 +25,7 @@ function usage()
     
 positional arguments:
   trainoutdir          Directory containing Deep3m trained models
-  augimages            Augmented image data from PreprocessImageData.m
+  images               Directory of images to process
   predictoutdir        Directory containing output from prediction
 
 optional arguments:
@@ -36,6 +36,7 @@ optional arguments:
                        faster performance at cost of lower
                        accuracy. (valid values 1, 2, 4, 10)
                        (default 1)
+
     " 1>&2;
    exit 1;
 }
