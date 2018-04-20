@@ -20,7 +20,47 @@ teardown() {
     [ "${lines[0]}" = "usage: runprediction.sh [-h] [--1fmonly]" ]
 }
 
+@test "runprediction.sh invalid --augspeed value" {
+  run $RUNPREDICTION_SH --augspeed 0 trainoutdir augimages predictdir
+  echo "$status output" 1>&2
+  [ "$status" -eq 7 ]
+  [ "${lines[0]}" = "ERROR, --augspeed must be one of the following values 1, 2, 4, 10" ]
+  run $RUNPREDICTION_SH --augspeed 3 trainoutdir augimages predictdir
+  echo "$status output" 1>&2
+  [ "$status" -eq 7 ]
+  run $RUNPREDICTION_SH --augspeed haha trainoutdir augimages predictdir
+  echo "$status output" 1>&2
+  [ "$status" -eq 7 ]
+}
 
+@test "runprediction.sh valid --augspeed values" {
+  #
+  # in this test we are assuming the next command after checking
+  # --augspeed is valis is the directory check which fails with
+  # exit code 6. So we just check we get that exit code and not 7
+  # which is the value if the --augspeed value is not valid
+  #
+  aug_images="$TEST_TMP_DIR/augimages"
+  touch "$aug_images"
+  run $RUNPREDICTION_SH --augspeed 1 trainoutdir augimages "$TEST_TMP_DIR"
+  echo "$status $output" 1>&2
+  [ "$status" -eq 6 ]
+
+  run $RUNPREDICTION_SH --augspeed 2 trainoutdir augimages "$TEST_TMP_DIR"
+  echo "$status $output" 1>&2
+  [ "$status" -eq 6 ]
+
+  run $RUNPREDICTION_SH --augspeed 4 trainoutdir augimages "$TEST_TMP_DIR"
+  echo "$status $output" 1>&2
+  [ "$status" -eq 6 ]
+
+  run $RUNPREDICTION_SH --augspeed 10 trainoutdir augimages "$TEST_TMP_DIR"
+  echo "$status $output" 1>&2
+  [ "$status" -eq 6 ]
+
+
+
+}
 @test "runprediction.sh mkdir of augimages directory fails" {
   aug_images="$TEST_TMP_DIR/augimages"
   touch "$aug_images"

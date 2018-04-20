@@ -61,6 +61,14 @@ declare -r train_out=$1
 declare -r images=$2
 declare -r predict_out=$3
 
+# check aug_speed is a valid value
+if [ "$aug_speed" -eq 1 ] || [ "$aug_speed" -eq 2 ] || [ "$aug_speed" -eq 4 ] || [ $aug_speed -eq 10 ] ; then
+  : # the : is a no-op command
+else
+  echo "ERROR, --augspeed must be one of the following values 1, 2, 4, 10"
+  exit 7
+fi
+
 augimages="$predict_out/augimages"
 
 mkdir -p "$augimages"
