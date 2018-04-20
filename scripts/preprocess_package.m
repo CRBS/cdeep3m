@@ -38,7 +38,7 @@ fmnumber = str2num(fmtype(1));
 speed = str2num(arg_list{6});
 
 fmdir = fullfile(outdir,[num2str(fmnumber),'fm']);
-if ~exist(fmdir,'dir'), mkdir(outdir); end
+if ~exist(fmdir,'dir'), mkdir(fmdir); end
 load(fullfile(outdir,'de_augmentation_info.mat'),'packages','num_of_pkg','imagesize','z_blocks');
 % ----------------------------------------------------------------------------------------
 %% 
