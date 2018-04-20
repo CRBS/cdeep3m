@@ -39,7 +39,7 @@ function run_predict(arg_list)
 
   all_predict_file = strcat(outdir,filesep(),'run_all_predict.sh');
 
-  if isdir(outdir) == 1;
+  if exist(all_predict_file) == 2;
      fprintf('\n');
      msg = sprintf('CreatePredictJob.m appears to already have been run in %s directory',
                    outdir);

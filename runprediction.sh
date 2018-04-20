@@ -12,10 +12,12 @@ fi
 
 one_fmonly=""
 gpu="0"
+aug_speed="1"
+
 function usage()
 {
     echo "usage: $script_name [-h] [--1fmonly]
-                      trainoutdir augimagesdir predictoutdir
+                      trainoutdir imagesdir predictoutdir
 
               Version: $version
 
@@ -29,18 +31,23 @@ positional arguments:
 optional arguments:
   -h, --help           show this help message and exit
   --1fmonly            Only run prediction on 1fm model
-
+  --augspeed           Augmentation speed. Higher the number
+                       the less augmentations generated and
+                       faster performance at cost of lower
+                       accuracy. (valid values 1, 2, 4, 10)
+                       (default 1)
     " 1>&2;
    exit 1;
 }
 
-TEMP=`getopt -o h --long "1fmonly" -n '$0' -- "$@"`
+TEMP=`getopt -o h --long "1fmonly,augspeed:" -n '$0' -- "$@"`
 eval set -- "$TEMP"
 
 while true ; do
     case "$1" in
         -h ) usage ;; 
         --1fmonly ) one_fmonly="--1fmonly " ; shift ;;
+        --augspeed ) aug_speed=$2 ; shift 2 ;;
         --) shift ; break ;;
     esac
 done
@@ -51,13 +58,31 @@ if [ $# -ne 3 ] ; then
 fi
 
 declare -r train_out=$1
-declare -r augimages=$2
+declare -r images=$2
 declare -r predict_out=$3
+
+augimages="$predict_out/augimages"
+
+mkdir -p "$augimages"
+ecode=$?
+
+if [ $ecode != 0 ] ; then
+  echo "ERROR, a non-zero exit code ($ecode) was received from: mkdir -p \"$augimages\""
+  exit 6
+fi
+
+DefDataPackages.m "$images" "$augimages"
+ecode=$?
+
+if [ $ecode != 0 ] ; then
+  echo "ERROR, a non-zero exit code ($ecode) was received from: DefDataPackages.m \"$images\" \"$augimages\""
+  exit 5
+fi
 
 CreatePredictJob.m "$train_out" "$augimages" "$predict_out"
 ecode=$?
 if [ $ecode != 0 ] ; then
-  echo "Error, a non-zero exit code ($ecode) was received from: CreatePredictJob.m \"$train_out\" \"$augimages\" \"$predict_out\""
+  echo "ERROR, a non-zero exit code ($ecode) was received from: CreatePredictJob.m \"$train_out\" \"$augimages\" \"$predict_out\""
   echo ""
   exit 2
 fi
@@ -67,10 +92,10 @@ if [ ! -x "$predict_out/run_all_predict.sh" ] ; then
   exit 3
 fi
 
-"$predict_out/run_all_predict.sh" ${one_fmonly}
+"$predict_out/run_all_predict.sh" ${one_fmonly} --augspeed ${aug_speed}
 ecode=$?
 if [ $ecode != 0 ] ; then
-  echo "ERROR, a non-zero exit code ($ecode) was received from: \"$predict_out/run_all_predict.sh\" ${one_fmonly}"
+  echo "ERROR, a non-zero exit code ($ecode) was received from: \"$predict_out/run_all_predict.sh\" ${one_fmonly} --augspeed ${aug_speed}"
   exit 4
 fi
 
