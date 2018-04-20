@@ -2,11 +2,9 @@
 
 
 setup() {
-    export CAFFE_PREDICT_TEMPLATE_SH="${BATS_TEST_DIRNAME}/../scripts/caffepredict_template.sh"
+    export CAFFE_PREDICT_SH="${BATS_TEST_DIRNAME}/../caffepredict.sh"
     export TEST_TMP_DIR="${BATS_TMPDIR}/"`uuidgen`
     /bin/mkdir -p "$TEST_TMP_DIR"
-    export CAFFE_PREDICT_SH="$TEST_TMP_DIR/caffepredict.sh"
-   /bin/cp "$CAFFE_PREDICT_TEMPLATE_SH" "$CAFFE_PREDICT_SH"
 }
 
 teardown() {
