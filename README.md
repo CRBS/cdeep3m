@@ -10,6 +10,7 @@
 [divelablicense]: https://github.com/CRBS/cdeep3m/blob/master/model/LICENSE
 [license]: https://github.com/CRBS/cdeep3m/blob/master/LICENSE
 [cloudaccess]: https://github.com/CRBS/cdeep3m/wiki/How-to-access-CDeep3M-cloud
+[speedup]: https://github.com/CRBS/cdeep3m/wiki/Speed-up
 
 # CDeep3M
 
@@ -63,6 +64,12 @@ Click here for instruction how to [access your cloudstack][cloudaccess]
 
 Done with your segmentation? Don't forget to [delete your Cloud Stack][deletestack]
   
+
+# Additional info for more experienced users
+
+* How to [speed up][speedup] processing time
+
+
 # Local install, for advanced users/developers only
 
 ## Installation requirements for local install
