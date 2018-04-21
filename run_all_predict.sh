@@ -123,20 +123,20 @@ for Y in `echo "$model_list" | sed "s/,/ /g"` ; do
       let cntr+=1
     done
   done
-  if [ -f "$Y/DONE" ] ; then
-    echo "Found $Y/DONE. Merge completed. Skipping..."
+  if [ -f "$out_dir/$model_name/DONE" ] ; then
+    echo "Found $Z/DONE. Merge completed. Skipping..."
     continue
   fi
   echo ""
-  echo "Running Merge_LargeData.m $out_dir/$Y"
-  merge_log="$out_dir/$Y/merge.log"
-  Merge_LargeData.m "$out_dir/$Y" >> "$merge_log" 2>&1
+  echo "Running Merge_LargeData.m $out_dir/$model_name"
+  merge_log="$out_dir/$model_name/merge.log"
+  Merge_LargeData.m "$out_dir/$model_name" >> "$merge_log" 2>&1
   ecode=$?
   if [ $ecode != 0 ] ; then
     echo "ERROR, a non-zero exit code ($ecode) from running Merge_LargeData.m"
     exit 6
   fi
-  echo "Merge completed: `date +%s`" > "$Y/DONE"
+  echo "Merge completed: `date +%s`" > "$out_dir/$model_name/DONE"
 done
 
 echo ""
