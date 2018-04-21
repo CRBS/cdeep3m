@@ -80,6 +80,9 @@ if [ ! -s "$package_proc_info" ] ; then
   exit 3
 fi
 
+cp "$out_dir/augimages/de_augmentation_info.mat" "$out_dir/."
+cp "$out_dir/augimages/package_processing_info.txt" "$out_dir/."
+
 num_pkgs=`head -n 3 $package_proc_info | tail -n 1`
 num_zstacks=`tail -n 1 $package_proc_info`
 
