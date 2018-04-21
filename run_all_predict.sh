@@ -73,7 +73,7 @@ echo "Models: $model_list"
 echo "Speed: $aug_speed"
 echo ""
 
-package_proc_info="$img_dir/package_processing_info.txt"
+package_proc_info="$out_dir/augimages/package_processing_info.txt"
 
 if [ ! -s "$package_proc_info" ] ; then
   echo "ERROR $package_proc_info not found"
@@ -84,13 +84,13 @@ num_pkgs=`head -n 3 $package_proc_info | tail -n 1`
 num_zstacks=`tail -n 1 $package_proc_info`
 
 for Y in `echo "$model_list" | sed "s/,/ /g"` ; do
-  for CUR_PKG in `seq 001 $num_pkgs` ; do
-    for CUR_Z in `seq 01 $num_zstacks` ; do
-      model_name=`basename $Y`
+  for CUR_PKG in `seq -w 001 $num_pkgs` ; do
+    for CUR_Z in `seq -w 01 $num_zstacks` ; do
+      model_name=$Y
       echo "Running $model_name predict $num_pkgs package(s) to process"
       let cntr=1
       pkg_name="Pkg${CUR_PKG}_Z${CUR_Z}"
-      Z="$img_dir/$model_name/$pkg_name"
+      Z="$out_dir/augimages/$model_name/$pkg_name"
       out_pkg="$out_dir/$model_name/$pkg_name"
       if [ -f "$out_pkg/DONE" ] ; then
         echo "Found $out_pkg/DONE. Prediction completed. Skipping..."
@@ -98,7 +98,7 @@ for Y in `echo "$model_list" | sed "s/,/ /g"` ; do
       fi
       echo -n "  Processing $pkg_name $cntr of $num_pkgs "
       outfile="$out_pkg/out.log"
-      PreprocessPackage.m "$img_dir" "$out_pkg" $CUR_PKG $CUR_Z $Y $aug_speed
+      PreprocessPackage.m "$img_dir" "$out_dir/augimages" $CUR_PKG $CUR_Z $Y $aug_speed
       ecode=$?
       if [ $? != 0 ] ; then
         echo "ERROR, a non-zero exit code ($ecode) was received from: PreprocessPackage.m \"$img_dir\" \"$out_pkg\" $CUR_PKG $CUR_Z $Y $aug_speed"
@@ -119,17 +119,18 @@ for Y in `echo "$model_list" | sed "s/,/ /g"` ; do
       echo "Prediction completed: `date +%s`" > "$Z/DONE"
       let cntr+=1
     done
+  done
   if [ -f "$Y/DONE" ] ; then
     echo "Found $Y/DONE. Merge completed. Skipping..."
     continue
   fi
   echo ""
-  echo "Running Merge_LargeData.m $Y"
-  merge_log="$Y/merge.log"
-  Merge_LargeData.m "$Y" >> "$merge_log" 2>&1
+  echo "Running Merge_LargeData.m $out_dir/$Y"
+  merge_log="$out_dir/$Y/merge.log"
+  Merge_LargeData.m "$out_dir/$Y" >> "$merge_log" 2>&1
   ecode=$?
   if [ $ecode != 0 ] ; then
-    echo "ERROR non-zero exit code ($ecode) from running Merge_LargeData.m"
+    echo "ERROR, a non-zero exit code ($ecode) from running Merge_LargeData.m"
     exit 6
   fi
   echo "Merge completed: `date +%s`" > "$Y/DONE"
