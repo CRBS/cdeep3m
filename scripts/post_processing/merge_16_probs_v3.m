@@ -87,7 +87,9 @@ for  fff = 2: (numel(all_files)-3) %predictions start with 0; Ignore 0&1 and las
         fprintf('Saving: %s ... Image #%s   \n', output_filename, num2str(z));
     end
     %}
+    if size(image,3)>1
     image = mean(image,3);
+    end
     
     %image_stack=de_augment_data(b);    
     output_filename=fullfile(folder , sprintf('%s_%04d.png', filebasename,(fff-2)));
