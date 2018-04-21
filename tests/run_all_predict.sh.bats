@@ -17,7 +17,7 @@ teardown() {
     run $RUN_ALL_PREDICT_SH
     echo "$status $output" 1>&2
     [ "$status" -eq 1 ]
-    [ "${lines[0]}" = "usage: run_all_predict.sh [-h] [--gpu GPU]" ]
+    [ "${lines[0]}" = "usage: run_all_predict.sh [-h]" ]
 }
 
 @test "run_all_predict.sh no predict.config file" {
