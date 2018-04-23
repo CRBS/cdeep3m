@@ -40,7 +40,7 @@ teardown() {
     [ "${lines[2]}" = "Image Dir: imgdir" ]
     [ "${lines[3]}" = "Models: 1fm,3fm" ]
     [ "${lines[4]}" = "Speed: 4" ]
-    [ "${lines[5]}" = "ERROR imgdir/package_processing_info.txt not found" ]
+    [ "${lines[5]}" = "ERROR $TEST_TMP_DIR/augimages/package_processing_info.txt not found" ]
 }
 
 
