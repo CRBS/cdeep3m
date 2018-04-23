@@ -92,7 +92,7 @@
                      "ecode=100\n",
                      "while [ $ecode -ne 0 ]\n",
                      "do\n",
-                     "  apt-get -y install octave octave-image octave-pkg-dev git python-pip unzip\n",
+                     "  apt-get -y install octave octave-image octave-pkg-dev git python-pip unzip parallel\n",
                      "  ecode=$?\n",
                      "  echo 'Sleeping 1 second'\n",
                      "  sleep 1\n",
