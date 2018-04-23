@@ -3,7 +3,7 @@ folder=fullfile(folder);
 %mkdir(folder);
 %folder_name=fullfile(folder, 'v1');
 for f= 1:16 
-folder_name=[folder filesep 'v' num2str(i)];
+folder_name=[folder filesep 'v' num2str(f)];
 if exist(folder_name,'dir')==7
 return
 endif
