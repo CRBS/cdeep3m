@@ -24,7 +24,7 @@ endfunction
 %!test
 %! test_fname = tempname();
 %! create_dir(test_fname);
-%! write_predict_readme(test_fname);
+%! write_train_readme(test_fname);
 %! readme_file = strcat(test_fname,filesep(),'readme.txt');
 %! assert(exist(readme_file, "file"),2);
 %! rmdir(test_fname,'s');
