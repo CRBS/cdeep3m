@@ -1,7 +1,10 @@
 function folder = merge_16_probs_v3(folder)
 folder=fullfile(folder);
 %mkdir(folder);
-folder_name=fullfile(folder, 'v1');
+%folder_name=fullfile(folder, 'v1');
+folderlist = dir(folder);
+folderlist = list(3:end);
+folder_name = fullfile(folder, folderlist(min(find([list.isdir]))).name);
 all_files = read_files_in_folder(folder_name);
 first_file = all_files(1).name;
 [~,NAME,ext]  = fileparts(first_file);
