@@ -60,9 +60,33 @@ fi
 
 trained_model_dir=`egrep "^ *trainedmodeldir *=" "$predict_config" | sed "s/^.*=//" | sed "s/^ *//"`
 
+if [ -z "$trained_model_dir" ] ; then
+  echo "ERROR unable to extract trainedmodeldir from $predict_config"
+  exit 3
+fi
+
 img_dir=`egrep "^ *imagedir *=" "$predict_config" | sed "s/^.*=//" | sed "s/^ *//"`
+
+if [ -z "$img_dir" ] ; then
+  echo "ERROR unable to extract imagedir from $predict_config"
+  exit 4
+fi
+
+
 model_list=`egrep "^ *models *=" "$predict_config" | sed "s/^.*=//" | sed "s/^ *//"`
+
+if [ -z "$model_list" ] ; then
+  echo "ERROR unable to extract models from $predict_config"
+  exit 5
+fi
+
 aug_speed=`egrep "^ *augspeed *=" "$predict_config" | sed "s/^.*=//" | sed "s/^ *//"`
+
+if [ -z "$aug_speed" ] ; then
+  echo "ERROR unable to extract augspeed from $predict_config"
+  exit 6
+fi
+
 
 echo "Running Prediction"
 echo ""
@@ -77,35 +101,46 @@ package_proc_info="$out_dir/augimages/package_processing_info.txt"
 
 if [ ! -s "$package_proc_info" ] ; then
   echo "ERROR $package_proc_info not found"
-  exit 3
+  exit 7
 fi
 
 cp "$out_dir/augimages/de_augmentation_info.mat" "$out_dir/."
+
+if [ $? != 0 ] ; then
+  echo "ERROR unable to copy $out_dir/augimages/de_augmentation_info.mat to $out_dir"
+  exit 8
+fi
+
 cp "$out_dir/augimages/package_processing_info.txt" "$out_dir/."
+
+if [ $? != 0 ] ; then
+  echo "ERROR unable to copy $out_dir/augimages/package_processing_info.txt to $out_dir"
+  exit 9
+fi
 
 num_pkgs=`head -n 3 $package_proc_info | tail -n 1`
 num_zstacks=`tail -n 1 $package_proc_info`
-
-for Y in `echo "$model_list" | sed "s/,/ /g"` ; do
+let tot_pkgs=$num_pkgs*$num_zstacks
+for model_name in `echo "$model_list" | sed "s/,/ /g"` ; do
+  
+  echo "Running $model_name predict $tot_pkgs package(s) to process"
+  let cntr=1
   for CUR_PKG in `seq -w 001 $num_pkgs` ; do
     for CUR_Z in `seq -w 01 $num_zstacks` ; do
-      model_name=$Y
-      echo "Running $model_name predict $num_pkgs package(s) to process"
-      let cntr=1
       pkg_name="Pkg${CUR_PKG}_Z${CUR_Z}"
       Z="$out_dir/augimages/$model_name/$pkg_name"
       out_pkg="$out_dir/$model_name/$pkg_name"
       if [ -f "$out_pkg/DONE" ] ; then
-        echo "Found $out_pkg/DONE. Prediction completed. Skipping..."
+        echo "  Found $out_pkg/DONE. Prediction completed. Skipping..."
         continue
       fi
-      echo -n "  Processing $pkg_name $cntr of $num_pkgs "
+      echo -n "  Processing $pkg_name $cntr of $tot_pkgs "
       outfile="$out_pkg/out.log"
-      PreprocessPackage.m "$img_dir" "$out_dir/augimages" $CUR_PKG $CUR_Z $Y $aug_speed
+      PreprocessPackage.m "$img_dir" "$out_dir/augimages" $CUR_PKG $CUR_Z $model_name $aug_speed
       ecode=$?
-      if [ $? != 0 ] ; then
-        echo "ERROR, a non-zero exit code ($ecode) was received from: PreprocessPackage.m \"$img_dir\" \"$out_pkg\" $CUR_PKG $CUR_Z $Y $aug_speed"
-        exit 4
+      if [ $ecode != 0 ] ; then
+        echo "ERROR, a non-zero exit code ($ecode) was received from: PreprocessPackage.m \"$img_dir\" \"$out_pkg\" $CUR_PKG $CUR_Z $model_name $aug_speed"
+        exit 10
       fi
 
       /usr/bin/time -p caffepredict.sh --gpu $gpu "$trained_model_dir/$model_name/trainedmodel" "$Z" "$out_pkg"
@@ -117,14 +152,14 @@ for Y in `echo "$model_list" | sed "s/,/ /g"` ; do
           echo ""
           tail $outfile
         fi
-        exit 5
+        exit 11
       fi
-      echo "Prediction completed: `date +%s`" > "$Z/DONE"
+      echo "Prediction completed: `date +%s`" > "$out_pkg/DONE"
       let cntr+=1
     done
   done
   if [ -f "$out_dir/$model_name/DONE" ] ; then
-    echo "Found $Z/DONE. Merge completed. Skipping..."
+    echo "Found $out_dir/$model_name/DONE. Merge completed. Skipping..."
     continue
   fi
   echo ""
@@ -134,7 +169,7 @@ for Y in `echo "$model_list" | sed "s/,/ /g"` ; do
   ecode=$?
   if [ $ecode != 0 ] ; then
     echo "ERROR, a non-zero exit code ($ecode) from running Merge_LargeData.m"
-    exit 6
+    exit 12
   fi
   echo "Merge completed: `date +%s`" > "$out_dir/$model_name/DONE"
 done
