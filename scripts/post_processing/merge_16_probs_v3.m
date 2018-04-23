@@ -1,14 +1,9 @@
 function folder = merge_16_probs_v3(folder)
-folder=fullfile(folder);
-%mkdir(folder);
-%folder_name=fullfile(folder, 'v1');
-for f= 1:16 
-folder_name=[folder filesep 'v' num2str(f)];
-if exist(folder_name,'dir')==7
-return
-endif
-end
 
+% get variation directories aka directories that start with v
+vfolderlist = get_variation_folders(folder);
+
+folder_name = fullfile(folder, vfolderlist(min(find([vfolderlist.isdir]))).name)
 all_files = read_files_in_folder(folder_name);
 first_file = all_files(1).name;
 [~,NAME,ext]  = fileparts(first_file);
