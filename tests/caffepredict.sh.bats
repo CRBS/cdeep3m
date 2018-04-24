@@ -1,6 +1,16 @@
 #!/usr/bin/env bats
 
 
+# Example output of nvidia-smi -L from single node
+# TODO
+
+# Example output of nvidia-smi -L from 4 node
+#GPU 0: Tesla V100-SXM2-16GB (UUID: GPU-ccf578c6-5369-9ff4-e1c2-d4c0c9d4d338)
+#GPU 1: Tesla V100-SXM2-16GB (UUID: GPU-7bbcd9e7-b1e2-5e53-fb9a-6d27e364dd40)
+#GPU 2: Tesla V100-SXM2-16GB (UUID: GPU-0b610645-cc68-d906-0b75-f88e8d241313)
+#GPU 3: Tesla V100-SXM2-16GB (UUID: GPU-362ffce9-16cd-679a-9e46-0da23373846d)
+
+
 setup() {
     export CAFFE_PREDICT_SH="${BATS_TEST_DIRNAME}/../caffepredict.sh"
     export TEST_TMP_DIR="${BATS_TMPDIR}/"`uuidgen`
@@ -17,7 +27,7 @@ teardown() {
     run $CAFFE_PREDICT_SH
     echo "$status $output" 1>&2
     [ "$status" -eq 1 ]
-    [ "${lines[0]}" = "usage: caffepredict.sh [-h] [--gpu GPU]" ]
+    [ "${lines[0]}" = "usage: caffepredict.sh [-h]" ]
 }
 
 @test "caffepredict.sh model passed in is empty dir" {
@@ -41,10 +51,16 @@ teardown() {
     touch "$TEST_TMP_DIR/foo.caffemodel"
     touch "$TEST_TMP_DIR/test_data_full_stacks_v1.h5"
     touch "$TEST_TMP_DIR/v1"
+    echo "#!/bin/bash" > "$TEST_TMP_DIR/nvidia-smi"
+    echo "echo 'GPU 0'" >> "$TEST_TMP_DIR/nvidia-smi"
+    chmod a+x "$TEST_TMP_DIR/nvidia-smi"
+    export A_TEMP_PATH=$PATH
+    export PATH=$TEST_TMP_DIR:$PATH
     run $CAFFE_PREDICT_SH "$TEST_TMP_DIR/foo.caffemodel" "$TEST_TMP_DIR" "$TEST_TMP_DIR"
-
+    export PATH=$A_TEMP_PATH
     [ "$status" -eq 4 ]
-    [ "${lines[1]}" = "ERROR unable to create $TEST_TMP_DIR/v1" ]
+    echo "$status $output" 2>&1
+    [ "${lines[2]}" = "ERROR unable to create $TEST_TMP_DIR/v1" ]
 
 }
 

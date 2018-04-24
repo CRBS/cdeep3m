@@ -17,7 +17,7 @@ teardown() {
     run $RUNPREDICTION_SH
     [ "$status" -eq 1 ]
     echo "$status $output" 1>&2
-    [ "${lines[0]}" = "usage: runprediction.sh [-h] [--1fmonly] [--augspeed AUGSPEED]" ]
+    [ "${lines[0]}" = "usage: runprediction.sh [-h] [--models MODELS] [--augspeed AUGSPEED]" ]
 }
 
 @test "runprediction.sh invalid --augspeed value" {
@@ -128,13 +128,13 @@ teardown() {
    export PATH=$A_TEMP_PATH
 }
 
-@test "runprediction.sh success --1fmonly and --augspeed set" {
+@test "runprediction.sh success --models and --augspeed set" {
    ln -s /bin/true "$TEST_TMP_DIR/DefDataPackages.m"
    ln -s /bin/echo "$TEST_TMP_DIR/run_all_predict.sh"
    mkdir -p "$TEST_TMP_DIR/predictoutdir"
    export A_TEMP_PATH=$PATH
    export PATH=$TEST_TMP_DIR:$PATH
-   run $RUNPREDICTION_SH --1fmonly --augspeed 4 trainoutdir augimages "$TEST_TMP_DIR/predictoutdir"
+   run $RUNPREDICTION_SH --models 1fm --augspeed 4 trainoutdir augimages "$TEST_TMP_DIR/predictoutdir"
    echo "$output" 1>&2
    [ "$status" -eq 0 ]
    [ "${lines[0]}" = "$TEST_TMP_DIR/predictoutdir" ]

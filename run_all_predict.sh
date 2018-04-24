@@ -8,8 +8,6 @@ if [ -f "$script_dir/VERSION" ] ; then
    version=`cat $script_dir/VERSION`
 fi
 
-gpu="0"
-
 function usage()
 {
     echo "usage: $script_name [-h]
@@ -143,7 +141,7 @@ for model_name in `echo "$model_list" | sed "s/,/ /g"` ; do
         exit 10
       fi
 
-      /usr/bin/time -p caffepredict.sh --gpu $gpu "$trained_model_dir/$model_name/trainedmodel" "$Z" "$out_pkg"
+      /usr/bin/time -p caffepredict.sh "$trained_model_dir/$model_name/trainedmodel" "$Z" "$out_pkg"
       ecode=$?
       if [ $ecode != 0 ] ; then
         echo "ERROR, a non-zero exit code ($ecode) was received from: /usr/bin/time -p caffepredict.sh --gpu $gpu \"$trained_model_dir/$model_name/trainedmodel\" \"$Z\" \"$out_pkg\""

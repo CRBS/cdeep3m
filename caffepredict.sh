@@ -9,12 +9,9 @@ if [ -f "$script_dir/VERSION" ] ; then
    version=`cat $script_dir/VERSION`
 fi
 
-gpu="0"
-
-
 function usage()
 {
-    echo "usage: $script_name [-h] [--gpu GPU]
+    echo "usage: $script_name [-h]
                       model augimagesdir outputdir
 
               Version: $version
@@ -34,20 +31,18 @@ positional arguments:
                        created if it does not exist.
 optional arguments:
   -h, --help           show this help message and exit
-  --gpu                Which GPU to use, can be a number ie 0 or 1 or
-                       all to use all GPUs (default $gpu)
 
     " 1>&2;
    exit 1;
 }
 
-TEMP=`getopt -o h --long "gpu:" -n '$0' -- "$@"`
+TEMP=`getopt -o h --long "help" -n '$0' -- "$@"`
 eval set -- "$TEMP"
 
 while true ; do
     case "$1" in
         -h ) usage ;;
-        --gpu ) gpu=$2 ; shift 2 ;;
+        --help ) usage ;;
         --) shift ; break ;;
     esac
 done
@@ -87,9 +82,26 @@ if [ $? != 0 ] ; then
   exit 3
 fi
 
+gpucount=`nvidia-smi -L | wc -l`
+if [ "$gpucount" -eq 0 ] ; then
+  echo "ERROR unable to get count of GPU(s). Is nvidia-smi working?"
+  exit 4
+fi
 
+let maxgpuindex=$gpucount-1
+
+if [ $maxgpuindex -gt 0 ] ; then
+  echo "Detected $gpucount GPU(s). Will run in parallel"
+else
+  echo "Single GPU detected"
+fi
+
+theargs=""
+let cntr=0
+parallel_job_file="$out_dir/parallel.jobs"
 for input_file in `find "${in_dir}" -name "*.h5" -type f | sort -V` ;
   do
+  
   idx=`echo $input_file | sed "s/^.*_v//" | sed "s/\.h5$//"`
   predict_dir=$out_dir/v$idx;
 
@@ -102,18 +114,23 @@ for input_file in `find "${in_dir}" -name "*.h5" -type f | sort -V` ;
       exit 4
     fi
   fi
+  echo -e "$log_dir\n$deploy_dir\n$model\n$input_file\n$predict_dir\n$cntr" >> $parallel_job_file
+  let cntr++
+  if [ $cntr -gt $maxgpuindex ] ; then
+    let cntr=0
+  fi
+done
 
-  echo -n "."
-  echo "Input: $input_file" >> "$out_log"
-  echo "Output: $predict_dir" >> "$out_log"
+# the --delay 2 is to add a 2 second delay between starting jobs
+# without this jobs would fail on GPU with out of memory error
+#
 
-  GLOG_logtostderr="$log_dir" /usr/bin/time -p predict_seg_new.bin --model=${deploy_dir}/deploy.prototxt --weights=${model} --data=${input_file} --predict=$predict_dir/test.h5 --shift_axis=2 --shift_stride=1 --gpu=$gpu >> "$out_log" 2>&1
+cat $parallel_job_file | parallel --no-notice --delay 2 -N 6 -j $gpucount 'GLOG_logtostderr="{1}" /usr/bin/time -p predict_seg_new.bin --model={2}/deploy.prototxt --weights={3} --data={4} --predict={5}/test.h5 --shift_axis=2 --shift_stride=1 --gpu={6}' >> "$out_log" 2>&1
   ecode=$?
   if [ $ecode != 0 ] ; then
     echo "ERROR non-zero exit code ($ecode) from running predict_seg_new.bin"
     exit 6
   fi
-done
 
 echo ""
 echo "Running StartPostprocessing.m $out_dir"

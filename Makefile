@@ -86,3 +86,13 @@ updateversion: ## Updates version by updating VERSION file
 	read -p "Current ($$cv) enter new version: " vers; \
 	echo "Updating VERSION with new version: $$vers"; \
 	echo $$vers > VERSION
+
+deploytohost: dist ## Deploys cdeep3m host specified by $cdeep3m_host
+	@cv=`cat VERSION`; \
+	deep3mdirname=cdeep3m-$$cv ;\
+	distdir=dist/$$deep3mdirname ;\
+	echo "Version is $$cv and deploying to $$cdeep3m_host" ; \
+	scp $$distdir.tar.gz ubuntu@$$cdeep3m_host:/home/ubuntu/. ; \
+	ssh ubuntu@$$cdeep3m_host /bin/rm -rf `readlink /home/ubuntu/cdeep3m` ;\
+	ssh ubuntu@$$cdeep3m_host tar -zxf /home/ubuntu/$$deep3mdirname.tar.gz
+

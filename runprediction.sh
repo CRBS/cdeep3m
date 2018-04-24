@@ -14,7 +14,7 @@ aug_speed="1"
 
 function usage()
 {
-    echo "usage: $script_name [-h] [--1fmonly] [--augspeed AUGSPEED]
+    echo "usage: $script_name [-h] [--models MODELS] [--augspeed AUGSPEED]
                       trainoutdir imagesdir predictoutdir
 
               Version: $version
@@ -28,7 +28,8 @@ positional arguments:
 
 optional arguments:
   -h, --help           show this help message and exit
-  --1fmonly            Only run prediction on 1fm model
+  --models             Only run prediction on models specified
+                       in comma delimited list. (default $model_list)
   --augspeed           Augmentation speed. Higher the number
                        the less augmentations generated and
                        faster performance at cost of lower
@@ -39,13 +40,14 @@ optional arguments:
    exit 1;
 }
 
-TEMP=`getopt -o h --long "1fmonly,augspeed:" -n '$0' -- "$@"`
+TEMP=`getopt -o h --long "help,models:,augspeed:" -n '$0' -- "$@"`
 eval set -- "$TEMP"
 
 while true ; do
     case "$1" in
         -h ) usage ;; 
-        --1fmonly ) model_list="1fm" ; shift ;;
+        --help ) usage ;;
+        --models ) model_list=$2 ; shift 2 ;;
         --augspeed ) aug_speed=$2 ; shift 2 ;;
         --) shift ; break ;;
     esac
