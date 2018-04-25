@@ -234,7 +234,7 @@ teardown() {
     [ "${lines[4]}" = "Speed: 4" ]
     [ "${lines[5]}" = "Running 1fm predict 1 package(s) to process" ]
     [ "${lines[6]}" = "  Processing Pkg001_Z01 1 of 1 imgdir $TEST_TMP_DIR/augimages 001 01 1fm 4" ]
-    [ "${lines[7]}" = "--gpu 0 traindir/1fm/trainedmodel $TEST_TMP_DIR/augimages/1fm/Pkg001_Z01 $TEST_TMP_DIR/1fm/Pkg001_Z01" ]
+    [ "${lines[7]}" = "traindir/1fm/trainedmodel $TEST_TMP_DIR/augimages/1fm/Pkg001_Z01 $TEST_TMP_DIR/1fm/Pkg001_Z01" ]
     [ "${lines[11]}" = "Running Merge_LargeData.m $TEST_TMP_DIR/1fm" ]
 
     export PATH=$A_TEMP_PATH
