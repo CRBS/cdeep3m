@@ -9,6 +9,7 @@ function [packages, z_blocks] = break_large_img(imagesize)
 if imagesize(3) >100
 z_blocks = [1:100:imagesize(3)];
 if z_blocks(end)<imagesize(3) ; z_blocks =[z_blocks, imagesize(3)]; end
+if z_blocks(end)<(z_blocks(end-1)+5); z_blocks = [z_blocks(1:end-2), z_blocks(end)]; end
 disp('Data will be split in z direction at planes:');
 disp(z_blocks);
 else z_blocks = [1,imagesize(3)]
