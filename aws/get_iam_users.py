@@ -17,8 +17,6 @@ def _parse_arguments(desc, theargs):
     help_formatter = argparse.RawDescriptionHelpFormatter
     parser = argparse.ArgumentParser(description=desc,
                                      formatter_class=help_formatter)
-    parser.add_argument('stackid',
-                        help='id of stack')
     parser.add_argument('--region', default='us-east-2',
                         help="Region to use" +
                              "(default us-east-2)")
