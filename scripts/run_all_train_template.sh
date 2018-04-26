@@ -19,10 +19,13 @@ average_loss="16"
 lr_policy="poly"
 iter_size="8"
 snapshot_interval="2000"
+model_list="1fm,3fm,5fm"
+
 
 function usage()
 {
-    echo "usage: $script_name [-h] [--1fmonly] [--numiterations NUMITERATIONS] 
+    echo "usage: $script_name [-h] [--models MODELS] 
+                              [--numiterations NUMITERATIONS] 
                               [--gpu GPU] [--base_lr BASE_LR] [--power POWER] 
                               [--momentum MOMENTUM] 
                               [--weight_decay WEIGHT_DECAY] 
@@ -41,7 +44,8 @@ function usage()
 
 optional arguments:
   -h, --help           show this help message and exit
-  --1fmonly            Only train 1fm model
+  --models             Only train on models specified in comma 
+                       delimited list. (default 1fm,3fm,5fm)
   --gpu                Which GPU to use, can be a number ie 0 or 1 or
                        all to use all GPUs (default $gpu)
   --base_learn         Base learning rate (default $base_lr)
@@ -62,13 +66,13 @@ optional arguments:
    exit 1;
 }
 
-TEMP=`getopt -o h --long "1fmonly,gpu:,numiterations:,base_learn:,power:,momentum:,weight_decay:,average_loss:,lr_policy:,iter_size:,snapshot_interval:" -n '$0' -- "$@"`
+TEMP=`getopt -o h --long "models:,gpu:,numiterations:,base_learn:,power:,momentum:,weight_decay:,average_loss:,lr_policy:,iter_size:,snapshot_interval:" -n '$0' -- "$@"`
 eval set -- "$TEMP"
 
 while true ; do
     case "$1" in
         -h ) usage ;;
-        --1fmonly ) one_fmonly=true ; shift ;;
+        --models ) model_list=$2 ; shift 2 ;;
         --numiterations ) numiterations=$2 ; shift 2 ;;
         --gpu ) gpu=$2 ; shift 2 ;;
         --base_learn ) base_lr=$2 ; shift 2 ;;
@@ -83,32 +87,59 @@ while true ; do
     esac
 done
 
-# time_est=`perl -e "printf('%.2f',${num_iterations}*8/3600);"`
-
 echo ""
 
-for Y in `echo 1fm 3fm 5fm` ; do
+let maxgpuindex=0
+gpucount=`nvidia-smi -L | wc -l`
+if [ "$gpucount" -eq 0 ] ; then
+  echo "ERROR unable to get count of GPU(s). Is nvidia-smi working?"
+  exit 4
+fi
+
+let maxgpuindex=$gpucount-1
+
+if [ $maxgpuindex -gt 0 ] ; then
+  echo -n "Detected $gpucount GPU(s)."
+  if [ "$gpu" == "all" ] ; then
+    echo " Will run in parallel."
+  else
+    echo " Using only GPU $gpu"
+  fi
+else
+  echo "Single GPU detected."
+fi
+
+if [ "$gpu" == "all" ] ; then
+  let cntr=0
+else
+  let cntr=$gpu
+fi
+
+parallel_job_file="$script_dir/parallel.jobs"
+
+for model_name in `echo "$model_list" | sed "s/,/ /g"` ; do
   if [ ! -d "$script_dir/$Y" ] ; then
     echo "ERROR, no $script_dir/$Y directory found."
     exit 2
   fi
-  echo "Running $Y train, this could take a while"
-  /usr/bin/time -p $script_dir/caffe_train.sh --numiterations $numiterations --gpu $gpu --base_learn $base_lr --power $power --momentum $momentum --weight_decay $weight_decay --average_loss $average_loss --lr_policy $lr_policy --iter_size $iter_size --snapshot_interval $snapshot_interval $Y
-  if [ $? != 0 ] ; then
-    echo "Non zero exit code from caffe for train of $Y model. Exiting."
-    outfile="$script_dir/$Y/log/out.log"
-    if [ -f "$outfile" ] ; then
-      echo "Here is last 10 lines of $outfile:"
-      echo ""
-      tail $outfile
-    fi
-    exit 1
-  fi
-  if [ $one_fmonly == true ] ; then
-    echo "--1fmonly flag set, skipping 3fm and 5fm models."
-    break
+  echo -e "$numiterations\n$cntr\n$base_lr\n$power\n$momentum\n$weight_decay\n$average_loss\n$lr_policy\n$iter_size\n$snapshot_interval\n$model_name" >> $parallel_job_file
+  if [ "$gpu" == "all" ] ; then
+    let cntr++
+    if [ $cntr -gt $maxgpuindex ] ; then
+      let cntr=0
+    fi  
   fi
 done
+
+# the --delay 2 is to add a 2 second delay between starting jobs
+# without this jobs would fail on GPU with out of memory error
+#
+ 
+cat $parallel_job_file | parallel --no-notice --delay 2 -N 11 -j $gpucount $script_dir/caffe_train.sh --numiterations {1} --gpu {2} --base_learn {3} --power {4} --momentum {5} --weight_decay {6} --average_loss {7} --lr_policy {8} --iter_size {9} --snapshot_interval {10} {11}
+  if [ $? != 0 ] ; then
+    echo "Non zero exit code from caffe for train of model. Exiting."
+    exit 1
+  fi
 
 echo ""
 echo "Training has completed. Have a nice day!"
