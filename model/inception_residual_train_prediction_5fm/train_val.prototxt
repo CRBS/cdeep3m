@@ -87,7 +87,7 @@ layer {
     backend: HDF5
     batch_size: 1
     hdf5_file_shuffle: true
-    data_source:  "train_file.txt"
+    data_source:  "valid_file.txt"
   }
 
 }

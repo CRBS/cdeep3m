@@ -1,4 +1,4 @@
-## Usage [status,errmsg, train_file] = verify_and_create_train_file ( train_input, outdir )
+## Usage [status, errmsg, train_file, valid_file] = verify_and_create_train_file ( train_input, outdir, valid_input="" )
 ##
 ## 1st Looks for files ending with .h5 in train_input directory
 ## and verifies there are 16 of them. 2nd code creates a
@@ -11,9 +11,10 @@
 ## If there is an error status will be set to a non zero numeric
 ## value and errmsg will explain the issue. 
 
-function [status,errmsg, train_file] = verify_and_create_train_file (train_input, outdir)
+function [status,errmsg, train_file, valid_file] = verify_and_create_train_file (train_input, outdir, valid_input="")
   errmsg = '';
   train_file = '';
+  valid_file = ''; 
   status = 0;
   H_FIVE_SUFFIX='.h5';
 
@@ -39,6 +40,35 @@ function [status,errmsg, train_file] = verify_and_create_train_file (train_input
      fprintf(train_out,'%s\n',char(train_files(i)));
   endfor
   fclose(train_out);
+
+  % If user specified validation file 
+  if !isempty(valid_input); 
+
+    if isdir(valid_input) == 0;
+      errmsg = sprintf('%s is not a directory', valid_input);
+      status = 1;
+      return;
+    endif
+    
+    valid_files = glob(strcat(valid_input, filesep(),'*', H_FIVE_SUFFIX));
+    
+    if rows(valid_files) != 16;
+      errmsg = sprintf('Expecting 16 .h5 files, but got: %d', rows(valid_files));
+      status = 3;
+      return;
+    endif
+    
+    
+    valid_file = strcat(outdir, filesep(),'valid_file.txt');
+    valid_out = fopen(valid_file, "w");
+    for i = 1:rows(valid_files)
+      fprintf(valid_out,'%s\n',char(valid_files(i)));
+    endfor
+    fclose(valid_out);
+
+  else
+    valid_file = train_file; 
+  endif
 endfunction
 
 %!test

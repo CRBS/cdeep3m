@@ -20,6 +20,7 @@ average_loss="16"
 lr_policy="poly"
 iter_size="8"
 snapshot_interval="2000"
+validation_dir=""
 
 function usage()
 {
@@ -30,6 +31,7 @@ function usage()
                               [--average_loss AVERAGE_LOSS] 
                               [--lr_policy POLICY] [--iter_size ITER_SIZE] 
                               [--snapshot_interval SNAPSHOT_INTERVAL]
+                              [--validation_dir VALIDATION_DIR]
                               augtrainimages trainoutdir
 
               Version: $version
@@ -62,12 +64,13 @@ optional arguments:
   --snapshot_interval  How often caffe should output a model and solverstate.
                        (default $snapshot_interval)
   --numiterations      Number of training iterations to run (default $numiterations)
+  --validation_dir     Augmented validation data
 
     " 1>&2;
    exit 1;
 }
 
-TEMP=`getopt -o h --long "1fmonly,numiterations:,base_learn:,power:,momentum:,weight_decay:,average_loss:,lr_policy:,iter_size:,snapshot_interval:" -n '$0' -- "$@"`
+TEMP=`getopt -o h --long "1fmonly,numiterations:,base_learn:,power:,momentum:,weight_decay:,average_loss:,lr_policy:,iter_size:,snapshot_interval:,validation_dir:" -n '$0' -- "$@"`
 eval set -- "$TEMP"
 
 while true ; do
@@ -83,6 +86,7 @@ while true ; do
         --iter_size ) iter_size=$2 ; shift 2 ;;
         --snapshot_interval ) snapshot_interval=$2 ; shift 2 ;;
         --numiterations ) numiterations=$2 ; shift 2 ;;
+        --validation_dir ) validation_dir=$2 ; shift 2 ;;
         --) shift ; break ;;
     esac
 done
@@ -95,7 +99,12 @@ fi
 declare -r aug_train=$1
 declare -r train_out=$2
 
-CreateTrainJob.m "$aug_train" "$train_out"
+
+if [ -z $validation_dir ] ; then 
+  validation_dir=$aug_train
+fi
+
+./CreateTrainJob.m "$aug_train" "$train_out" "$validation_dir"
 ecode=$?
 if [ $ecode != 0 ] ; then
   echo "Error, a non-zero exit code ($ecode) was received from: CreateTrainJob.m \"$aug_train\" \"$train_out\""
