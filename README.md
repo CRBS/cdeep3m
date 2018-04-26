@@ -24,7 +24,7 @@ This code is for a manuscript under revision, titled:
 Click launch button to spin up the latest release of CDeep3M on the cloud (~20 minute spin up time):
 **(Oregon region)** 
 
-[![Launch Deep3m AWS CloudFormation link](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=cdeep3m-stack-0-20-0rc2&templateURL=https://s3-us-west-2.amazonaws.com/cdeep3m-releases/0.20.0rc2/cdeep3m_0.20.0rc2_basic_cloudformation.json)
+[![Launch Deep3m AWS CloudFormation link](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=cdeep3m-stack-0-20-0rc3&templateURL=https://s3-us-west-2.amazonaws.com/cdeep3m-releases/0.20.0rc3/cdeep3m_0.20.0rc3_basic_cloudformation.json)
 
 **NOTE: Running will result in EC2 charges (0.9-3$ per hour runtime)**
 
@@ -93,14 +93,14 @@ Done with your segmentation? Don't forget to [delete your Cloud Stack][deletesta
 #### Step 1) Download release tarball
 
 ```Bash
-wget https://github.com/CRBS/cdeep3m/releases/download/v0.20.0rc2/cdeep3m-0.20.0rc2.tar.gz
+wget https://github.com/CRBS/cdeep3m/releases/download/v0.20.0rc3/cdeep3m-0.20.0rc3.tar.gz
 ```
 
 #### Step 2) Uncompress 
 
 ```Bash
-tar -zxf cdeep3m-0.20.0rc2.tar.gz
-cd cdeep3m-0.20.0rc2
+tar -zxf cdeep3m-0.20.0rc3.tar.gz
+cd cdeep3m-0.20.0rc3
 ```
 
 #### Step 3) Add to path
