@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import sys
+import stat
 import os
 import argparse
 import time
@@ -20,9 +21,11 @@ def _parse_arguments(desc, theargs):
     help_formatter = argparse.RawDescriptionHelpFormatter
     parser = argparse.ArgumentParser(description=desc,
                                      formatter_class=help_formatter)
+    parser.add_argument('outdir',
+                        help='Directory to write out private key file')
     parser.add_argument('--usestackid', default=None,
                         help='If set use stackid instead')
-    parser.add_argument('--privatekeyfile', default=os.path.join(os.path.expanduser('~'),'.ssh','id_rsa'),
+    parser.add_argument('--key_file', default=os.path.join(os.path.expanduser('~'),'.ssh','id_rsa'),
                         help='Private key file to use')
     parser.add_argument('--template',
                         help='CloudFormation template file to use')
@@ -33,8 +36,6 @@ def _parse_arguments(desc, theargs):
                         help='Stack name to use')
     parser.add_argument('--cdeep3mversion', default='0.15.2',
                         help='Version of CDeep3M to launch (default 0.15.2)')
-    parser.add_argument('--keypairname', default='id_rsa',
-                        help='AWS EC2 KeyPair Name')
     parser.add_argument('--instancetype', default='p3.2xlarge',
                         choices=['p2.xlarge', 'p3.2xlarge','p3.8xlarge','p3.16xlarge'],
                         help='GPU Instance type to launch (default p3.2xlarge')
@@ -47,10 +48,31 @@ def _parse_arguments(desc, theargs):
     return parser.parse_args(theargs)
 
 
+def _create_key_pair(theargs):
+   """Creates keypair and save private key to theargs.outdir
+      :returns string: name of keypair created.
+   """
+   ec2 = boto3.client('ec2',region_name=theargs.region)
+   name = theargs.name + 'keypair'
+   res = ec2.create_key_pair(KeyName=name)
+   if not os.path.isdir(theargs.outdir):
+      os.makedirs(theargs.outdir, mode=0o755)
+   os.chmod(theargs.outdir,stat.S_IRWXU | stat.S_IRUSR | stat.S_IXUSR)
+   
+   theargs.key_file = os.path.join(theargs.outdir,'private.key')
+   with open(theargs.key_file, 'w') as f:
+     f.write(res['KeyMaterial'])
+     f.flush()
+   sys.stdout.write('Wrote key: ' + name + ' to file ' + theargs.key_file + '\n')
+   os.chmod(theargs.key_file,stat.S_IRWXU | stat.S_IRUSR)
+   return name
+
+
 def _launch_cloudformation(theargs):
     """Launches cloud formation
        :returns string: stackid
     """
+    theargs.keypairname = _create_key_pair(theargs)
     cloudform = boto3.client('cloudformation', region_name=theargs.region)
     template = theargs.template
     with open(template, 'r') as f:
@@ -117,6 +139,7 @@ def _wait_for_stack(stackid, theargs):
      time.sleep(30)
      dns = _is_stack_complete(stackid, cloudform)
    sys.stdout.write('\n')
+   time.sleep(30)
    return dns
 
 
@@ -134,8 +157,7 @@ def _is_stack_complete(stackid, cloudform):
 def _get_ssh_client_connected_to_server(hostname, theargs):
     ssh_client = paramiko.SSHClient()
     ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    pkey = paramiko.RSAKey.from_private_key_file(theargs.privatekeyfile,
-                                                 getpass.getpass('Passphrase for key: ', sys.stdout))
+    pkey = paramiko.RSAKey.from_private_key_file(theargs.key_file)
     ssh_client.connect(hostname=hostname,
                        username='ubuntu',
                        pkey=pkey,
@@ -175,10 +197,13 @@ def main(arglist):
 
     if dns is None:
       return 1
-
+    
     ssh_client = _get_ssh_client_connected_to_server(dns, theargs)
+    cmd_to_run = 'nohup /bin/bash -ic "source /home/ubuntu/.bashrc ;/usr/bin/time -p /home/ubuntu/cdeep3m/runprediction.sh /home/ubuntu/sbem/mitochrondria/xy5.9nm40nmz/30000iterations_train_out /home/ubuntu/sbem/mitochrondria/xy5.9nm40nmz/images /home/ubuntu/predictyoyo" > output.txt 2>&1 < /dev/null &'
 
-    sys.stdout.write(_exec_command(ssh_client, 'nohup /bin/bash -ic "source /home/ubuntu/.bashrc ;/usr/bin/time -p /home/ubuntu/cdeep3m/runprediction.sh /home/ubuntu/sbem/mitochrondria/xy5.9nm40nmz/30000iterations_train_out /home/ubuntu/sbem/mitochrondria/xy5.9nm40nmz/images /home/ubuntu/predictyoyo" > output.txt 2>&1 < /dev/null &'))
+    sys.stdout.write('Attempting to run command: ' + cmd_to_run)
+    sys.stdout.write(_exec_command(ssh_client, cmd_to_run))
+    sys.stdout.write('Hopefully command is running.\n')
     
  
     ssh_client.close()   
