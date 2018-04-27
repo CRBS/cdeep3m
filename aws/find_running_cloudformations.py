@@ -17,13 +17,18 @@ def _parse_arguments(desc, theargs):
                         help='Find only AMI image with this string in name' +
                              ' (default: Deep Learning AMI with Source ' + 
                              'Code v2.0')
+    parser.add_argument('--profile',
+                        default=None,
+                        help='AWS profile to load from credentials. default none')
     return parser.parse_args(theargs)
 
 def _get_running_cloudformations(theargs):
     """Finds all running cloudformations
     """
     mapstr = ''
-    ec2 = boto3.client('ec2')
+    if theargs.profile is not None:
+        boto3.setup_default_session(profile_name=theargs.profile)
+    ec2 = boto3.client('ec2', region_name='us-west-2')
     response = ec2.describe_regions()
     for region in response['Regions']:
         rname = region['RegionName']
