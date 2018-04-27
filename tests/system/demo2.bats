@@ -22,11 +22,6 @@ teardown() {
     run $RUNTRAINING_SH --numiterations 100 "$TEST_TMP_DIR/mito_testaugtrain" "$TEST_TMP_DIR/train_out"
     echo "$status $output" 1>&2
     [ "$status" -eq 0 ]
-    [ -s "$TEST_TMP_DIR/out/Segmented_0001.png" ]
-    [ -s "$TEST_TMP_DIR/out/Segmented_0002.png" ]
-    [ -s "$TEST_TMP_DIR/out/Segmented_0003.png" ]
-    [ -s "$TEST_TMP_DIR/out/Segmented_0004.png" ]
-    [ -s "$TEST_TMP_DIR/out/Segmented_0005.png" ]
 }
 
 
