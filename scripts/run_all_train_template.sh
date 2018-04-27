@@ -118,8 +118,8 @@ fi
 parallel_job_file="$script_dir/parallel.jobs"
 
 for model_name in `echo "$model_list" | sed "s/,/ /g"` ; do
-  if [ ! -d "$script_dir/$Y" ] ; then
-    echo "ERROR, no $script_dir/$Y directory found."
+  if [ ! -d "$script_dir/$model_name" ] ; then
+    echo "ERROR, no $script_dir/$model_name directory found."
     exit 2
   fi
   echo -e "$numiterations\n$cntr\n$base_lr\n$power\n$momentum\n$weight_decay\n$average_loss\n$lr_policy\n$iter_size\n$snapshot_interval\n$model_name" >> $parallel_job_file

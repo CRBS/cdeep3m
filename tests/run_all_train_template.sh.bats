@@ -15,63 +15,142 @@ teardown() {
     fi
 }
 
+@test "run_all_train.sh unable to get count of GPUs" {
+    touch "$TEST_TMP_DIR/foo.caffemodel"
+    ln -s /bin/false "$TEST_TMP_DIR/nvidia-smi"
+    export A_TEMP_PATH=$PATH
+    export PATH=$TEST_TMP_DIR:$PATH
+    run $RUN_ALL_TRAIN_SH 
+    export PATH=$A_TEMP_PATH
+    [ "$status" -eq 4 ]
+    echo "$status $output" 2>&1
+    [ "${lines[0]}" = "ERROR unable to get count of GPU(s). Is nvidia-smi working?" ]
+}
+
 @test "run_all_train.sh no args empty dir" {
+    echo "#!/bin/bash" > "$TEST_TMP_DIR/nvidia-smi"
+    echo "echo 'GPU 0'" >> "$TEST_TMP_DIR/nvidia-smi"
+    chmod a+x "$TEST_TMP_DIR/nvidia-smi"
+    ln -s /bin/echo "$TEST_TMP_DIR/parallel"
+    export A_TEMP_PATH=$PATH
+    export PATH=$TEST_TMP_DIR:$PATH
     run $RUN_ALL_TRAIN_SH
+    export PATH=$A_TEMP_PATH
     echo "$status $output" 1>&2
     [ "$status" -eq 2 ]
-    [ "${lines[0]}" = "ERROR, no $TEST_TMP_DIR/1fm directory found." ]
+    [ "${lines[0]}" = "Single GPU detected." ]
+    [ "${lines[1]}" = "ERROR, no $TEST_TMP_DIR/1fm directory found." ]
 }
 
-@test "run_all_train.sh success no args" {
+@test "run_all_train.sh success no args with 4 GPUs" {
     ln -s /bin/echo "$TEST_TMP_DIR/caffe_train.sh"
     mkdir -p "$TEST_TMP_DIR/1fm" "$TEST_TMP_DIR/3fm" "$TEST_TMP_DIR/5fm"
+    echo "echo -e 'GPU 0\nGPU 1\nGPU 2\nGPU 3'" >> "$TEST_TMP_DIR/nvidia-smi"
+    chmod a+x "$TEST_TMP_DIR/nvidia-smi"
+    ln -s /bin/echo "$TEST_TMP_DIR/parallel"
+
+    export A_TEMP_PATH=$PATH
+    export PATH=$TEST_TMP_DIR:$PATH
     run $RUN_ALL_TRAIN_SH
+    export PATH=$A_TEMP_PATH
     echo "$status $output" 1>&2
     [ "$status" -eq 0 ]
-    [ "${lines[0]}" = "Running 1fm train, this could take a while" ]    
-    [ "${lines[1]}" = "--numiterations 30000 --gpu all --base_learn 1e-02 --power 0.8 --momentum 0.9 --weight_decay 0.0005 --average_loss 16 --lr_policy poly --iter_size 8 --snapshot_interval 2000 1fm" ]
-    [ "${lines[5]}" = "Running 3fm train, this could take a while" ]
-    [ "${lines[6]}" = "--numiterations 30000 --gpu all --base_learn 1e-02 --power 0.8 --momentum 0.9 --weight_decay 0.0005 --average_loss 16 --lr_policy poly --iter_size 8 --snapshot_interval 2000 3fm" ]
-    [ "${lines[10]}" = "Running 5fm train, this could take a while" ]
-    [ "${lines[11]}" = "--numiterations 30000 --gpu all --base_learn 1e-02 --power 0.8 --momentum 0.9 --weight_decay 0.0005 --average_loss 16 --lr_policy poly --iter_size 8 --snapshot_interval 2000 5fm" ]
-    [ "${lines[15]}" = "Training has completed. Have a nice day!" ]
+    [ "${lines[0]}" = "Detected 4 GPU(s). Will run in parallel." ]
+    [ "${lines[1]}" = "--no-notice --delay 2 -N 11 -j 4 $TEST_TMP_DIR/caffe_train.sh --numiterations {1} --gpu {2} --base_learn {3} --power {4} --momentum {5} --weight_decay {6} --average_loss {7} --lr_policy {8} --iter_size {9} --snapshot_interval {10} {11}" ]    
+    [ "${lines[2]}" = "Training has completed. Have a nice day!" ]
+    run cat "$TEST_TMP_DIR/parallel.jobs"
+    echo "$status $output" 1>&2
+    [ "${lines[0]}" = "30000" ]
+    [ "${lines[1]}" = "0" ]
+    [ "${lines[2]}" = "1e-02" ]
+    [ "${lines[3]}" = "0.8" ]
+    [ "${lines[4]}" = "0.9" ]
+    [ "${lines[5]}" = "0.0005" ]
+    [ "${lines[6]}" = "16" ]
+    [ "${lines[7]}" = "poly" ]
+    [ "${lines[8]}" = "8" ]
+    [ "${lines[9]}" = "2000" ]
+    [ "${lines[10]}" = "1fm" ]
+    [ "${lines[12]}" = "1" ]
+    [ "${lines[21]}" = "3fm" ]
+    [ "${lines[23]}" = "2" ]
+    [ "${lines[32]}" = "5fm" ]
 }
 
-@test "run_all_train.sh caffe_train.sh fail" {
-    ln -s /bin/false "$TEST_TMP_DIR/caffe_train.sh"  
+@test "run_all_train.sh success no args with 1 GPU" {
+    ln -s /bin/echo "$TEST_TMP_DIR/caffe_train.sh"
     mkdir -p "$TEST_TMP_DIR/1fm" "$TEST_TMP_DIR/3fm" "$TEST_TMP_DIR/5fm"
+    echo "echo 'GPU 0'" >> "$TEST_TMP_DIR/nvidia-smi"
+    chmod a+x "$TEST_TMP_DIR/nvidia-smi"
+    ln -s /bin/echo "$TEST_TMP_DIR/parallel"
+
+    export A_TEMP_PATH=$PATH
+    export PATH=$TEST_TMP_DIR:$PATH
     run $RUN_ALL_TRAIN_SH
+    export PATH=$A_TEMP_PATH
+    echo "$status $output" 1>&2
+    [ "$status" -eq 0 ]
+    [ "${lines[0]}" = "Single GPU detected." ]
+    [ "${lines[1]}" = "--no-notice --delay 2 -N 11 -j 1 $TEST_TMP_DIR/caffe_train.sh --numiterations {1} --gpu {2} --base_learn {3} --power {4} --momentum {5} --weight_decay {6} --average_loss {7} --lr_policy {8} --iter_size {9} --snapshot_interval {10} {11}" ]
+    [ "${lines[2]}" = "Training has completed. Have a nice day!" ]
+    run cat "$TEST_TMP_DIR/parallel.jobs"
+    echo "$status $output" 1>&2
+    [ "${lines[1]}" = "0" ]
+    [ "${lines[10]}" = "1fm" ]
+    [ "${lines[12]}" = "0" ]
+    [ "${lines[21]}" = "3fm" ]
+    [ "${lines[23]}" = "0" ]
+    [ "${lines[32]}" = "5fm" ]
+}
+
+@test "run_all_train.sh test custom parameters" {
+    ln -s /bin/echo "$TEST_TMP_DIR/caffe_train.sh"
+    mkdir -p "$TEST_TMP_DIR/1fm" "$TEST_TMP_DIR/3fm" "$TEST_TMP_DIR/5fm"
+    echo "echo -e 'GPU 0\nGPU 1\nGPU 2\nGPU 3'" >> "$TEST_TMP_DIR/nvidia-smi"
+    chmod a+x "$TEST_TMP_DIR/nvidia-smi"
+    ln -s /bin/echo "$TEST_TMP_DIR/parallel"
+
+    export A_TEMP_PATH=$PATH
+    export PATH=$TEST_TMP_DIR:$PATH
+    run $RUN_ALL_TRAIN_SH --models 3fm,5fm --base_learn base --power power --momentum momentum --weight_decay weight --average_loss average --lr_policy lr --iter_size iter --snapshot_interval snapshot --numiterations numiterations
+    export PATH=$A_TEMP_PATH
+    echo "$status $output" 1>&2
+    [ "$status" -eq 0 ]
+    [ "${lines[0]}" = "Detected 4 GPU(s). Will run in parallel." ]
+    [ "${lines[1]}" = "--no-notice --delay 2 -N 11 -j 4 $TEST_TMP_DIR/caffe_train.sh --numiterations {1} --gpu {2} --base_learn {3} --power {4} --momentum {5} --weight_decay {6} --average_loss {7} --lr_policy {8} --iter_size {9} --snapshot_interval {10} {11}" ]
+    [ "${lines[2]}" = "Training has completed. Have a nice day!" ]
+    run cat "$TEST_TMP_DIR/parallel.jobs"
+    echo "$status $output" 1>&2
+    [ "${lines[0]}" = "numiterations" ]
+    [ "${lines[1]}" = "0" ]
+    [ "${lines[2]}" = "base" ]
+    [ "${lines[3]}" = "power" ]
+    [ "${lines[4]}" = "momentum" ]
+    [ "${lines[5]}" = "weight" ]
+    [ "${lines[6]}" = "average" ]
+    [ "${lines[7]}" = "lr" ]
+    [ "${lines[8]}" = "iter" ]
+    [ "${lines[9]}" = "snapshot" ]
+    [ "${lines[10]}" = "3fm" ]
+    [ "${lines[12]}" = "1" ]
+    [ "${lines[21]}" = "5fm" ]
+}
+
+@test "run_all_train.sh fail no args" {
+    ln -s /bin/echo "$TEST_TMP_DIR/caffe_train.sh"
+    mkdir -p "$TEST_TMP_DIR/1fm" "$TEST_TMP_DIR/3fm" "$TEST_TMP_DIR/5fm"
+    echo "echo 'GPU 0'" >> "$TEST_TMP_DIR/nvidia-smi"
+    chmod a+x "$TEST_TMP_DIR/nvidia-smi"
+    ln -s /bin/false "$TEST_TMP_DIR/parallel"
+
+    export A_TEMP_PATH=$PATH
+    export PATH=$TEST_TMP_DIR:$PATH
+    run $RUN_ALL_TRAIN_SH
+    export PATH=$A_TEMP_PATH
     echo "$status $output" 1>&2
     [ "$status" -eq 1 ]
-    [ "${lines[0]}" = "Running 1fm train, this could take a while" ]        
-    [ "${lines[1]}" = "Command exited with non-zero status 1" ]
-    [ "${lines[5]}" = "Non zero exit code from caffe for train of 1fm model. Exiting." ]
+    [ "${lines[0]}" = "Single GPU detected." ]
+    [ "${lines[1]}" = "Non zero exit code from caffe for train of model. Exiting." ]
 }
 
-@test "run_all_train.sh success custom iterations and gpu" {
-    ln -s /bin/echo "$TEST_TMP_DIR/caffe_train.sh"  
-    mkdir -p "$TEST_TMP_DIR/1fm" "$TEST_TMP_DIR/3fm" "$TEST_TMP_DIR/5fm"
-    run $RUN_ALL_TRAIN_SH --numiterations 2500 --gpu yo
-    echo "$status $output" 1>&2
-    [ "$status" -eq 0 ]
-    [ "${lines[0]}" = "Running 1fm train, this could take a while" ]        
-    [ "${lines[1]}" = "--numiterations 2500 --gpu yo --base_learn 1e-02 --power 0.8 --momentum 0.9 --weight_decay 0.0005 --average_loss 16 --lr_policy poly --iter_size 8 --snapshot_interval 2000 1fm" ]
-    [ "${lines[5]}" = "Running 3fm train, this could take a while" ]
-    [ "${lines[6]}" = "--numiterations 2500 --gpu yo --base_learn 1e-02 --power 0.8 --momentum 0.9 --weight_decay 0.0005 --average_loss 16 --lr_policy poly --iter_size 8 --snapshot_interval 2000 3fm" ]
-    [ "${lines[10]}" = "Running 5fm train, this could take a while" ]
-    [ "${lines[11]}" = "--numiterations 2500 --gpu yo --base_learn 1e-02 --power 0.8 --momentum 0.9 --weight_decay 0.0005 --average_loss 16 --lr_policy poly --iter_size 8 --snapshot_interval 2000 5fm" ]
-    [ "${lines[15]}" = "Training has completed. Have a nice day!" ]
-}
-
-@test "run_all_train.sh success --1fmonly" {
-    ln -s /bin/echo "$TEST_TMP_DIR/caffe_train.sh"  
-    mkdir -p "$TEST_TMP_DIR/1fm" "$TEST_TMP_DIR/3fm" "$TEST_TMP_DIR/5fm"
-    run $RUN_ALL_TRAIN_SH --1fmonly
-    echo "$status $output" 1>&2
-    [ "$status" -eq 0 ]
-    [ "${lines[0]}" = "Running 1fm train, this could take a while" ]        
-    [ "${lines[1]}" = "--numiterations 30000 --gpu all --base_learn 1e-02 --power 0.8 --momentum 0.9 --weight_decay 0.0005 --average_loss 16 --lr_policy poly --iter_size 8 --snapshot_interval 2000 1fm" ]
-    [ "${lines[5]}" = "--1fmonly flag set, skipping 3fm and 5fm models." ]
-    [ "${lines[6]}" = "Training has completed. Have a nice day!" ]
-}
-
+   
