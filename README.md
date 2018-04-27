@@ -11,6 +11,7 @@
 [license]: https://github.com/CRBS/cdeep3m/blob/master/LICENSE
 [cloudaccess]: https://github.com/CRBS/cdeep3m/wiki/How-to-access-CDeep3M-cloud
 [speedup]: https://github.com/CRBS/cdeep3m/wiki/Speed-up
+[parallel]: https://www.gnu.org/software/parallel/
 
 # CDeep3M
 
@@ -88,6 +89,8 @@ Done with your segmentation? Don't forget to [delete your Cloud Stack][deletesta
 
 * bats (for testing): https://github.com/bats-core/bats-core/archive/v0.4.0.tar.gz
 
+* [GNU Parallel][parallel]
+
 ## How to install locally
 
 #### Step 1) Download release tarball
@@ -126,3 +129,7 @@ For contents of **model/** see [model/LICENSE file][divelablicense] for license
 
 * Support from NIH grants 5P41GM103412-29 (NCMIR), 5p41GM103426-24 (NBCR), 5R01GM082949-10 (CIL)
 * The DIVE lab for making [DeepEM3D][deepem3d] publicly available.
+
+* O. Tange (2011): GNU Parallel - The Command-Line Power Tool,
+;login: The USENIX Magazine, February 2011:42-47.
+
