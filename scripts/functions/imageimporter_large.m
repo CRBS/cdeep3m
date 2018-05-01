@@ -7,6 +7,7 @@ function [imgstack] = imageimporter_large(img_path,area,z_stack)
 %-----------------------------------------------------------------------------
 %% CDeep3M -- NCMIR/NBCR, UCSD -- Author: M Haberl -- Date: 11/2017
 %-----------------------------------------------------------------------------
+warning ("off")
 disp('Image importer loading ... '); 
 disp(img_path); 
 % check if a folder of png/tif files or a single stack to load
