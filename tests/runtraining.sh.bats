@@ -25,9 +25,22 @@ teardown() {
    export A_TEMP_PATH=$PATH
    export PATH=$TEST_TMP_DIR:$PATH
    run $RUNTRAINING_SH trainimages trainoutdir
+   echo "$status $output" 1>&2
    [ "$status" -eq 3 ]
-   [ "${lines[0]}" = "trainimages trainoutdir" ]
+   [ "${lines[0]}" = "trainimages trainoutdir trainimages" ]
    
+   export PATH=$A_TEMP_PATH
+}
+
+@test "runtraining.sh CreateTrainJob.m with --validation flag" {
+   ln -s /bin/echo "$TEST_TMP_DIR/CreateTrainJob.m"
+   export A_TEMP_PATH=$PATH
+   export PATH=$TEST_TMP_DIR:$PATH
+   run $RUNTRAINING_SH --validation_dir foo trainimages trainoutdir
+   echo "$status $output" 1>&2
+   [ "$status" -eq 3 ]
+   [ "${lines[0]}" = "trainimages trainoutdir foo" ]
+
    export PATH=$A_TEMP_PATH
 }
 

@@ -100,14 +100,14 @@ declare -r aug_train=$1
 declare -r train_out=$2
 
 
-if [ -z $validation_dir ] ; then 
+if [ -z "$validation_dir" ] ; then 
   validation_dir=$aug_train
 fi
 
-./CreateTrainJob.m "$aug_train" "$train_out" "$validation_dir"
+CreateTrainJob.m "$aug_train" "$train_out" "$validation_dir"
 ecode=$?
 if [ $ecode != 0 ] ; then
-  echo "Error, a non-zero exit code ($ecode) was received from: CreateTrainJob.m \"$aug_train\" \"$train_out\""
+  echo "Error, a non-zero exit code ($ecode) was received from: CreateTrainJob.m \"$aug_train\" \"$train_out\" \"$validation_dir\""
   echo ""
   exit 2
 fi
