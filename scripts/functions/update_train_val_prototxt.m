@@ -1,10 +1,10 @@
-## Usage update_train_val_prototxt(outdir, model, train_file)
+## Usage update_train_val_prototxt(outdir, model, train_file, valid_file)
 ##
 ## Updates <outdir>/<model>/train_val.prototxt file
 ## replacing path in data_source: line with <train_file>
 ##
 
-function update_train_val_prototxt(outdir,model,train_file)
+function update_train_val_prototxt(outdir,model,train_file,valid_file)
   % updates data_source in train_val.prototxt file
   train_val_prototxt = strcat(outdir,filesep(),model,filesep(),
                               'train_val.prototxt');
@@ -12,8 +12,10 @@ function update_train_val_prototxt(outdir,model,train_file)
   lines = strsplit(t_data,'\n');
   train_out = fopen(train_val_prototxt,"w");
   for j = 1:columns(lines)
-    if index(char(lines(j)),'data_source:') >= 1;
+    if index(char(lines(j)),'train_file.txt') >= 1;
       fprintf(train_out,'    data_source: "%s"\n',train_file);
+    elseif index(char(lines(j)), 'valid_file.txt') >= 1; 
+      fprintf(train_out,'    data_source: "%s"\n', valid_file); 
     else
       fprintf(train_out,'%s\n',char(lines(j)));
     endif

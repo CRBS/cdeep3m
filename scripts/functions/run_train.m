@@ -9,6 +9,7 @@
 ##          {
 ##            [1,1] = /foo/traindata
 ##            [2,1] = /foo/output
+##            [3,1] = /foo/validationdata
 ##          }
 ##
 
@@ -27,11 +28,11 @@ function run_train(arg_list)
   run_all_train_template=strcat(base_dir,filesep(),'scripts',filesep(),
                               'run_all_train_template.sh');
 
-  if numel(arg_list)~=2; 
+  if numel(arg_list) < 2; 
     fprintf('\n');
-    msg = sprintf('%s expects two command line arguments\n\n', prog_name);
+    msg = sprintf('%s expects at least two command line arguments\n\n', prog_name);
     msg = strcat(msg,
-                 sprintf('Usage: %s <Input train data directory> <output directory>\n',
+                 sprintf('Usage: %s <Input train data directory> <output directory> <validatoin data directory> (validation data is optional)\n',
                          prog_name));
     error(msg); 
     return; 
@@ -54,11 +55,17 @@ function run_train(arg_list)
      msg = strcat(msg,sprintf('\nRun %s to run training\n',all_train_file));
      error(msg);
   endif
+
+  validation_img_path = make_absolute_filename(arg_list{3});
+
+  if isdir(validation_img_path) == 0;
+    error('Third argument is not a directory and its supposed to be');
+  endif
   % ---------------------------------------------------------------------------
   % Examine input training data and generate list of h5 files
   % ---------------------------------------------------------------------------
   fprintf(stdout(), 'Verifying input training data is valid ... ');
-  [status, errmsg, train_file] = verify_and_create_train_file(in_img_path, outdir);
+  [status, errmsg, train_file, valid_file] = verify_and_create_train_file(in_img_path, outdir, validation_img_path);
 
   if status != 0;
     error(errmsg);
@@ -78,9 +85,9 @@ function run_train(arg_list)
   update_solverproto_txt_file(outdir,'3fm');
   update_solverproto_txt_file(outdir,'5fm');
 
-  update_train_val_prototxt(outdir,'1fm',train_file);
-  update_train_val_prototxt(outdir,'3fm',train_file);
-  update_train_val_prototxt(outdir,'5fm',train_file);
+  update_train_val_prototxt(outdir,'1fm',train_file,valid_file);
+  update_train_val_prototxt(outdir,'3fm',train_file,valid_file);
+  update_train_val_prototxt(outdir,'5fm',train_file,valid_file);
   caffe_train = strcat(outdir,filesep(),'caffe_train.sh');
   copyfile(caffe_train_template,caffe_train);
  
