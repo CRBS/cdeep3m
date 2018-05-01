@@ -84,14 +84,15 @@ small_patch = single((255 /bitdepth(idx))*small_patch);
 %small_patch = single((255 /max(small_patch(:)))*small_patch);
 area = packages{x_y_num};
 if numel(packages)>1
-insertsize = [(area(2)+1)-area(1),(area(4)+1)-area(3)];
-if area(1)==1;small_patch = small_patch(13:end,:); end
-if area(3)==1;small_patch = small_patch(:,13:end); end
 
-merger_image(area(1):area(2),area(3):area(4),1) = small_patch(1:insertsize(1),1:insertsize(2)); %insert image onto NaN blank image
-%single_plane = nanmean(merger_image,3);
-%merger_image = (NaN([imagesize(1:2),2],'single')); %Initialize empty image in x/y 2 in  z
-%merger_image(:,:,2) = single_plane;
+corners = [area(1)+12, area(2)-12, area(3)+12, area(4)-12];
+if area(1)==1; corners(1) = 1; end; if area(2)==size(merger_image,1), corners(2) = size(merger_image,1); end
+if area(3)==1; corners(3) = 1; end; if area(4)==size(merger_image,2), corners(4) = size(merger_image,2); end
+if corners(2)>size(merger_image,1), corners(2) = size(merger_image,1); end;
+if corners(4)>size(merger_image,2), corners(4) = size(merger_image,2); end;
+insertsize = [(corners(2)+1)-corners(1),(corners(4)+1)-corners(3)];
+
+merger_image(corners(1):corners(2),corners(3):corners(4),1) = small_patch(13:insertsize(1)+12,13:insertsize(2)+12);
 
 else %if there is only one package
 if imagesize(1)<=1012, start(1) = 13;else, start(1) = 1;end %define where the image has been padded
@@ -101,9 +102,7 @@ merger_image = small_patch(start(1):(imagesize(1)+start(1)-1),start(2):(imagesiz
 end
 
 end
-%combined_plane = merger_image;
-%combined_plane = nanmean(merger_image,3);
-%bitdepth = [1 255 65535];
+
 [~,idx] = min(abs(bitdepth - single(max(merger_image(:)))));
 save_plane = uint8((255 /bitdepth(idx))*merger_image);
 outfile = fullfile(fm_dir, sprintf('Segmented_%04d.png',z_plane));
