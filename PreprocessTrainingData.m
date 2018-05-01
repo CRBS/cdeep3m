@@ -18,16 +18,12 @@
 % ----------------------------------------------------------------------------------------
 %% Initialize
 % ----------------------------------------------------------------------------------------
-
+warning("off")
 disp('Starting Training data Preprocessing');
 pkg load hdf5oct
 pkg load image
 script_dir = fileparts(make_absolute_filename(program_invocation_name()));
 addpath(genpath(script_dir));
-addpath(genpath(strcat(script_dir,filesep(),'scripts',filesep())));
-addpath(genpath(strcat(script_dir,filesep(),'scripts',filesep(),'functions')));
-
-
 
 arg_list = argv ();
 if numel(arg_list)<3; disp('Use -> PreprocessTraining /ImageData/training/images/ /ImageData/training/labels/ /ImageData/augmentedtraining/'); return; end
