@@ -6,7 +6,7 @@ function [imagesize] = check_image_size(img_path)
 %-----------------------------------------------------------------------------
 %% CDeep3M -- NCMIR/NBCR, UCSD -- Author: M Haberl -- Date: 11/2017
 %-----------------------------------------------------------------------------
-
+warning ("off")
 disp('Check image size of: '); 
 disp(img_path); 
 % check if a folder of png/tif files or a single stack to load
