@@ -52,13 +52,6 @@ function [status,errmsg, train_file, valid_file] = verify_and_create_train_file 
     
     valid_files = glob(strcat(valid_input, filesep(),'*', H_FIVE_SUFFIX));
     
-    if rows(valid_files) != 16;
-      errmsg = sprintf('Expecting 16 .h5 files, but got: %d', rows(valid_files));
-      status = 3;
-      return;
-    endif
-    
-    
     valid_file = strcat(outdir, filesep(),'valid_file.txt');
     valid_out = fopen(valid_file, "w");
     for i = 1:rows(valid_files)
