@@ -199,13 +199,23 @@ def main(arglist):
       return 1
     
     ssh_client = _get_ssh_client_connected_to_server(dns, theargs)
-    cmd_to_run = 'nohup /bin/bash -ic "source /home/ubuntu/.bashrc ;/usr/bin/time -p /home/ubuntu/cdeep3m/runprediction.sh /home/ubuntu/sbem/mitochrondria/xy5.9nm40nmz/30000iterations_train_out /home/ubuntu/sbem/mitochrondria/xy5.9nm40nmz/images /home/ubuntu/predictyoyo" > output.txt 2>&1 < /dev/null &'
+    cmd_to_run = 'nohup /bin/bash -ic "source /home/ubuntu/.bashrc ;/usr/bin/time -p /home/ubuntu/cdeep3m/runprediction.sh /home/ubuntu/sbem/mitochrondria/xy5.9nm40nmz/30000iterations_train_out /home/ubuntu/sbem/mitochrondria/xy5.9nm40nmz/images /home/ubuntu/predictyoyo;/usr/bin/time -p /home/ubuntu/cdeep3m/EnsemblePredictions.m /home/ubuntu/predictyoyo/1fm /home/ubuntu/predictyoyo/3fm /home/ubuntu/predictyoyo/5fm /home/ubuntu/predictyoyo/ensembled; touch /home/ubuntu/predictyoyo/alldone" > output.txt 2>&1 < /dev/null &'
 
-    sys.stdout.write('Attempting to run command: ' + cmd_to_run)
+    sys.stdout.write('Attempting to run command: ' + cmd_to_run + '\n')
     sys.stdout.write(_exec_command(ssh_client, cmd_to_run))
     sys.stdout.write('Hopefully command is running.\n')
+    sys.stdout.write('Waiting for command to finish.')
     
- 
+    donecheck_cmd = '/bin/bash -c "if [ -f /home/ubuntu/predictyoyo/alldone ] ; then echo done; fi"'
+    res = _exec_command(ssh_client,donecheck_cmd) 
+    sys.stdout.write('Res:' + res + ':\n')
+    sys.stdout.flush()
+    while 'None' in res:
+        sys.stdout.write('.')
+        time.sleep(60)
+        res = _exec_command(ssh_client,donecheck_cmd)
+        sys.stdout.write('Res:' + res + ':\n')
+    
     ssh_client.close()   
 
 
