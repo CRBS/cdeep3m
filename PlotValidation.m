@@ -1,15 +1,29 @@
 #!/usr/bin/octave -qf
 
+
+% PlotValidation
+% Generates traing vs validation loss plot. 
+%
+% Syntax : PlotValidation.m <train_output.csv> <validation_output.csv> <output_filepath.png>
+%
+%
+%-------------------------------------------------------------------------------
+%% Validation for Deep3M -- NCMIR/NBCR, UCSD -- Author: L Tindall -- Date: 5/2018
+%-------------------------------------------------------------------------------
+%
+
 % arg_list =
 % {
 %   [1,1] = train_output.csv
 %   [2,1] = test_output.csv
-%   [3,1] = output_dir
+%   [3,1] = output_filepath.png
 % }
 arg_list = argv ();
 
-% NumIters,Seconds,LearningRate,loss_deconv_all
+% column format for train_output csv (NumIters,Seconds,LearningRate,loss_deconv_all)
 train_output = csvread(arg_list{1,1},1,0); 
+
+% column format for test_output csv (NumIters,Seconds,LearningRate,accuracy_conv,class_Acc,loss_deconv_all)
 test_output = csvread(arg_list{2,1},1,0); 
 
 
@@ -24,6 +38,5 @@ set(gca,'YScale','log');
 legend("Training","Validation"); 
 
 
-output_img_path = strcat(arg_list{3,1},filesep(),'train_vs_val.png')
-print(plt,output_img_path, "-dpngcairo"); 
+print(plt, arg_list{3,1}, "-dpngcairo"); 
 
