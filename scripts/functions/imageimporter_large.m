@@ -27,12 +27,13 @@ if ~isempty(ext)
         imgstack=permute(imgstack,[2 3 1]); %To match the same format as TIF or PNG images
     elseif ~isempty(strfind(ext,'tif'))
         info = imfinfo(img_path);
-        fprintf('Reading %s image stack with %d images\n', num2str(z_stack(2)-z_stack(1)),size(info,1));
+        fprintf('Reading %s planes from image stack with %d planes\n', num2str(z_stack(2)+1-z_stack(1)),size(info,1));
         for iii =1:numel(all_zs)
+            fprintf('.');
             idx = all_zs(iii);
-            imgstack(:,:,iii) = imread(img_path,'index',idx,'PixelRegion', {rows, cols});
+            imgstack(:,:,iii) = imread(img_path,'index',idx,'PixelRegion', {cols, rows});
         end
-        
+        fprintf('\n');
     end
     
 elseif isdir(img_path)
