@@ -27,9 +27,9 @@ if numel(arg_list) == 1
 logdir = arg_list{1,1};
   if exist(logdir,'dir')==7
   disp('Parsing log file');
-  system(sprintf('python ~/caffe_nd_sense_segmentation/tools/extra/parse_log.py %s %s',fullfile(logdir, 'out.log'), logdir));
   train_file = fullfile(logdir, 'out.log.train'); delete(train_file);
   test_file = fullfile(logdir, 'out.log.test');  delete(test_file);
+  system(sprintf('python ~/caffe_nd_sense_segmentation/tools/extra/parse_log.py %s %s',fullfile(logdir, 'out.log'), logdir));
   else
   disp('Invalid argument');
   return
