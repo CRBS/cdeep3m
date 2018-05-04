@@ -113,3 +113,8 @@ end
 disp('Merging large image dataset completed');
 toc
 fprintf('Your results are in: %s\n', fm_dir);
+
+done_file = fopen(strcat(fm_dir, filesep(),"DONE"), "w");
+fprintf(done_file,"0\n");
+fclose(done_file);
+
