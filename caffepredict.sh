@@ -20,6 +20,8 @@ function usage()
               to perform training. The trained model will be stored in
               <model>/trainedmodel directory
               Output from caffe will be redirected to <model>/log/out.log
+              When script completes <outputdir>/DONE file will be created
+              with last line containing 0 upon success. 
     
 positional arguments:
   model                Path to .caffemodel file or directory with caffe
@@ -56,13 +58,18 @@ model=$1
 in_dir=$2
 out_dir=$3
 
+done_file="$out_dir/DONE"
+
+function fatal_error() {
+  echo -e "$1\n$2" >> "$done_file"
+  exit $2
+}
 
 if [ -d "$model" ] ; then
   model_dir="$model"
   latest_iteration=`ls "$model" | egrep "\.caffemodel$" | sed "s/^.*iter_//" | sed "s/\.caffemodel//" | sort -g | tail -n 1`
   if [ "$latest_iteration" == "" ] ; then
-     echo "ERROR no #.caffemodel files found"
-     exit 2
+     fatal_error "ERROR no #.caffemodel files found" 2
   fi
   model=`find "$model" -name "*${latest_iteration}.caffemodel" -type f`
 else
@@ -78,14 +85,12 @@ out_log="$out_dir/out.log"
 mkdir -p "$log_dir"
 
 if [ $? != 0 ] ; then
-  echo "ERROR unable to create $log_dir"
-  exit 3
+  fatal_error "ERROR unable to create $log_dir" 3
 fi
 
 gpucount=`nvidia-smi -L | wc -l`
 if [ "$gpucount" -eq 0 ] ; then
-  echo "ERROR unable to get count of GPU(s). Is nvidia-smi working?"
-  exit 4
+  fatal_error "ERROR unable to get count of GPU(s). Is nvidia-smi working?" 4
 fi
 
 let maxgpuindex=$gpucount-1
@@ -110,8 +115,7 @@ for input_file in `find "${in_dir}" -name "*.h5" -type f | sort -V` ;
     echo "Creating directory $predict_dir" >> "$out_log"
     mkdir -p "$predict_dir"
     if [ $? != 0 ] ; then
-      echo "ERROR unable to create $predict_dir"
-      exit 4
+      fatal_error "ERROR unable to create $predict_dir" 5
     fi
   fi
   echo -e "$log_dir\n$deploy_dir\n$model\n$input_file\n$predict_dir\n$cntr" >> $parallel_job_file
@@ -128,8 +132,7 @@ done
 cat $parallel_job_file | parallel --no-notice --delay 2 -N 6 -j $gpucount 'GLOG_logtostderr="{1}" /usr/bin/time -p predict_seg_new.bin --model={2}/deploy.prototxt --weights={3} --data={4} --predict={5}/test.h5 --shift_axis=2 --shift_stride=1 --gpu={6}' >> "$out_log" 2>&1
   ecode=$?
   if [ $ecode != 0 ] ; then
-    echo "ERROR non-zero exit code ($ecode) from running predict_seg_new.bin"
-    exit 6
+    fatal_error "ERROR non-zero exit code ($ecode) from running predict_seg_new.bin" 6
   fi
 
 echo ""
@@ -138,8 +141,8 @@ StartPostprocessing.m "$out_dir" >> "$out_log" 2>&1
 ecode=$?
 
 if [ $ecode != 0 ] ; then
-  echo "ERROR non-zero exit code ($ecode) from running StartPostprocessing.m"
-  exit 7
+  fatal_error "ERROR non-zero exit code ($ecode) from running StartPostprocessing.m" 7
 fi
 
+echo -e "Success\n0" >> "$done_file"
 exit 0
