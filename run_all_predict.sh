@@ -3,10 +3,40 @@
 script_name=`basename $0`
 script_dir=`dirname $0`
 version="???"
+procwait="60"
+nobackground="false"
 
 if [ -f "$script_dir/VERSION" ] ; then
    version=`cat $script_dir/VERSION`
 fi
+
+function check_merge_large_data {
+  # assuming $1 is path to done_file
+  done_file=$1
+  if [ -f "$done_file" ] ; then
+    check_merge_large_data_res=`tail -n 1 "$done_file"`
+    if [ -z "$check_merge_large_data_res" ] ; then
+      check_merge_large_data_res="0"
+    fi
+  else
+    check_merge_large_data_res=""
+  fi
+}
+
+function fail_if_merge_largedata_fails {
+  merge_done=$1
+  if [ -n "$merge_done" ] ; then
+  check_merge_large_data "$merge_done"
+  if [ -n "$check_merge_large_data_res" ] ; then
+    if [ "$check_merge_large_data_res" -gt 0 ] ; then
+      echo "ERROR, a non-zero exit code ($check_merge_large_data_res) was receiv
+ed from: Merge_LargeData.m `dirname $merge_done`"
+      exit 12
+    fi
+  fi
+fi
+}
+
 
 function usage()
 {
@@ -25,18 +55,27 @@ positional arguments:
 
 optional arguments:
   -h, --help           show this help message and exit
+  --procwait           seconds to wait before checking on
+                       background processes
+  --sourcescript       If set, allows caller to source 
+                       script for functions defined and silently
+                       returns.
+  --nobackground       Run all processes in serial fashion.
 
     " 1>&2;
    exit 1;
 }
 
-TEMP=`getopt -o h --long "help" -n '$0' -- "$@"`
+TEMP=`getopt -o h --long "help,procwait:,sourcescript,nobackground" -n '$0' -- "$@"`
 eval set -- "$TEMP"
 
 while true ; do
     case "$1" in
         -h ) usage ;;
         --help ) usage ;;
+        --sourcescript ) return 0 ;;
+        --nobackground ) nobackground="true" ;;
+        --procwait ) procwait=$2 ; shift 2 ;;
         --) shift ; break ;;
     esac
 done
@@ -119,6 +158,11 @@ fi
 num_pkgs=`head -n 3 $package_proc_info | tail -n 1`
 num_zstacks=`tail -n 1 $package_proc_info`
 let tot_pkgs=$num_pkgs*$num_zstacks
+
+
+caffe_done=""
+prev_merge_done=""
+# name of previous model
 for model_name in `echo "$model_list" | sed "s/,/ /g"` ; do
   
   echo "Running $model_name predict $tot_pkgs package(s) to process"
@@ -132,44 +176,91 @@ for model_name in `echo "$model_list" | sed "s/,/ /g"` ; do
         echo "  Found $out_pkg/DONE. Prediction completed. Skipping..."
         continue
       fi
-      echo -n "  Processing $pkg_name $cntr of $tot_pkgs "
-      outfile="$out_pkg/out.log"
-      PreprocessPackage.m "$img_dir" "$out_dir/augimages" $CUR_PKG $CUR_Z $model_name $aug_speed
-      ecode=$?
-      if [ $ecode != 0 ] ; then
-        echo "ERROR, a non-zero exit code ($ecode) was received from: PreprocessPackage.m \"$img_dir\" \"$out_pkg\" $CUR_PKG $CUR_Z $model_name $aug_speed"
-        exit 10
+
+      echo "  Processing $pkg_name $cntr of $tot_pkgs"
+      augoutfile="$Z/out.log"
+      echo "Running PreprocessPackage.m in background"
+      PreprocessPackage.m "$img_dir" "$out_dir/augimages" $CUR_PKG $CUR_Z $model_name $aug_speed > "$augoutfile" 2>&1 &
+      if [ "$nobackground" == "true" ] ; then
+        echo "Running serially waiting for PreprocessPackage.m to finish"
+        wait
       fi
 
-      /usr/bin/time -p caffepredict.sh "$trained_model_dir/$model_name/trainedmodel" "$Z" "$out_pkg"
-      ecode=$?
-      if [ $ecode != 0 ] ; then
-        echo "ERROR, a non-zero exit code ($ecode) was received from: /usr/bin/time -p caffepredict.sh --gpu $gpu \"$trained_model_dir/$model_name/trainedmodel\" \"$Z\" \"$out_pkg\""
-        if [ -f "$outfile" ] ; then
-          echo "Here is last 10 lines of $outfile:"
-          echo ""
-          tail $outfile
+      pre_process_done="$Z/DONE"
+      while [ ! -f "$pre_process_done" ] ; do
+        echo "Waiting $procwait seconds for $pre_process_done file to appear"
+        sleep $procwait
+        num_preprocs=`ps --ppid $$ | grep Preproc | wc -l`
+        if [ "$num_preprocs" -eq 0 ] ; then
+           echo "No child process with name starting with Preproc found"
+           if [ ! -f "$pre_process_done" ] ; then
+             echo "ERROR no running PreprocessPackage.m found and no $pre_process_done file"
+             exit 10
+           fi
+           break
         fi
-        exit 11
+      done
+
+      if [ -n "$caffe_done" ] ; then
+        while [ ! -f "$caffe_done" ] ; do
+          echo "Waiting $procwait seconds for $caffe_done file to appear"
+          sleep $procwait
+          num_preprocs=`ps --ppid $$ | grep caffe | wc -l`
+          if [ "$num_preprocs" -eq 0 ] ; then
+            echo "No child process with name starting with caffe found"
+            if [ ! -f "$caffe_done" ] ; then
+              echo "ERROR no running caffepredict.sh found and no $caffe_done"
+              exit 11
+            fi
+            break
+          fi
+        done
       fi
-      echo "Prediction completed: `date +%s`" > "$out_pkg/DONE"
+      caffe_done="$out_pkg/DONE"
+
+      /usr/bin/time -p caffepredict.sh "$trained_model_dir/$model_name/trainedmodel" "$Z" "$out_pkg" &
+      
+      if [ "$nobackground" == "true" ] ; then
+        echo "Running serially waiting for caffepredict.sh to finish"
+        wait
+      fi
+
       let cntr+=1
     done
   done
-  if [ -f "$out_dir/$model_name/DONE" ] ; then
-    echo "Found $out_dir/$model_name/DONE. Merge completed. Skipping..."
-    continue
+
+  check_merge_large_data "$out_dir/$model_name/DONE"
+  if [ -n "$check_merge_large_data_res" ] ; then  
+    if [ "$check_merge_large_data_res" -eq 0 ] ; then
+      echo "Found $out_dir/$model_name/DONE Merge completed. Skipping..."
+      continue
+    fi
   fi
+
+  fail_if_merge_largedata_fails "$prev_merge_done"  
+
   echo ""
   echo "Running Merge_LargeData.m $out_dir/$model_name"
   merge_log="$out_dir/$model_name/merge.log"
-  Merge_LargeData.m "$out_dir/$model_name" >> "$merge_log" 2>&1
-  ecode=$?
-  if [ $ecode != 0 ] ; then
-    echo "ERROR, a non-zero exit code ($ecode) from running Merge_LargeData.m"
-    exit 12
+  Merge_LargeData.m "$out_dir/$model_name" >> "$merge_log" 2>&1 &
+  if [ "$nobackground" == "true" ] ; then
+    echo "Running serially waiting for Merge_LargeData.m to finish"
+    wait
   fi
-  echo "Merge completed: `date +%s`" > "$out_dir/$model_name/DONE"
+
+  prev_merge_done="$out_dir/$model_name/DONE"
+done
+
+wait
+
+# check merge_largedata succeeded
+for model_name in `echo "$model_list" | sed "s/,/ /g"` ; do
+  merge_done="$out_dir/$model_name/DONE"
+  if [ ! -f "$merge_done" ] ; then
+    echo "ERROR, no DONE file generated from: Merge_LargeData.m `dirname $merge_done`"
+    exit 13
+  fi
+  fail_if_merge_largedata_fails "$merge_done"
 done
 
 echo ""
