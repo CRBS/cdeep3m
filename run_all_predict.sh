@@ -10,6 +10,38 @@ if [ -f "$script_dir/VERSION" ] ; then
    version=`cat $script_dir/VERSION`
 fi
 
+function check_caffepredict {
+  # assuming $1 is path to done_file
+  done_file=$1
+  if [ -f "$done_file" ] ; then
+    check_caffepredict_res=`tail -n 1 "$done_file"`
+    if [ -z "$check_merge_large_data_res" ] ; then
+      check_caffepredict_res="0"
+    fi
+  else
+    check_caffepredict_res=""
+  fi
+}
+
+function fail_if_check_caffepredict_fails {
+  done_file=$1
+  if [ -n "$done_file" ] ; then
+    check_caffepredict "$done_file"
+    if [ -n "$check_caffepredict_res" ] ; then
+      if [ "$check_caffepredict_res" -gt 0 ] ; then
+        echo "ERROR, a non-zero exit code ($check_caffepredict_res) was receiv
+ed from: caffepredict.sh on `dirname $done_file`"
+        exit 11
+      fi
+   
+    else
+      echo "ERROR, no DONE file found for caffepredict.sh on `dirname $done_file`"
+      exit 12  
+    fi
+  fi
+}
+
+
 function check_merge_large_data {
   # assuming $1 is path to done_file
   done_file=$1
@@ -31,7 +63,7 @@ function fail_if_merge_largedata_fails {
     if [ "$check_merge_large_data_res" -gt 0 ] ; then
       echo "ERROR, a non-zero exit code ($check_merge_large_data_res) was receiv
 ed from: Merge_LargeData.m `dirname $merge_done`"
-      exit 12
+      exit 13
     fi
   fi
 fi
@@ -202,19 +234,18 @@ for model_name in `echo "$model_list" | sed "s/,/ /g"` ; do
       done
 
       if [ -n "$caffe_done" ] ; then
+        echo "Checking if caffepredict.sh processing on `dirname $caffe_done` has completed"
+        tree $out_dir
         while [ ! -f "$caffe_done" ] ; do
           echo "Waiting $procwait seconds for $caffe_done file to appear"
           sleep $procwait
           num_preprocs=`ps --ppid $$ | grep caffe | wc -l`
           if [ "$num_preprocs" -eq 0 ] ; then
             echo "No child process with name starting with caffe found"
-            if [ ! -f "$caffe_done" ] ; then
-              echo "ERROR no running caffepredict.sh found and no $caffe_done"
-              exit 11
-            fi
             break
           fi
         done
+        fail_if_check_caffepredict_fails "$caffe_done"
       fi
       caffe_done="$out_pkg/DONE"
 
