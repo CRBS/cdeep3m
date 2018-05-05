@@ -157,6 +157,47 @@ teardown() {
     export PATH=$A_TEMP_PATH
 }
 
+@test "run_all_predict.sh last Merge_LargeData.m fails" {
+    
+    echo "#!/bin/bash" > "$TEST_TMP_DIR/Merge_LargeData.m"
+    echo 'model=`basename ${1}`' >> "$TEST_TMP_DIR/Merge_LargeData.m"
+    echo 'echo "modeldir: $modeldir"' >> "$TEST_TMP_DIR/Merge_LargeData.m"
+    echo 'echo "model: $model"' >> "$TEST_TMP_DIR/Merge_LargeData.m"
+    echo 'if [ "$model" == "5fm" ] ; then' >> "$TEST_TMP_DIR/Merge_LargeData.m"
+    echo '  echo -e "fail\n1" > ${1}/DONE' >> "$TEST_TMP_DIR/Merge_LargeData.m"
+    echo 'else' >> "$TEST_TMP_DIR/Merge_LargeData.m"
+    echo '  echo -e "success\n0" > ${1}/DONE' >> "$TEST_TMP_DIR/Merge_LargeData.m"
+    echo 'fi' >> "$TEST_TMP_DIR/Merge_LargeData.m"
+    chmod a+x "$TEST_TMP_DIR/Merge_LargeData.m"
+
+    echo "#!/bin/bash" > "$TEST_TMP_DIR/PreprocessPackage.m" 
+    echo 'echo "$2/${5}/Pkg${3}_Z${4}/DONE"' >> "$TEST_TMP_DIR/PreprocessPackage.m"
+    echo 'echo -e "success\n0" > $2/${5}/Pkg${3}_Z${4}/DONE' >> "$TEST_TMP_DIR/PreprocessPackage.m"
+    chmod a+x "$TEST_TMP_DIR/PreprocessPackage.m"
+    echo "#!/bin/bash" > "$TEST_TMP_DIR/caffepredict.sh"
+    echo 'echo -e "success\n0" > ${3}/DONE' >> "$TEST_TMP_DIR/caffepredict.sh"
+    chmod a+x "$TEST_TMP_DIR/caffepredict.sh"
+    echo "trainedmodeldir=traindir" > "$TEST_TMP_DIR/predict.config"
+    echo "imagedir=imgdir" >> "$TEST_TMP_DIR/predict.config"
+    echo "models=1fm,3fm,5fm" >> "$TEST_TMP_DIR/predict.config"
+    echo "augspeed=4" >> "$TEST_TMP_DIR/predict.config"
+    mkdir -p "$TEST_TMP_DIR/augimages"
+    echo "foo" > "$TEST_TMP_DIR/augimages/de_augmentation_info.mat"
+    echo -e "\nNumber of XY Packages\n1\nNumber of z-blocks\n1" > "$TEST_TMP_DIR/augimages/package_processing_info.txt"
+    mkdir -p "$TEST_TMP_DIR/1fm/Pkg001_Z01" "$TEST_TMP_DIR/3fm/Pkg001_Z01" "$TEST_TMP_DIR/5fm/Pkg001_Z01"
+    mkdir -p "$TEST_TMP_DIR/augimages/1fm/Pkg001_Z01"
+    mkdir -p "$TEST_TMP_DIR/augimages/3fm/Pkg001_Z01"
+    mkdir -p "$TEST_TMP_DIR/augimages/5fm/Pkg001_Z01"
+    export A_TEMP_PATH=$PATH
+    export PATH=$TEST_TMP_DIR:$PATH
+
+    run $RUN_ALL_PREDICT_SH --procwait 1 "$TEST_TMP_DIR"
+    echo "$status $output" 1>&2
+    [ "$status" -eq 13 ]
+    export PATH=$A_TEMP_PATH
+}
+
+
 @test "run_all_predict.sh caffepredict.sh fails no DONE file" {
     ln -s /bin/false "$TEST_TMP_DIR/caffepredict.sh"
     echo "#!/bin/bash" > "$TEST_TMP_DIR/PreprocessPackage.m"
@@ -180,7 +221,7 @@ teardown() {
     export A_TEMP_PATH=$PATH
     export PATH=$TEST_TMP_DIR:$PATH
 
-    run $RUN_ALL_PREDICT_SH --procwait 3 "$TEST_TMP_DIR"
+    run $RUN_ALL_PREDICT_SH --procwait 1 "$TEST_TMP_DIR"
     echo "$status $output" 1>&2
     [ "$status" -eq 12 ]
     export PATH=$A_TEMP_PATH
@@ -227,10 +268,11 @@ teardown() {
     echo 'echo -e "success\n0" > $2/${5}/Pkg${3}_Z${4}/DONE' >> "$TEST_TMP_DIR/PreprocessPackage.m"
     chmod a+x "$TEST_TMP_DIR/PreprocessPackage.m"
     echo "#!/bin/bash" > "$TEST_TMP_DIR/caffepredict.sh"
-    echo 'pkgname=`dirname ${3}`' >> "$TEST_TMP_DIR/caffepredict.sh"
-    echo 'modeldir=`dirname $pkgname`' >> "$TEST_TMP_DIR/caffepredict.sh"
+    echo 'modeldir=`dirname ${3}`' >> "$TEST_TMP_DIR/caffepredict.sh"
     echo 'model=`basename $modeldir`' >> "$TEST_TMP_DIR/caffepredict.sh"
-    echo 'if [ $model == "5fm" ] ; then' >> "$TEST_TMP_DIR/caffepredict.sh"
+    echo 'echo "modeldir: $modeldir"' >> "$TEST_TMP_DIR/caffepredict.sh"
+    echo 'echo "model: $model"' >> "$TEST_TMP_DIR/caffepredict.sh"
+    echo 'if [ "$model" == "5fm" ] ; then' >> "$TEST_TMP_DIR/caffepredict.sh"
     echo '  echo -e "fail\n1" > ${3}/DONE' >> "$TEST_TMP_DIR/caffepredict.sh"
     echo 'else' >> "$TEST_TMP_DIR/caffepredict.sh"
     echo '  echo -e "success\n0" > ${3}/DONE' >> "$TEST_TMP_DIR/caffepredict.sh"
