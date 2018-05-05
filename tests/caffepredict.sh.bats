@@ -34,7 +34,9 @@ teardown() {
     run $CAFFE_PREDICT_SH "$TEST_TMP_DIR" blah "$TEST_TMP_DIR"
 
     [ "$status" -eq 2 ]
-    [ "${lines[0]}" = "ERROR no #.caffemodel files found" ]
+    run cat "$TEST_TMP_DIR/DONE"
+    [ "${lines[0]}" = "ERROR no #.caffemodel files found" ] 
+    [ "${lines[1]}" = "2" ]
 }
 
 @test "caffepredict.sh unable to create log directory" {
@@ -43,8 +45,9 @@ teardown() {
     run $CAFFE_PREDICT_SH "$TEST_TMP_DIR/foo.caffemodel" blah "$TEST_TMP_DIR"
     
     [ "$status" -eq 3 ] 
-    [ "${lines[1]}" = "ERROR unable to create $TEST_TMP_DIR/log" ]
-
+    run cat "$TEST_TMP_DIR/DONE" 
+    [ "${lines[0]}" = "ERROR unable to create $TEST_TMP_DIR/log" ]
+    [ "${lines[1]}" = "3" ] 
 }
 
 @test "caffepredict.sh unable to get count of GPUs" {
@@ -56,7 +59,9 @@ teardown() {
     export PATH=$A_TEMP_PATH
     [ "$status" -eq 4 ]
     echo "$status $output" 2>&1
+    run cat "$TEST_TMP_DIR/DONE"
     [ "${lines[0]}" = "ERROR unable to get count of GPU(s). Is nvidia-smi working?" ]
+    [ "${lines[1]}" = "4" ]
 }
 
 @test "caffepredict.sh unable to create a v# directory" {
@@ -70,9 +75,12 @@ teardown() {
     export PATH=$TEST_TMP_DIR:$PATH
     run $CAFFE_PREDICT_SH "$TEST_TMP_DIR/foo.caffemodel" "$TEST_TMP_DIR" "$TEST_TMP_DIR"
     export PATH=$A_TEMP_PATH
-    [ "$status" -eq 4 ]
     echo "$status $output" 2>&1
-    [ "${lines[2]}" = "ERROR unable to create $TEST_TMP_DIR/v1" ]
+    [ "$status" -eq 5 ]
+    [ "${lines[0]}" = "Single GPU detected" ]
+    run cat "$TEST_TMP_DIR/DONE"
+    [ "${lines[0]}" = "ERROR unable to create $TEST_TMP_DIR/v1" ]
+    [ "${lines[1]}" = "5" ] 
 
 }
 
@@ -134,7 +142,9 @@ teardown() {
    [ "$status" -eq 7 ]
    [ "${lines[0]}" = "Single GPU detected" ]
    [ "${lines[1]}" = "Running StartPostprocessing.m $TEST_TMP_DIR" ]
-   [ "${lines[2]}" = "ERROR non-zero exit code (1) from running StartPostprocessing.m" ]
+   run cat "$TEST_TMP_DIR/DONE"
+   [ "${lines[0]}" = "ERROR non-zero exit code (1) from running StartPostprocessing.m" ]
+   [ "${lines[1]}" = "7" ]
    export PATH=$A_TEMP_PATH
 }
 
@@ -156,8 +166,10 @@ teardown() {
    run $CAFFE_PREDICT_SH "$TEST_TMP_DIR/foo.caffemodel" "$TEST_TMP_DIR/augimages" "$TEST_TMP_DIR"
    echo "$status $output" 1>&2
    [ "$status" -eq 6 ]
-   [ "${lines[0]}" = "Detected 6 GPU(s). Will run in parallel" ] 
-   [ "${lines[1]}" = "ERROR non-zero exit code (1) from running predict_seg_new.bin" ]
+   [ "${lines[0]}" = "Detected 6 GPU(s). Will run in parallel" ]
+   run cat "$TEST_TMP_DIR/DONE" 
+   [ "${lines[0]}" = "ERROR non-zero exit code (1) from running predict_seg_new.bin" ]
+   [ "${lines[1]}" = "6" ]
    export PATH=$A_TEMP_PATH
 }
 

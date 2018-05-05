@@ -106,7 +106,7 @@ teardown() {
     [ "${lines[6]}" = "ERROR unable to copy $TEST_TMP_DIR/augimages/package_processing_info.txt to $TEST_TMP_DIR" ]
 }
 
-@test "run_all_predict.sh ProprocessPackage.m fails" {
+@test "run_all_predict.sh PreprocessPackage.m fails" {
     ln -s /bin/echo "$TEST_TMP_DIR/caffepredict.sh"
     ln -s /bin/echo "$TEST_TMP_DIR/Merge_LargeData.m"
     ln -s /bin/false "$TEST_TMP_DIR/PreprocessPackage.m"
@@ -122,16 +122,21 @@ teardown() {
     export A_TEMP_PATH=$PATH
     export PATH=$TEST_TMP_DIR:$PATH
 
-    run $RUN_ALL_PREDICT_SH "$TEST_TMP_DIR"
+    run $RUN_ALL_PREDICT_SH --procwait 1 "$TEST_TMP_DIR"
     echo "$status $output" 1>&2
     [ "$status" -eq 10 ]
     export PATH=$A_TEMP_PATH
 }
 
 @test "run_all_predict.sh Merge_LargeData.m fails" {
-    ln -s /bin/echo "$TEST_TMP_DIR/caffepredict.sh"
     ln -s /bin/false "$TEST_TMP_DIR/Merge_LargeData.m"
-    ln -s /bin/true "$TEST_TMP_DIR/PreprocessPackage.m"
+    echo "#!/bin/bash" > "$TEST_TMP_DIR/PreprocessPackage.m"
+    echo 'echo "$2/${5}/Pkg${3}_Z${4}/DONE"' >> "$TEST_TMP_DIR/PreprocessPackage.m"
+    echo 'echo -e "success\n0" > $2/${5}/Pkg${3}_Z${4}/DONE' >> "$TEST_TMP_DIR/PreprocessPackage.m"
+    chmod a+x "$TEST_TMP_DIR/PreprocessPackage.m"
+    echo "#!/bin/bash" > "$TEST_TMP_DIR/caffepredict.sh"
+    echo 'echo -e "success\n0" > ${3}/DONE' >> "$TEST_TMP_DIR/caffepredict.sh"
+    chmod a+x "$TEST_TMP_DIR/caffepredict.sh"
     echo "trainedmodeldir=traindir" > "$TEST_TMP_DIR/predict.config"
     echo "imagedir=imgdir" >> "$TEST_TMP_DIR/predict.config"
     echo "models=1fm,3fm,5fm" >> "$TEST_TMP_DIR/predict.config"
@@ -140,20 +145,59 @@ teardown() {
     echo "foo" > "$TEST_TMP_DIR/augimages/de_augmentation_info.mat"
     echo -e "\nNumber of XY Packages\n1\nNumber of z-blocks\n1" > "$TEST_TMP_DIR/augimages/package_processing_info.txt"
     mkdir -p "$TEST_TMP_DIR/1fm/Pkg001_Z01" "$TEST_TMP_DIR/3fm/Pkg001_Z01" "$TEST_TMP_DIR/5fm/Pkg001_Z01"
+    mkdir -p "$TEST_TMP_DIR/augimages/1fm/Pkg001_Z01"
+    mkdir -p "$TEST_TMP_DIR/augimages/3fm/Pkg001_Z01"
+    mkdir -p "$TEST_TMP_DIR/augimages/5fm/Pkg001_Z01" 
+    export A_TEMP_PATH=$PATH
+    export PATH=$TEST_TMP_DIR:$PATH
+
+    run $RUN_ALL_PREDICT_SH --procwait 1 "$TEST_TMP_DIR"
+    echo "$status $output" 1>&2
+    [ "$status" -eq 13 ]
+    export PATH=$A_TEMP_PATH
+}
+
+@test "run_all_predict.sh caffepredict.sh fails no DONE file" {
+    ln -s /bin/false "$TEST_TMP_DIR/caffepredict.sh"
+    echo "#!/bin/bash" > "$TEST_TMP_DIR/PreprocessPackage.m"
+    echo 'echo "$2/${5}/Pkg${3}_Z${4}/DONE"' >> "$TEST_TMP_DIR/PreprocessPackage.m"
+    echo 'echo -e "success\n0" > $2/${5}/Pkg${3}_Z${4}/DONE' >> "$TEST_TMP_DIR/PreprocessPackage.m"
+    chmod a+x "$TEST_TMP_DIR/PreprocessPackage.m"
+    echo "trainedmodeldir=traindir" > "$TEST_TMP_DIR/predict.config"
+    echo "imagedir=imgdir" >> "$TEST_TMP_DIR/predict.config"
+    echo "models=1fm,3fm,5fm" >> "$TEST_TMP_DIR/predict.config"
+    echo "augspeed=4" >> "$TEST_TMP_DIR/predict.config"
+    mkdir -p "$TEST_TMP_DIR/augimages"
+    echo "foo" > "$TEST_TMP_DIR/augimages/de_augmentation_info.mat"
+    echo -e "\nNumber of XY Packages\n1\nNumber of z-blocks\n1" > "$TEST_TMP_DIR/augimages/package_processing_info.txt"
+    mkdir -p "$TEST_TMP_DIR/1fm/Pkg001_Z01" 
+    mkdir -p "$TEST_TMP_DIR/3fm/Pkg001_Z01" 
+    mkdir -p "$TEST_TMP_DIR/5fm/Pkg001_Z01"
+    mkdir -p "$TEST_TMP_DIR/augimages/1fm/Pkg001_Z01"
+    mkdir -p "$TEST_TMP_DIR/augimages/3fm/Pkg001_Z01"
+    mkdir -p "$TEST_TMP_DIR/augimages/5fm/Pkg001_Z01"
 
     export A_TEMP_PATH=$PATH
     export PATH=$TEST_TMP_DIR:$PATH
 
-    run $RUN_ALL_PREDICT_SH "$TEST_TMP_DIR"
+    run $RUN_ALL_PREDICT_SH --procwait 3 "$TEST_TMP_DIR"
     echo "$status $output" 1>&2
     [ "$status" -eq 12 ]
     export PATH=$A_TEMP_PATH
 }
 
-@test "run_all_predict.sh caffepredict.sh fails" {
-    ln -s /bin/false "$TEST_TMP_DIR/caffepredict.sh"
-    ln -s /bin/true "$TEST_TMP_DIR/Merge_LargeData.m"
-    ln -s /bin/true "$TEST_TMP_DIR/PreprocessPackage.m"
+@test "run_all_predict.sh caffepredict.sh fails nonzero exit in DONE file" {
+    echo "#!/bin/bash" > "$TEST_TMP_DIR/PreprocessPackage.m"
+    echo 'echo "$2/${5}/Pkg${3}_Z${4}/DONE"' >> "$TEST_TMP_DIR/PreprocessPackage.m"
+    echo 'echo -e "success\n0" > $2/${5}/Pkg${3}_Z${4}/DONE' >> "$TEST_TMP_DIR/PreprocessPackage.m"
+    chmod a+x "$TEST_TMP_DIR/PreprocessPackage.m"
+    echo "#!/bin/bash" > "$TEST_TMP_DIR/caffepredict.sh"
+    echo 'echo -e "fail\n1" > ${3}/DONE' >> "$TEST_TMP_DIR/caffepredict.sh"
+    chmod a+x "$TEST_TMP_DIR/caffepredict.sh"
+    echo "#!/bin/bash" > "$TEST_TMP_DIR/Merge_LargeData.m"
+    echo 'echo -e "success\n0" > ${1}/DONE' >> "$TEST_TMP_DIR/Merge_LargeData.m"
+    chmod a+x "$TEST_TMP_DIR/Merge_LargeData.m"
+
     echo "trainedmodeldir=traindir" > "$TEST_TMP_DIR/predict.config"
     echo "imagedir=imgdir" >> "$TEST_TMP_DIR/predict.config"
     echo "models=1fm,3fm,5fm" >> "$TEST_TMP_DIR/predict.config"
@@ -161,16 +205,22 @@ teardown() {
     mkdir -p "$TEST_TMP_DIR/augimages"
     echo "foo" > "$TEST_TMP_DIR/augimages/de_augmentation_info.mat"
     echo -e "\nNumber of XY Packages\n1\nNumber of z-blocks\n1" > "$TEST_TMP_DIR/augimages/package_processing_info.txt"
-    mkdir -p "$TEST_TMP_DIR/1fm/Pkg001_Z01" "$TEST_TMP_DIR/3fm/Pkg001_Z01" "$TEST_TMP_DIR/5fm/Pkg001_Z01"
-    
+    mkdir -p "$TEST_TMP_DIR/1fm/Pkg001_Z01"
+    mkdir -p "$TEST_TMP_DIR/3fm/Pkg001_Z01"
+    mkdir -p "$TEST_TMP_DIR/5fm/Pkg001_Z01"
+    mkdir -p "$TEST_TMP_DIR/augimages/1fm/Pkg001_Z01"
+    mkdir -p "$TEST_TMP_DIR/augimages/3fm/Pkg001_Z01"
+    mkdir -p "$TEST_TMP_DIR/augimages/5fm/Pkg001_Z01"
+
     export A_TEMP_PATH=$PATH
     export PATH=$TEST_TMP_DIR:$PATH
 
-    run $RUN_ALL_PREDICT_SH "$TEST_TMP_DIR"
+    run $RUN_ALL_PREDICT_SH --procwait 1 "$TEST_TMP_DIR"
     echo "$status $output" 1>&2
     [ "$status" -eq 11 ]
     export PATH=$A_TEMP_PATH
 }
+
 
 @test "run_all_predict.sh no work to do" {
     ln -s /bin/echo "$TEST_TMP_DIR/caffepredict.sh"
@@ -183,7 +233,12 @@ teardown() {
     mkdir -p "$TEST_TMP_DIR/augimages"
     echo "foo" > "$TEST_TMP_DIR/augimages/de_augmentation_info.mat"
     echo -e "\nNumber of XY Packages\n1\nNumber of z-blocks\n1" > "$TEST_TMP_DIR/augimages/package_processing_info.txt"
-    mkdir -p "$TEST_TMP_DIR/1fm/Pkg001_Z01" "$TEST_TMP_DIR/3fm/Pkg001_Z01" "$TEST_TMP_DIR/5fm/Pkg001_Z01"
+    mkdir -p "$TEST_TMP_DIR/1fm/Pkg001_Z01" 
+    mkdir -p "$TEST_TMP_DIR/3fm/Pkg001_Z01" 
+    mkdir -p "$TEST_TMP_DIR/5fm/Pkg001_Z01"
+    mkdir -p "$TEST_TMP_DIR/augimages/1fm/Pkg001_Z01"
+    mkdir -p "$TEST_TMP_DIR/augimages/3fm/Pkg001_Z01"
+    mkdir -p "$TEST_TMP_DIR/augimages/5fm/Pkg001_Z01"
     touch "$TEST_TMP_DIR/1fm/DONE"
     touch "$TEST_TMP_DIR/1fm/Pkg001_Z01/DONE"
     touch "$TEST_TMP_DIR/3fm/DONE"
@@ -194,7 +249,7 @@ teardown() {
     export A_TEMP_PATH=$PATH
     export PATH=$TEST_TMP_DIR:$PATH
 
-    run $RUN_ALL_PREDICT_SH "$TEST_TMP_DIR"
+    run $RUN_ALL_PREDICT_SH --procwait 1 "$TEST_TMP_DIR"
     echo "$status $output" 1>&2
     [ "$status" -eq 0 ]
     [ "${lines[0]}" = "Running Prediction" ]
@@ -204,15 +259,22 @@ teardown() {
     [ "${lines[4]}" = "Speed: 4" ]
     [ "${lines[5]}" = "Running 1fm predict 1 package(s) to process" ]
     [ "${lines[6]}" = "  Found $TEST_TMP_DIR/1fm/Pkg001_Z01/DONE. Prediction completed. Skipping..." ]
-    [ "${lines[7]}" = "Found $TEST_TMP_DIR/1fm/DONE. Merge completed. Skipping..." ]
+    [ "${lines[7]}" = "Found $TEST_TMP_DIR/1fm/DONE Merge completed. Skipping..." ]
 
     export PATH=$A_TEMP_PATH
 }
 
 @test "run_all_predict.sh success" {
-    ln -s /bin/echo "$TEST_TMP_DIR/caffepredict.sh"
-    ln -s /bin/echo "$TEST_TMP_DIR/Merge_LargeData.m"
-    ln -s /bin/echo "$TEST_TMP_DIR/PreprocessPackage.m"
+    echo "#!/bin/bash" > "$TEST_TMP_DIR/PreprocessPackage.m"
+    echo 'echo "$2/${5}/Pkg${3}_Z${4}/DONE"' >> "$TEST_TMP_DIR/PreprocessPackage.m"
+    echo 'echo -e "success\n0" > $2/${5}/Pkg${3}_Z${4}/DONE' >> "$TEST_TMP_DIR/PreprocessPackage.m"
+    chmod a+x "$TEST_TMP_DIR/PreprocessPackage.m"
+    echo "#!/bin/bash" > "$TEST_TMP_DIR/caffepredict.sh"
+    echo 'echo -e "success\n0" > ${3}/DONE' >> "$TEST_TMP_DIR/caffepredict.sh"
+    chmod a+x "$TEST_TMP_DIR/caffepredict.sh"
+    echo "#!/bin/bash" > "$TEST_TMP_DIR/Merge_LargeData.m"
+    echo 'echo -e "success\n0" > ${1}/DONE' >> "$TEST_TMP_DIR/Merge_LargeData.m"
+    chmod a+x "$TEST_TMP_DIR/Merge_LargeData.m"
     echo "trainedmodeldir=traindir" > "$TEST_TMP_DIR/predict.config"
     echo "imagedir=imgdir" >> "$TEST_TMP_DIR/predict.config"
     echo "models=1fm,3fm,5fm" >> "$TEST_TMP_DIR/predict.config"
@@ -220,11 +282,17 @@ teardown() {
     mkdir -p "$TEST_TMP_DIR/augimages"
     echo "foo" > "$TEST_TMP_DIR/augimages/de_augmentation_info.mat"
     echo -e "\nNumber of XY Packages\n1\nNumber of z-blocks\n1" > "$TEST_TMP_DIR/augimages/package_processing_info.txt"
-    mkdir -p "$TEST_TMP_DIR/1fm/Pkg001_Z01" "$TEST_TMP_DIR/3fm/Pkg001_Z01" "$TEST_TMP_DIR/5fm/Pkg001_Z01"
+    mkdir -p "$TEST_TMP_DIR/1fm/Pkg001_Z01" 
+    mkdir -p "$TEST_TMP_DIR/3fm/Pkg001_Z01" 
+    mkdir -p "$TEST_TMP_DIR/5fm/Pkg001_Z01"
+    mkdir -p "$TEST_TMP_DIR/augimages/1fm/Pkg001_Z01"
+    mkdir -p "$TEST_TMP_DIR/augimages/3fm/Pkg001_Z01"
+    mkdir -p "$TEST_TMP_DIR/augimages/5fm/Pkg001_Z01"
+
     export A_TEMP_PATH=$PATH
     export PATH=$TEST_TMP_DIR:$PATH
 
-    run $RUN_ALL_PREDICT_SH "$TEST_TMP_DIR"
+    run $RUN_ALL_PREDICT_SH --procwait 1 "$TEST_TMP_DIR"
     echo "$status $output" 1>&2
     [ "$status" -eq 0 ]
     [ "${lines[0]}" = "Running Prediction" ]    
@@ -233,17 +301,22 @@ teardown() {
     [ "${lines[3]}" = "Models: 1fm,3fm,5fm" ]
     [ "${lines[4]}" = "Speed: 4" ]
     [ "${lines[5]}" = "Running 1fm predict 1 package(s) to process" ]
-    [ "${lines[6]}" = "  Processing Pkg001_Z01 1 of 1 imgdir $TEST_TMP_DIR/augimages 001 01 1fm 4" ]
-    [ "${lines[7]}" = "traindir/1fm/trainedmodel $TEST_TMP_DIR/augimages/1fm/Pkg001_Z01 $TEST_TMP_DIR/1fm/Pkg001_Z01" ]
-    [ "${lines[11]}" = "Running Merge_LargeData.m $TEST_TMP_DIR/1fm" ]
+    [ "${lines[6]}" = "  Processing Pkg001_Z01 1 of 1" ]
 
     export PATH=$A_TEMP_PATH
 }
 
 @test "run_all_predict.sh success multi package and multi z" {
-    ln -s /bin/true "$TEST_TMP_DIR/caffepredict.sh"
-    ln -s /bin/true "$TEST_TMP_DIR/Merge_LargeData.m"
-    ln -s /bin/echo "$TEST_TMP_DIR/PreprocessPackage.m"
+    echo "#!/bin/bash" > "$TEST_TMP_DIR/PreprocessPackage.m"
+    echo 'echo -e "success\n0" > $2/${5}/Pkg${3}_Z${4}/DONE' >> "$TEST_TMP_DIR/PreprocessPackage.m"
+    chmod a+x "$TEST_TMP_DIR/PreprocessPackage.m"
+    echo "#!/bin/bash" > "$TEST_TMP_DIR/caffepredict.sh"
+    echo 'echo -e "success\n0" > ${3}/DONE' >> "$TEST_TMP_DIR/caffepredict.sh"
+    chmod a+x "$TEST_TMP_DIR/caffepredict.sh"
+    echo "#!/bin/bash" > "$TEST_TMP_DIR/Merge_LargeData.m"
+    echo 'echo -e "success\n0" > ${1}/DONE' >> "$TEST_TMP_DIR/Merge_LargeData.m"
+    chmod a+x "$TEST_TMP_DIR/Merge_LargeData.m"
+
     echo "trainedmodeldir=traindir" > "$TEST_TMP_DIR/predict.config"
     echo "imagedir=imgdir" >> "$TEST_TMP_DIR/predict.config"
     echo "models=1fm,3fm,5fm" >> "$TEST_TMP_DIR/predict.config"
@@ -255,11 +328,15 @@ teardown() {
     mkdir -p "$TEST_TMP_DIR/1fm/Pkg001_Z02" "$TEST_TMP_DIR/3fm/Pkg001_Z02" "$TEST_TMP_DIR/5fm/Pkg001_Z02"
     mkdir -p "$TEST_TMP_DIR/1fm/Pkg002_Z01" "$TEST_TMP_DIR/3fm/Pkg002_Z01" "$TEST_TMP_DIR/5fm/Pkg002_Z01"
     mkdir -p "$TEST_TMP_DIR/1fm/Pkg002_Z02" "$TEST_TMP_DIR/3fm/Pkg002_Z02" "$TEST_TMP_DIR/5fm/Pkg002_Z02"
+    mkdir -p "$TEST_TMP_DIR/augimages/1fm/Pkg001_Z01" "$TEST_TMP_DIR/augimages/3fm/Pkg001_Z01" "$TEST_TMP_DIR/augimages/5fm/Pkg001_Z01"
+    mkdir -p "$TEST_TMP_DIR/augimages/1fm/Pkg001_Z02" "$TEST_TMP_DIR/augimages/3fm/Pkg001_Z02" "$TEST_TMP_DIR/augimages/5fm/Pkg001_Z02"
+    mkdir -p "$TEST_TMP_DIR/augimages/1fm/Pkg002_Z01" "$TEST_TMP_DIR/augimages/3fm/Pkg002_Z01" "$TEST_TMP_DIR/augimages/5fm/Pkg002_Z01"
+    mkdir -p "$TEST_TMP_DIR/augimages/1fm/Pkg002_Z02" "$TEST_TMP_DIR/augimages/3fm/Pkg002_Z02" "$TEST_TMP_DIR/augimages/5fm/Pkg002_Z02"
 
     export A_TEMP_PATH=$PATH
     export PATH=$TEST_TMP_DIR:$PATH
 
-    run $RUN_ALL_PREDICT_SH "$TEST_TMP_DIR"
+    run $RUN_ALL_PREDICT_SH --procwait 1 "$TEST_TMP_DIR"
     echo "$status $output" 1>&2
     [ "$status" -eq 0 ]
     [ "${lines[0]}" = "Running Prediction" ]
@@ -268,25 +345,7 @@ teardown() {
     [ "${lines[3]}" = "Models: 1fm,3fm,5fm" ]
     [ "${lines[4]}" = "Speed: 4" ]
     [ "${lines[5]}" = "Running 1fm predict 4 package(s) to process" ]
-    [ "${lines[6]}" = "  Processing Pkg001_Z01 1 of 4 imgdir $TEST_TMP_DIR/augimages 001 01 1fm 4" ]
-    [ "${lines[10]}" = "  Processing Pkg001_Z02 2 of 4 imgdir $TEST_TMP_DIR/augimages 001 02 1fm 4" ]
-    [ "${lines[14]}" = "  Processing Pkg002_Z01 3 of 4 imgdir $TEST_TMP_DIR/augimages 002 01 1fm 4" ]
-    [ "${lines[18]}" = "  Processing Pkg002_Z02 4 of 4 imgdir $TEST_TMP_DIR/augimages 002 02 1fm 4" ]
-    [ "${lines[22]}" = "Running Merge_LargeData.m $TEST_TMP_DIR/1fm" ]
-    [ "${lines[23]}" = "Running 3fm predict 4 package(s) to process" ]
-    [ "${lines[24]}" = "  Processing Pkg001_Z01 1 of 4 imgdir $TEST_TMP_DIR/augimages 001 01 3fm 4" ]
-    [ "${lines[28]}" = "  Processing Pkg001_Z02 2 of 4 imgdir $TEST_TMP_DIR/augimages 001 02 3fm 4" ]
-    [ "${lines[32]}" = "  Processing Pkg002_Z01 3 of 4 imgdir $TEST_TMP_DIR/augimages 002 01 3fm 4" ]
-    [ "${lines[36]}" = "  Processing Pkg002_Z02 4 of 4 imgdir $TEST_TMP_DIR/augimages 002 02 3fm 4" ]
-    [ "${lines[40]}" = "Running Merge_LargeData.m $TEST_TMP_DIR/3fm" ]
-    [ "${lines[41]}" = "Running 5fm predict 4 package(s) to process" ]
-    [ "${lines[42]}" = "  Processing Pkg001_Z01 1 of 4 imgdir $TEST_TMP_DIR/augimages 001 01 5fm 4" ]
-    [ "${lines[46]}" = "  Processing Pkg001_Z02 2 of 4 imgdir $TEST_TMP_DIR/augimages 001 02 5fm 4" ]
-    [ "${lines[50]}" = "  Processing Pkg002_Z01 3 of 4 imgdir $TEST_TMP_DIR/augimages 002 01 5fm 4" ]
-    [ "${lines[54]}" = "  Processing Pkg002_Z02 4 of 4 imgdir $TEST_TMP_DIR/augimages 002 02 5fm 4" ]
-    [ "${lines[58]}" = "Running Merge_LargeData.m $TEST_TMP_DIR/5fm" ]
-
-
+    [ "${lines[6]}" = "  Processing Pkg001_Z01 1 of 4" ]
 
     export PATH=$A_TEMP_PATH
 }
