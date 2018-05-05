@@ -235,7 +235,6 @@ for model_name in `echo "$model_list" | sed "s/,/ /g"` ; do
 
       if [ -n "$caffe_done" ] ; then
         echo "Checking if caffepredict.sh processing on `dirname $caffe_done` has completed"
-        tree $out_dir
         while [ ! -f "$caffe_done" ] ; do
           echo "Waiting $procwait seconds for $caffe_done file to appear"
           sleep $procwait
@@ -283,6 +282,10 @@ for model_name in `echo "$model_list" | sed "s/,/ /g"` ; do
 done
 
 wait
+
+# fail if prediction fails
+echo "Checking if caffepredict.sh processing on `dirname $caffe_done` has completed"
+fail_if_check_caffepredict_fails "$caffe_done"
 
 # check merge_largedata succeeded
 for model_name in `echo "$model_list" | sed "s/,/ /g"` ; do
