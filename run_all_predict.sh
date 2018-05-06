@@ -3,7 +3,7 @@
 script_name=`basename $0`
 script_dir=`dirname $0`
 version="???"
-procwait="60"
+procwait="5"
 nobackground="false"
 
 if [ -f "$script_dir/VERSION" ] ; then
@@ -210,7 +210,7 @@ for model_name in `echo "$model_list" | sed "s/,/ /g"` ; do
       fi
 
       echo "  Processing $pkg_name $cntr of $tot_pkgs"
-      augoutfile="$Z/out.log"
+      augoutfile="$out_dir/augimages/${model_name}.${pkg_name}.log"
       echo "Running PreprocessPackage.m in background"
       PreprocessPackage.m "$img_dir" "$out_dir/augimages" $CUR_PKG $CUR_Z $model_name $aug_speed > "$augoutfile" 2>&1 &
       if [ "$nobackground" == "true" ] ; then
@@ -241,6 +241,7 @@ for model_name in `echo "$model_list" | sed "s/,/ /g"` ; do
           num_preprocs=`ps --ppid $$ | grep caffe | wc -l`
           if [ "$num_preprocs" -eq 0 ] ; then
             echo "No child process with name starting with caffe found"
+            sleep $procwait
             break
           fi
         done
