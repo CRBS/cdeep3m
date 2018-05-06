@@ -71,6 +71,6 @@ augment_package(stack, outsubdir,fmnumber,speed);
 clear -v stack
 clear -v data
 
-done_file = fopen(strcat(outdir, filesep(),"DONE"), "w");
+done_file = fopen(strcat(outsubdir, filesep(),"DONE"), "w");
 fprintf(done_file,"0\n");
 fclose(done_file);
