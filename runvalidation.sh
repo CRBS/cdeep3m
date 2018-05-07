@@ -10,16 +10,16 @@ fi
 
 function usage()
 {
-    echo "usage: $script_name log_file out_file
+    echo "usage: $script_name log_file out_dir
 
-              Script to plot training vs validation loss. 
-              Example: runvalidation.sh ~/cdeep3m/train_out/1fm/log/out.log ~/cdeep3m/train_out/1fm/train_vs_val.png
+              Script to plot training vs validation loss.
+              Example: runvalidation.sh ~/cdeep3m/train_out/1fm/log/out.log ~/cdeep3m/train_out/1fm/log/
 
               Version: $version
 
 positional arguments:
-  log_file        Log file from desired model. 
-  out_file        Filename of output png. 
+  log_file        Log file from desired model.
+  out_dir        Directory for output files
 
 
     " 1>&2;
@@ -34,7 +34,7 @@ fi
 log_dir=$(dirname $1)
 
 
-python $CAFFE_PATH/tools/extra/parse_log.py $1 $log_dir 
+python $CAFFE_PATH/tools/extra/parse_log.py $1 $log_dir
 
 
 PlotValidation.m $1.train $1.test $2
