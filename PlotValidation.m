@@ -62,9 +62,9 @@ legend("Training","Validation");
 
 outfile = fullfile(logdir, 'loss');
 
-print(plt_loss,outfile, "-dpngcairo"); 
-%print(plt_loss,outfile, "-dpdf");
-fprintf('Your loss output file is saved as: %s.png\n', outfile);
+%print(plt_loss,outfile, "-dpngcairo"); 
+print(plt_loss,outfile, "-dpdfcairo");
+fprintf('Your loss output file is saved as: %s.pdf\n', outfile);
 
 
 
@@ -80,6 +80,6 @@ set(gca, 'Title', 'Validation Accuracy');
 
 
 outfile = fullfile(logdir, 'accuracy');
-print(plt_accuracy,outfile, "-dpngcairo");
-fprintf('Your accuracy output file is saved as: %s.png\n', outfile);
+print(plt_accuracy,outfile, "-dpdfcairo");
+fprintf('Your accuracy output file is saved as: %s.pdf\n', outfile);
 
