@@ -3,44 +3,89 @@
 script_name=`basename $0`
 script_dir=`dirname $0`
 version="???"
-procwait="5"
-nobackground="false"
+procwait="1"
 
 if [ -f "$script_dir/VERSION" ] ; then
    version=`cat $script_dir/VERSION`
 fi
 
+
 function check_caffepredict {
   # assuming $1 is path to done_file
   done_file=$1
+  check_caffepredict_res=""
   if [ -f "$done_file" ] ; then
     check_caffepredict_res=`tail -n 1 "$done_file"`
-    if [ -z "$check_merge_large_data_res" ] ; then
+    if [ -z "$check_caffepredict_res" ] ; then
       check_caffepredict_res="0"
     fi
-  else
-    check_caffepredict_res=""
   fi
 }
 
 function fail_if_check_caffepredict_fails {
   done_file=$1
+
+  # if $done_file is NOT an empty string
   if [ -n "$done_file" ] ; then
     check_caffepredict "$done_file"
-    if [ -n "$check_caffepredict_res" ] ; then
-      if [ "$check_caffepredict_res" -gt 0 ] ; then
-        echo "ERROR, a non-zero exit code ($check_caffepredict_res) was receiv
-ed from: caffepredict.sh on `dirname $done_file`"
-        exit 11
-      fi
-   
-    else
+    
+    # if $check_caffepredict_res is an empty string
+    # that means no done file found in file system
+    # and we expected one so fail
+    if [ -z "$check_caffepredict_res" ] ; then
       echo "ERROR, no DONE file found for caffepredict.sh on `dirname $done_file`"
-      exit 12  
+      exit 12
+    fi
+      
+    # if we got a non zero exit code then fail
+    if [ "$check_caffepredict_res" -gt 0 ] ; then
+      echo "ERROR, a non-zero exit code ($check_caffepredict_res) was receiv
+ed from: caffepredict.sh on `dirname $done_file`"
+      exit 11
     fi
   fi
 }
 
+function clean_up_augmented_pkg_data {
+  package_dir=$1
+  if [ -d "$package_dir" ] ; then
+    echo "Removing $package_dir in background"
+    /bin/rm -rf $package_dir &
+  fi
+}
+
+function wait_on_caffepredict {
+  c_done=$1
+  if [ -n "$c_done" ] ; then
+    echo "Checking if caffepredict.sh processing on `dirname $c_done` has completed"
+    while [ ! -f "$c_done" ] ; do
+      sleep $procwait
+      myproc=$$
+      num_caffes=`ps -o cmd --ppid $myproc | grep caffe | wc -l`
+      if [ "$num_caffes" -eq 0 ] ; then
+        sleep $procwait
+        break
+      fi
+    done
+    fail_if_check_caffepredict_fails "$c_done"
+  fi
+}
+
+function wait_on_preprocess {
+  p_done=$1
+  while [ ! -f "$p_done" ] ; do
+    sleep $procwait
+    myproc=$$
+    num_preprocs=`ps -o cmd --ppid $myproc | grep Preproc | wc -l`
+    if [ "$num_preprocs" -eq 0 ] ; then
+      if [ ! -f "$pre_process_done" ] ; then
+        echo "ERROR no running PreprocessPackage.m found and no $p_done file"
+        exit 10
+      fi
+      break
+    fi
+  done
+}
 
 function check_merge_large_data {
   # assuming $1 is path to done_file
@@ -92,13 +137,12 @@ optional arguments:
   --sourcescript       If set, allows caller to source 
                        script for functions defined and silently
                        returns.
-  --nobackground       Run all processes in serial fashion.
 
     " 1>&2;
    exit 1;
 }
 
-TEMP=`getopt -o h --long "help,procwait:,sourcescript,nobackground" -n '$0' -- "$@"`
+TEMP=`getopt -o h --long "help,procwait:,sourcescript" -n '$0' -- "$@"`
 eval set -- "$TEMP"
 
 while true ; do
@@ -106,7 +150,6 @@ while true ; do
         -h ) usage ;;
         --help ) usage ;;
         --sourcescript ) return 0 ;;
-        --nobackground ) nobackground="true" ;;
         --procwait ) procwait=$2 ; shift 2 ;;
         --) shift ; break ;;
     esac
@@ -194,6 +237,7 @@ let tot_pkgs=$num_pkgs*$num_zstacks
 
 caffe_done=""
 prev_merge_done=""
+prev_aug_package_dir=""
 # name of previous model
 for model_name in `echo "$model_list" | sed "s/,/ /g"` ; do
   
@@ -210,55 +254,24 @@ for model_name in `echo "$model_list" | sed "s/,/ /g"` ; do
       fi
 
       echo "  Processing $pkg_name $cntr of $tot_pkgs"
-      augoutfile="$out_dir/augimages/${model_name}.${pkg_name}.log"
+      augoutfile="$out_dir/augimages/preproc.${model_name}.${pkg_name}.log"
       echo "Running PreprocessPackage.m in background"
       PreprocessPackage.m "$img_dir" "$out_dir/augimages" $CUR_PKG $CUR_Z $model_name $aug_speed > "$augoutfile" 2>&1 &
-      if [ "$nobackground" == "true" ] ; then
-        echo "Running serially waiting for PreprocessPackage.m to finish"
-        wait
-      fi
 
       pre_process_done="$Z/DONE"
-      while [ ! -f "$pre_process_done" ] ; do
-        echo "Waiting $procwait seconds for $pre_process_done file to appear"
-        sleep $procwait
-        num_preprocs=`ps --ppid $$ | grep Preproc | wc -l`
-        if [ "$num_preprocs" -eq 0 ] ; then
-           echo "No child process with name starting with Preproc found"
-           if [ ! -f "$pre_process_done" ] ; then
-             echo "ERROR no running PreprocessPackage.m found and no $pre_process_done file"
-             exit 10
-           fi
-           break
-        fi
-      done
+      wait_on_preprocess "$pre_process_done"
 
-      if [ -n "$caffe_done" ] ; then
-        echo "Checking if caffepredict.sh processing on `dirname $caffe_done` has completed"
-        while [ ! -f "$caffe_done" ] ; do
-          echo "Waiting $procwait seconds for $caffe_done file to appear"
-          sleep $procwait
-          num_preprocs=`ps --ppid $$ | grep caffe | wc -l`
-          if [ "$num_preprocs" -eq 0 ] ; then
-            echo "No child process with name starting with caffe found"
-            sleep $procwait
-            break
-          fi
-        done
-        fail_if_check_caffepredict_fails "$caffe_done"
-      fi
+      wait_on_caffepredict "$caffe_done"
+      clean_up_augmented_pkg_data "$prev_aug_package_dir" 
       caffe_done="$out_pkg/DONE"
-
+      prev_aug_package_dir="$Z"
       /usr/bin/time -p caffepredict.sh "$trained_model_dir/$model_name/trainedmodel" "$Z" "$out_pkg" &
-      
-      if [ "$nobackground" == "true" ] ; then
-        echo "Running serially waiting for caffepredict.sh to finish"
-        wait
-      fi
 
       let cntr+=1
     done
   done
+
+  wait_on_caffepredict "$caffe_done"
 
   check_merge_large_data "$out_dir/$model_name/DONE"
   if [ -n "$check_merge_large_data_res" ] ; then  
@@ -272,17 +285,15 @@ for model_name in `echo "$model_list" | sed "s/,/ /g"` ; do
 
   echo ""
   echo "Running Merge_LargeData.m $out_dir/$model_name"
-  merge_log="$out_dir/$model_name/merge.log"
+  merge_log="$out_dir/merge.${model_name}.log"
   Merge_LargeData.m "$out_dir/$model_name" >> "$merge_log" 2>&1 &
-  if [ "$nobackground" == "true" ] ; then
-    echo "Running serially waiting for Merge_LargeData.m to finish"
-    wait
-  fi
 
   prev_merge_done="$out_dir/$model_name/DONE"
 done
 
 wait
+
+clean_up_augmented_pkg_data "$prev_aug_package_dir"
 
 # fail if prediction fails
 echo "Checking if caffepredict.sh processing on `dirname $caffe_done` has completed"
