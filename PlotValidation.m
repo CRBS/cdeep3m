@@ -60,7 +60,8 @@ legend("Training","Validation");
 if numel(arg_list)==3
 outfile = arg_list{3,1};
 elseif numel(arg_list)==1
-outfile = fullfile(logdir, 'loss.png');
+outfile = fullfile(logdir, 'loss');
 end
-print(plt,outfile, "-dpngcairo"); 
-fprintf('Your outputfile is saved as: %s\n', outfile');
+%print(plt,outfile, "-dpngcairo"); 
+print(plt,outfile, "-dpdf");
+fprintf('Your outputfile is saved as: %s.pdf\n', outfile');
