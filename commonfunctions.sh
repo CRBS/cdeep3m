@@ -1,10 +1,15 @@
 #!/bin/bash
 
 function fatal_error {
-  jobdir=$1
-  errmsg=$2
-  echo "$errmsg" 1>&2
-  echo "$errmsg" >> "$jobdir/ERROR"
+    local jobdir=$1
+    local errmsg=$2
+    local ecode=$3
+    echo "$errmsg" 1>&2
+    echo "$errmsg" >> "$jobdir/ERROR"
+    if [ -n "$ecode" ] ; then
+        echo "$ecode" >> "$jobdir/ERROR"
+        exit $ecode
+    fi
 }
 
 function get_package_name {
@@ -12,50 +17,50 @@ function get_package_name {
 # given package number and z sets
 # $package_name to standard naming convention
 # for packages. Namely Pkg###_Z##
-  local curpkg=$1
-  local curz=$2
-  local pad_pkg=`printf "%03d" $curpkg`
-  local pad_z=`printf "%02d" $curz`
-  echo "Pkg${pad_pkg}_Z${pad_z}"
+    local curpkg=$1
+    local curz=$2
+    local pad_pkg=`printf "%03d" $curpkg`
+    local pad_z=`printf "%02d" $curz`
+    echo "Pkg${pad_pkg}_Z${pad_z}"
 }
 
 function get_number_done_files_in_dir {
-  thedir=$1
-  number_done_files=`find "$thedir" -name "DONE" -type f | wc -l`
-  echo "$number_done_files"
+    local thedir=$1
+    number_done_files=`find "$thedir" -name "DONE" -type f | wc -l`
+    echo "$number_done_files"
 }
 
 function wait_for_predict_to_finish_on_package {
-  local pkg_dir=$1
-  local wait_time=$2
-  while [ ! -f "$pkg_dir/PREDICTDONE" ] ; do
-    sleep $wait_time
-  done
+    local pkg_dir=$1
+    local wait_time=$2
+    while [ ! -f "$pkg_dir/PREDICTDONE" ] ; do
+        sleep $wait_time
+    done
 }
 
 function wait_for_prediction_to_catchup {
-  local augimages=$1
-  local max_pkgs=$2
-  local wait_time=$3
+    local augimages=$1
+    local max_pkgs=$2
+    local wait_time=$3
   
-  local num_pkgs=$(get_number_done_files_in_dir "$augimages")
-  while [ "$num_pkgs" -gt "$max_pkgs" ] ; do
-    sleep $wait_time
-    num_pkgs=$(get_number_done_files_in_dir "$augimages")
-    if [ -f "$augimages/KILL.REQUEST" ] ; then
-      echo "killed"
-      return 0
-    fi
-  done
-  echo ""
+    local num_pkgs=$(get_number_done_files_in_dir "$augimages")
+    while [ "$num_pkgs" -gt "$max_pkgs" ] ; do
+        sleep $wait_time
+        num_pkgs=$(get_number_done_files_in_dir "$augimages")
+        if [ -f "$augimages/KILL.REQUEST" ] ; then
+            echo "killed"
+            return 0
+        fi
+    done
+    echo ""
 }
 
 function wait_for_preprocess_to_finish_on_package {
-  local package_dir=$1
-  local wait_time=$2
-  while [ ! -f "$package_dir/DONE" ] ; do
-    sleep $wait_time
-  done
+    local package_dir=$1
+    local wait_time=$2
+    while [ ! -f "$package_dir/DONE" ] ; do
+        sleep $wait_time
+    done
 }
 
 function parse_package_processing_info {
@@ -72,15 +77,15 @@ function parse_package_processing_info {
 # $num_zstacks to <val 2> and 
 # $tot_pkgs to $num_pkgs*$num_zstacks
   
-  package_proc_info=$1
-  num_pkgs=`head -n 3 $package_proc_info | tail -n 1`
-  num_zstacks=`tail -n 1 $package_proc_info`
-  let tot_pkgs=$num_pkgs*$num_zstacks
+    local package_proc_info=$1
+    num_pkgs=`head -n 3 $package_proc_info | tail -n 1`
+    num_zstacks=`tail -n 1 $package_proc_info`
+    let tot_pkgs=$num_pkgs*$num_zstacks
 }
 
 function get_models_as_space_separated_list {
- local space_sep_models=`echo "$1" | sed "s/,/ /g"`
- echo "$space_sep_models"
+    local space_sep_models=`echo "$1" | sed "s/,/ /g"`
+    echo "$space_sep_models"
 }
 
 function parse_predict_config {
@@ -106,39 +111,39 @@ function parse_predict_config {
 # If unable to parse models from config 5 is returned
 # If unable to parse augspeed from config 6 is returned
 
-  predict_config=$1
+    local predict_config=$1
 
-  if [ ! -s "$predict_config" ] ; then
-    echo "ERROR no $predict_config file found"
-    return 2
-  fi
+    if [ ! -s "$predict_config" ] ; then
+        echo "ERROR no $predict_config file found"
+        return 2
+    fi
 
-  trained_model_dir=`egrep "^ *trainedmodeldir *=" "$predict_config" | sed "s/^.*=//" | sed "s/^ *//"`
+    trained_model_dir=`egrep "^ *trainedmodeldir *=" "$predict_config" | sed "s/^.*=//" | sed "s/^ *//"`
 
-  if [ -z "$trained_model_dir" ] ; then
-    echo "ERROR unable to extract trainedmodeldir from $predict_config"
-    return 3
-  fi
+    if [ -z "$trained_model_dir" ] ; then
+        echo "ERROR unable to extract trainedmodeldir from $predict_config"
+        return 3
+    fi
 
-  img_dir=`egrep "^ *imagedir *=" "$predict_config" | sed "s/^.*=//" | sed "s/^ *//"`
+    img_dir=`egrep "^ *imagedir *=" "$predict_config" | sed "s/^.*=//" | sed "s/^ *//"`
 
-  if [ -z "$img_dir" ] ; then
-    echo "ERROR unable to extract imagedir from $predict_config"
-    return 4
-  fi
+    if [ -z "$img_dir" ] ; then
+        echo "ERROR unable to extract imagedir from $predict_config"
+        return 4
+    fi
 
-  model_list=`egrep "^ *models *=" "$predict_config" | sed "s/^.*=//" | sed "s/^ *//"`
+    model_list=`egrep "^ *models *=" "$predict_config" | sed "s/^.*=//" | sed "s/^ *//"`
 
-  if [ -z "$model_list" ] ; then
-    echo "ERROR unable to extract models from $predict_config"
-    return 5
-  fi
+    if [ -z "$model_list" ] ; then
+        echo "ERROR unable to extract models from $predict_config"
+        return 5
+    fi
 
-  aug_speed=`egrep "^ *augspeed *=" "$predict_config" | sed "s/^.*=//" | sed "s/^ *//"`
+    aug_speed=`egrep "^ *augspeed *=" "$predict_config" | sed "s/^.*=//" | sed "s/^ *//"`
 
-  if [ -z "$aug_speed" ] ; then
-    echo "ERROR unable to extract augspeed from $predict_config"
-    return 6
-  fi
-  return 0
+    if [ -z "$aug_speed" ] ; then
+        echo "ERROR unable to extract augspeed from $predict_config"
+        return 6
+    fi
+    return 0
 }
