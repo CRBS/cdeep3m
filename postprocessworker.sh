@@ -9,7 +9,7 @@ version="???"
 waitinterval="1"
 
 if [ -f "$script_dir/VERSION" ] ; then
-   version=`cat $script_dir/VERSION`
+    version=`cat $script_dir/VERSION`
 fi
 
 function usage()
@@ -19,9 +19,9 @@ function usage()
 
               Version: $version
 
-              Runs caffepredict.sh in a serial fashion
-              waiting for the next available package
-              to process. This script uses predict.config 
+              Runs StartPostprocessing.m and Merge_LargeData.m
+              as packages become available to process.
+              This script uses predict.config 
               file to obtain location of trained model 
               and image data
 
@@ -37,7 +37,7 @@ optional arguments:
                        (default $waitinterval)
 
     " 1>&2;
-   exit 1;
+    exit 1;
 }
 
 TEMP=`getopt -o h --long "help,waitinterval:" -n '$0' -- "$@"`
@@ -65,8 +65,7 @@ predict_config="$out_dir/predict.config"
 parse_predict_config "$predict_config"
 
 if [ $? != 0 ] ; then
-  echo "ERROR parsing $predict_config"
-  exit 2
+    fatal_error "$out_dir" "ERROR parsing $predict_config" 2
 fi
 
 echo "Running Postprocess"
@@ -81,8 +80,7 @@ echo ""
 package_proc_info="$out_dir/augimages/package_processing_info.txt"
 
 if [ ! -s "$package_proc_info" ] ; then
-  echo "ERROR $package_proc_info not found"
-  exit 7
+    fatal_error "$out_dir" "ERROR $package_proc_info not found" 7
 fi
 
 parse_package_processing_info "$package_proc_info"
@@ -90,40 +88,41 @@ parse_package_processing_info "$package_proc_info"
 space_sep_models=$(get_models_as_space_separated_list "$model_list")
 
 for model_name in `echo $space_sep_models` ; do
-  
-  let cntr=1
-  for CUR_PKG in `seq -w 001 $num_pkgs` ; do
-    for CUR_Z in `seq -w 01 $num_zstacks` ; do
-      package_name=$(get_package_name "$CUR_PKG" "$CUR_Z")
-      Z="$out_dir/augimages/$model_name/$package_name"
-      out_pkg="$out_dir/$model_name/$package_name"
-      if [ -f "$out_pkg/DONE" ] ; then
-        echo "  Found $out_pkg/DONE. Prediction completed. Skipping..."
+    if [ -f "$out_dir/$model_name/DONE" ] ; then
+        echo "Found $out_dir/$model_name/DONE Prediction on model completed. Skipping..."
         continue
-      fi
-      echo "For model $model_name postprocessing $package_name $cntr of $tot_pkgs"
-      echo "Waiting for $out_pkg to finish processing"
-      wait_for_predict_to_finish_on_package "$out_pkg" "$waitinterval"
+    fi 
+    let cntr=1
+    for CUR_PKG in `seq -w 001 $num_pkgs` ; do
+        for CUR_Z in `seq -w 01 $num_zstacks` ; do
+            package_name=$(get_package_name "$CUR_PKG" "$CUR_Z")
+            Z="$out_dir/augimages/$model_name/$package_name"
+            out_pkg="$out_dir/$model_name/$package_name"
+            if [ -f "$out_pkg/DONE" ] ; then
+                echo "  Found $out_pkg/DONE Prediction completed. Skipping..."
+                continue
+            fi
+            echo "For model $model_name postprocessing $package_name $cntr of $tot_pkgs"
+            echo "Waiting for $out_pkg to finish processing"
+            wait_for_predict_to_finish_on_package "$out_pkg" "$waitinterval"
 
-      echo "Running StartPostprocessing.m on $out_pkg"
-      /usr/bin/time -p StartPostprocessing.m "$out_pkg"
-      ecode=$?
-      if [ $ecode != 0 ] ; then
-        fatal_error "$out_dir" "ERROR non-zero exit code ($ecode) from running StartPostprocessing.m"
-        exit 7
-      fi
-      echo "0" > "$out_pkg/DONE"
-      echo "Removing $Z"
-      /bin/rm -rf "$Z"
-      let cntr+=1
+            echo "Running StartPostprocessing.m on $out_pkg"
+            /usr/bin/time -p StartPostprocessing.m "$out_pkg"
+            ecode=$?
+            if [ $ecode != 0 ] ; then
+                fatal_error "$out_dir" "ERROR non-zero exit code ($ecode) from running StartPostprocessing.m" 7
+            fi
+            echo "0" > "$out_pkg/DONE"
+            echo "Removing $Z"
+            /bin/rm -rf "$Z"
+            let cntr+=1
+        done
     done
-  done
-  /usr/bin/time -p Merge_LargeData.m "$out_dir/$model_name"
-  ecode=$?
-  if [ $ecode != 0 ] ; then
-    fatal_error "ERROR non-zero exit code ($ecode) from running Merge_LargeData.m"
-    exit 8
-  fi
+    /usr/bin/time -p Merge_LargeData.m "$out_dir/$model_name"
+    ecode=$?
+    if [ $ecode != 0 ] ; then
+        fatal_error "ERROR non-zero exit code ($ecode) from running Merge_LargeData.m" 8
+    fi
 done
 
 echo ""
