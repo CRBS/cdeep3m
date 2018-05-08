@@ -10,7 +10,7 @@ maxpackages="5"
 waitinterval="60"
 
 if [ -f "$script_dir/VERSION" ] ; then
-   version=`cat $script_dir/VERSION`
+    version=`cat $script_dir/VERSION`
 fi
 
 function usage()
@@ -41,7 +41,7 @@ optional arguments:
                        (default $waitinterval)
 
     " 1>&2;
-   exit 1;
+    exit 1;
 }
 
 TEMP=`getopt -o h --long "help,maxpackages:,waitinterval:" -n '$0' -- "$@"`
@@ -58,7 +58,7 @@ while true ; do
 done
 
 if [ $# -ne 1 ] ; then
-  usage
+    usage
 fi
 
 out_dir=$1
@@ -70,8 +70,7 @@ predict_config="$out_dir/predict.config"
 parse_predict_config "$predict_config"
 
 if [ $? != 0 ] ; then
-  echo "ERROR parsing $predict_config"
-  exit 2
+    fatal_error "$out_dir" "ERROR parsing $predict_config" 2
 fi
 
 echo "Running PreprocessPackage"
@@ -86,8 +85,7 @@ echo ""
 package_proc_info="$out_dir/augimages/package_processing_info.txt"
 
 if [ ! -s "$package_proc_info" ] ; then
-  echo "ERROR $package_proc_info not found"
-  exit 7
+    fatal_error "$out_dir" "ERROR $package_proc_info not found" 7
 fi
 
 parse_package_processing_info "$package_proc_info"
@@ -96,34 +94,33 @@ space_sep_models=$(get_models_as_space_separated_list "$model_list")
 
 for model_name in `echo $space_sep_models` ; do
   
-  let cntr=1
-  for CUR_PKG in `seq -w 001 $num_pkgs` ; do
-    for CUR_Z in `seq -w 01 $num_zstacks` ; do
-      package_name=$(get_package_name "$CUR_PKG" "$CUR_Z")
-      Z="$out_dir/augimages/$model_name/$package_name"
-      out_pkg="$out_dir/$model_name/$package_name"
-      if [ -f "$out_pkg/DONE" ] ; then
-        echo "  Found $out_pkg/DONE. Prediction completed. Skipping..."
-        continue
-      fi
-      echo "Preprocessing $package_name in model $model_name"
-      augoutfile="$out_dir/augimages/preproc.${model_name}.${package_name}.log"
+    let cntr=1
+    for CUR_PKG in `seq -w 001 $num_pkgs` ; do
+        for CUR_Z in `seq -w 01 $num_zstacks` ; do
+            package_name=$(get_package_name "$CUR_PKG" "$CUR_Z")
+            Z="$out_dir/augimages/$model_name/$package_name"
+            out_pkg="$out_dir/$model_name/$package_name"
+            if [ -f "$out_pkg/DONE" ] ; then
+                echo "  Found $out_pkg/DONE. Prediction completed. Skipping..."
+                continue
+            fi
+            echo "Preprocessing $package_name in model $model_name"
+            augoutfile="$out_dir/augimages/preproc.${model_name}.${package_name}.log"
       
-      /usr/bin/time -p PreprocessPackage.m "$img_dir" "$out_dir/augimages" $CUR_PKG $CUR_Z $model_name $aug_speed > "$augoutfile" 2>&1 
-      ecode=$?
-      if [ $ecode != 0 ] ; then
-        fatal_error "$out_dir" "ERROR, a non-zero exit code ($ecode) received from PreprocessPackage.m $CUR_PKG $CUR_Z $model_name $aug_speed"
-        exit 8
-      fi
-      echo "Waiting for prediction to catch up"
-      res=$(wait_for_prediction_to_catchup "$out_dir/augimages" $maxpackages $waitinterval)
-      if [ "$res" == "killed" ] ; then
-        echo "KILL.REQUEST file found. Exiting"
-        exit 1
-      fi
-      let cntr+=1
+            /usr/bin/time -p PreprocessPackage.m "$img_dir" "$out_dir/augimages" $CUR_PKG $CUR_Z $model_name $aug_speed > "$augoutfile" 2>&1 
+            ecode=$?
+            if [ $ecode != 0 ] ; then
+                fatal_error "$out_dir" "ERROR, a non-zero exit code ($ecode) received from PreprocessPackage.m $CUR_PKG $CUR_Z $model_name $aug_speed" 8
+            fi
+            echo "Waiting for prediction to catch up"
+            res=$(wait_for_prediction_to_catchup "$out_dir/augimages" $maxpackages $waitinterval)
+            if [ "$res" == "killed" ] ; then
+                echo "KILL.REQUEST file found. Exiting"
+                exit 1
+            fi
+            let cntr+=1
+        done
     done
-  done
 done
 
 echo ""
