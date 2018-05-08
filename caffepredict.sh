@@ -62,16 +62,12 @@ out_dir=$3
 
 done_file="$out_dir/PREDICTDONE"
 
-function fatal_error() {
-  echo -e "$1\n$2" >> "$done_file"
-  exit $2
-}
 
 if [ -d "$model" ] ; then
   model_dir="$model"
   latest_iteration=`ls "$model" | egrep "\.caffemodel$" | sed "s/^.*iter_//" | sed "s/\.caffemodel//" | sort -g | tail -n 1`
   if [ "$latest_iteration" == "" ] ; then
-     fatal_error "ERROR no #.caffemodel files found" 2
+     fatal_error "$out_dir" "ERROR no #.caffemodel files found" 2
   fi
   model=`find "$model" -name "*${latest_iteration}.caffemodel" -type f`
 else
@@ -87,12 +83,12 @@ out_log="$out_dir/out.log"
 mkdir -p "$log_dir"
 
 if [ $? != 0 ] ; then
-  fatal_error "ERROR unable to create $log_dir" 3
+  fatal_error "$out_dir" "ERROR unable to create $log_dir" 3
 fi
 
 gpucount=`nvidia-smi -L | wc -l`
 if [ "$gpucount" -eq 0 ] ; then
-  fatal_error "ERROR unable to get count of GPU(s). Is nvidia-smi working?" 4
+  fatal_error "$out_dir" "ERROR unable to get count of GPU(s). Is nvidia-smi working?" 4
 fi
 
 let maxgpuindex=$gpucount-1
@@ -117,7 +113,7 @@ for input_file in `find "${in_dir}" -name "*.h5" -type f | sort -V` ;
     echo "Creating directory $predict_dir" >> "$out_log"
     mkdir -p "$predict_dir"
     if [ $? != 0 ] ; then
-      fatal_error "ERROR unable to create $predict_dir" 5
+      fatal_error "$out_dir" "ERROR unable to create $predict_dir" 5
     fi
   fi
   echo -e "$log_dir\n$deploy_dir\n$model\n$input_file\n$predict_dir\n$cntr" >> $parallel_job_file
@@ -134,7 +130,7 @@ done
 cat $parallel_job_file | parallel --no-notice --delay 2 -N 6 -j $gpucount 'GLOG_logtostderr="{1}" /usr/bin/time -p predict_seg_new.bin --model={2}/deploy.prototxt --weights={3} --data={4} --predict={5}/test.h5 --shift_axis=2 --shift_stride=1 --gpu={6}' >> "$out_log" 2>&1
   ecode=$?
   if [ $ecode != 0 ] ; then
-    fatal_error "ERROR non-zero exit code ($ecode) from running predict_seg_new.bin" 6
+    fatal_error "$out_dir" "ERROR non-zero exit code ($ecode) from running predict_seg_new.bin" 6
   fi
 
 echo ""

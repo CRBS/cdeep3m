@@ -34,7 +34,7 @@ teardown() {
     run $CAFFE_PREDICT_SH "$TEST_TMP_DIR" blah "$TEST_TMP_DIR"
 
     [ "$status" -eq 2 ]
-    run cat "$TEST_TMP_DIR/DONE"
+    run cat "$TEST_TMP_DIR/ERROR"
     [ "${lines[0]}" = "ERROR no #.caffemodel files found" ] 
     [ "${lines[1]}" = "2" ]
 }
@@ -45,7 +45,7 @@ teardown() {
     run $CAFFE_PREDICT_SH "$TEST_TMP_DIR/foo.caffemodel" blah "$TEST_TMP_DIR"
     
     [ "$status" -eq 3 ] 
-    run cat "$TEST_TMP_DIR/DONE" 
+    run cat "$TEST_TMP_DIR/ERROR" 
     [ "${lines[0]}" = "ERROR unable to create $TEST_TMP_DIR/log" ]
     [ "${lines[1]}" = "3" ] 
 }
@@ -59,7 +59,7 @@ teardown() {
     export PATH=$A_TEMP_PATH
     [ "$status" -eq 4 ]
     echo "$status $output" 2>&1
-    run cat "$TEST_TMP_DIR/DONE"
+    run cat "$TEST_TMP_DIR/ERROR"
     [ "${lines[0]}" = "ERROR unable to get count of GPU(s). Is nvidia-smi working?" ]
     [ "${lines[1]}" = "4" ]
 }
@@ -78,7 +78,7 @@ teardown() {
     echo "$status $output" 2>&1
     [ "$status" -eq 5 ]
     [ "${lines[0]}" = "Single GPU detected" ]
-    run cat "$TEST_TMP_DIR/DONE"
+    run cat "$TEST_TMP_DIR/ERROR"
     [ "${lines[0]}" = "ERROR unable to create $TEST_TMP_DIR/v1" ]
     [ "${lines[1]}" = "5" ] 
 
@@ -105,7 +105,6 @@ teardown() {
    echo "$status $output" 1>&2
    [ "$status" -eq 0 ]
    [ "${lines[0]}" = "Detected 2 GPU(s). Will run in parallel" ]
-   [ "${lines[1]}" = "Running StartPostprocessing.m $TEST_TMP_DIR" ]
    export PATH=$A_TEMP_PATH
    run cat "$TEST_TMP_DIR/out.log"
    echo "From cat out.log: $status $output" 1>&2
@@ -113,39 +112,11 @@ teardown() {
    [ "${lines[1]}" = "Creating directory $TEST_TMP_DIR/v2" ]
    [ "${lines[15]}" = "Creating directory $TEST_TMP_DIR/v16" ]
 
-   [ "${lines[16]}" = "--no-notice --delay 2 -N 6 -j 2 GLOG_logtostderr=\"{1}\" /usr/bin/time -p predict_seg_new.bin --model={2}/deploy.prototxt --weights={3} --data={4} --predict={5}/test.h5 --shift_axis=2 --shift_stride=1 --gpu={6}" ] 
+   [ "${lines[16]}" = "--no-notice --delay 2 -N 6 -j 2 GLOG_logtostderr=\"{1}\" /usr/bin/time -p predict_seg_new.bin --model={2}/deploy.prototxt --weights={3} --data={4} --predict={5}/test.h5 --shift_axis=2 --shift_stride=1 --gpu={6}" ]
 
-   run tail -n 2 "$TEST_TMP_DIR/out.log"
-   echo "From tail -n 2 out.log: $status $output" 1>&2
-   [ "${lines[1]}" = "$TEST_TMP_DIR" ]
-}
+   [ -f "$TEST_TMP_DIR/PREDICTDONE" ] 
 
-@test "caffepredict.sh StartPostprocessing.m fails" {
-   mkdir -p "$TEST_TMP_DIR/augimages"
-   ln -s /bin/false "$TEST_TMP_DIR/StartPostprocessing.m"
-   ln -s /bin/echo "$TEST_TMP_DIR/predict_seg_new.bin"
-   ln -s /bin/echo "$TEST_TMP_DIR/parallel"
-   echo "#!/bin/bash" > "$TEST_TMP_DIR/nvidia-smi"
-   echo "echo 'GPU 0'" >> "$TEST_TMP_DIR/nvidia-smi"
-   chmod a+x "$TEST_TMP_DIR/nvidia-smi"
-
-   for Y in `seq 1 16` ; do
-     touch "$TEST_TMP_DIR/augimages/blah_v${Y}.h5"
-   done
-   parent_dir=`dirname "$TEST_TMP_DIR"`
-
-   export A_TEMP_PATH=$PATH
-   export PATH=$TEST_TMP_DIR:$PATH
-
-   run $CAFFE_PREDICT_SH "$TEST_TMP_DIR/foo.caffemodel" "$TEST_TMP_DIR/augimages" "$TEST_TMP_DIR"
-   echo "$status $output" 1>&2
-   [ "$status" -eq 7 ]
-   [ "${lines[0]}" = "Single GPU detected" ]
-   [ "${lines[1]}" = "Running StartPostprocessing.m $TEST_TMP_DIR" ]
-   run cat "$TEST_TMP_DIR/DONE"
-   [ "${lines[0]}" = "ERROR non-zero exit code (1) from running StartPostprocessing.m" ]
-   [ "${lines[1]}" = "7" ]
-   export PATH=$A_TEMP_PATH
+   [ ! -f "$TEST_TMP_DIR/ERROR" ] 
 }
 
 @test "caffepredict.sh predict_seg_new.bin fails" {
@@ -167,7 +138,7 @@ teardown() {
    echo "$status $output" 1>&2
    [ "$status" -eq 6 ]
    [ "${lines[0]}" = "Detected 6 GPU(s). Will run in parallel" ]
-   run cat "$TEST_TMP_DIR/DONE" 
+   run cat "$TEST_TMP_DIR/ERROR" 
    [ "${lines[0]}" = "ERROR non-zero exit code (1) from running predict_seg_new.bin" ]
    [ "${lines[1]}" = "6" ]
    export PATH=$A_TEMP_PATH
