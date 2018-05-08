@@ -2,6 +2,9 @@
 
 script_name=`basename $0`
 script_dir=`dirname $0`
+
+source "${script_dir}/commonfunctions.sh"
+
 version="???"
 procwait="1"
 
@@ -114,7 +117,6 @@ ed from: Merge_LargeData.m `dirname $merge_done`"
 fi
 }
 
-
 function usage()
 {
     echo "usage: $script_name [-h]
@@ -165,40 +167,12 @@ echo ""
 
 predict_config="$out_dir/predict.config"
 
-if [ ! -s "$predict_config" ] ; then
-  echo "ERROR no $predict_config file found"
+parse_predict_config "$predict_config"
+
+if [ $? != 0 ] ; then
+  echo "ERROR parsing $predict_config"
   exit 2
 fi
-
-trained_model_dir=`egrep "^ *trainedmodeldir *=" "$predict_config" | sed "s/^.*=//" | sed "s/^ *//"`
-
-if [ -z "$trained_model_dir" ] ; then
-  echo "ERROR unable to extract trainedmodeldir from $predict_config"
-  exit 3
-fi
-
-img_dir=`egrep "^ *imagedir *=" "$predict_config" | sed "s/^.*=//" | sed "s/^ *//"`
-
-if [ -z "$img_dir" ] ; then
-  echo "ERROR unable to extract imagedir from $predict_config"
-  exit 4
-fi
-
-
-model_list=`egrep "^ *models *=" "$predict_config" | sed "s/^.*=//" | sed "s/^ *//"`
-
-if [ -z "$model_list" ] ; then
-  echo "ERROR unable to extract models from $predict_config"
-  exit 5
-fi
-
-aug_speed=`egrep "^ *augspeed *=" "$predict_config" | sed "s/^.*=//" | sed "s/^ *//"`
-
-if [ -z "$aug_speed" ] ; then
-  echo "ERROR unable to extract augspeed from $predict_config"
-  exit 6
-fi
-
 
 echo "Running Prediction"
 echo ""
@@ -230,16 +204,18 @@ if [ $? != 0 ] ; then
   exit 9
 fi
 
-num_pkgs=`head -n 3 $package_proc_info | tail -n 1`
-num_zstacks=`tail -n 1 $package_proc_info`
-let tot_pkgs=$num_pkgs*$num_zstacks
-
+parse_package_processing_info "$package_proc_info"
 
 caffe_done=""
 prev_merge_done=""
 prev_aug_package_dir=""
 # name of previous model
-for model_name in `echo "$model_list" | sed "s/,/ /g"` ; do
+get_models_as_space_separated_list "$model_list"
+
+echo "Start up generation of packages to process"
+preprocesspackagerunner.sh "$out_dir" &
+
+for model_name in `echo $space_sep_models` ; do
   
   echo "Running $model_name predict $tot_pkgs package(s) to process"
   let cntr=1
@@ -254,9 +230,6 @@ for model_name in `echo "$model_list" | sed "s/,/ /g"` ; do
       fi
 
       echo "  Processing $pkg_name $cntr of $tot_pkgs"
-      augoutfile="$out_dir/augimages/preproc.${model_name}.${pkg_name}.log"
-      echo "Running PreprocessPackage.m in background"
-      PreprocessPackage.m "$img_dir" "$out_dir/augimages" $CUR_PKG $CUR_Z $model_name $aug_speed > "$augoutfile" 2>&1 &
 
       pre_process_done="$Z/DONE"
       wait_on_preprocess "$pre_process_done"
