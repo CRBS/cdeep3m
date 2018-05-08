@@ -5,6 +5,8 @@ script_dir=`dirname "$0"`
 script_name=`basename $0`
 version="???"
 
+source "${script_dir}/commonfunctions.sh"
+
 if [ -f "$script_dir/VERSION" ] ; then
    version=`cat $script_dir/VERSION`
 fi
@@ -58,7 +60,7 @@ model=$1
 in_dir=$2
 out_dir=$3
 
-done_file="$out_dir/DONE"
+done_file="$out_dir/PREDICTDONE"
 
 function fatal_error() {
   echo -e "$1\n$2" >> "$done_file"
@@ -136,13 +138,6 @@ cat $parallel_job_file | parallel --no-notice --delay 2 -N 6 -j $gpucount 'GLOG_
   fi
 
 echo ""
-echo "Running StartPostprocessing.m $out_dir"
-StartPostprocessing.m "$out_dir" >> "$out_log" 2>&1
-ecode=$?
-
-if [ $ecode != 0 ] ; then
-  fatal_error "ERROR non-zero exit code ($ecode) from running StartPostprocessing.m" 7
-fi
 
 echo -e "Success\n0" >> "$done_file"
 exit 0
