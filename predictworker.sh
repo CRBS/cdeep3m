@@ -9,7 +9,7 @@ version="???"
 waitinterval="1"
 
 if [ -f "$script_dir/VERSION" ] ; then
-   version=`cat $script_dir/VERSION`
+    version=`cat $script_dir/VERSION`
 fi
 
 function usage()
@@ -37,7 +37,7 @@ optional arguments:
                        (default $waitinterval)
 
     " 1>&2;
-   exit 1;
+    exit 1;
 }
 
 TEMP=`getopt -o h --long "help,waitinterval:" -n '$0' -- "$@"`
@@ -65,11 +65,10 @@ predict_config="$out_dir/predict.config"
 parse_predict_config "$predict_config"
 
 if [ $? != 0 ] ; then
-  echo "ERROR parsing $predict_config"
-  exit 2
+    fatal_error "$out_dir" "ERROR parsing $predict_config" 2
 fi
 
-echo "Running PreprocessPackage"
+echo "Running Prediction"
 echo ""
 
 echo "Trained Model Dir: $trained_model_dir"
@@ -81,8 +80,7 @@ echo ""
 package_proc_info="$out_dir/augimages/package_processing_info.txt"
 
 if [ ! -s "$package_proc_info" ] ; then
-  echo "ERROR $package_proc_info not found"
-  exit 7
+    fatal_error "$out_dir" "ERROR $package_proc_info not found" 7
 fi
 
 parse_package_processing_info "$package_proc_info"
@@ -91,32 +89,37 @@ space_sep_models=$(get_models_as_space_separated_list "$model_list")
 
 for model_name in `echo $space_sep_models` ; do
   
-  let cntr=1
-  for CUR_PKG in `seq -w 001 $num_pkgs` ; do
-    for CUR_Z in `seq -w 01 $num_zstacks` ; do
-      package_name=$(get_package_name "$CUR_PKG" "$CUR_Z")
-      Z="$out_dir/augimages/$model_name/$package_name"
-      out_pkg="$out_dir/$model_name/$package_name"
-      if [ -f "$out_pkg/PREDICTDONE" ] ; then
-        echo "  Found $out_pkg/PREDICTDONE. Predicton completed. Skipping..."
-        continue
-      fi
-      if [ -f "$out_pkg/DONE" ] ; then
-        echo "  Found $out_pkg/DONE. Postprocessing completed. Skipping..."
-        continue
-      fi
-      echo "For model $model_name preprocessing $package_name $cntr of $tot_pkgs"
-      wait_for_preprocess_to_finish_on_package "$Z" "$waitinterval"
-      echo "Running prediction on $model_name $package_name"
-      /usr/bin/time -p caffepredict.sh "$trained_model_dir/$model_name/trainedmodel" "$Z" "$out_pkg"
-      ecode=$?
-      if [ $ecode != 0 ] ; then
-        fatal_error "$out_dir" "ERROR, a non-zero exit code ($ecode) was received from: caffepredict.sh"
-        exit 4
-      fi
-      let cntr+=1
+    let cntr=1
+    for CUR_PKG in `seq -w 001 $num_pkgs` ; do
+        for CUR_Z in `seq -w 01 $num_zstacks` ; do
+            package_name=$(get_package_name "$CUR_PKG" "$CUR_Z")
+            Z="$out_dir/augimages/$model_name/$package_name"
+            out_pkg="$out_dir/$model_name/$package_name"
+            
+            # caffepredict.sh creates PREDICTDONE when done
+            # so check for that file before running
+            if [ -f "$out_pkg/PREDICTDONE" ] ; then
+                echo "  Found $out_pkg/PREDICTDONE Prediction completed. Skipping..."
+                continue
+            fi
+   
+            # StartPostprocessing.m creates DONE when done
+            # so check for that file before running
+            if [ -f "$out_pkg/DONE" ] ; then
+                echo "  Found $out_pkg/DONE Postprocessing completed. Skipping..."
+                continue
+            fi
+            echo "For model $model_name preprocessing $package_name $cntr of $tot_pkgs"
+            wait_for_preprocess_to_finish_on_package "$Z" "$waitinterval"
+            echo "Running prediction on $model_name $package_name"
+            /usr/bin/time -p caffepredict.sh "$trained_model_dir/$model_name/trainedmodel" "$Z" "$out_pkg"
+            ecode=$?
+            if [ $ecode != 0 ] ; then
+                fatal_error "$out_dir" "ERROR, a non-zero exit code ($ecode) was received from: caffepredict.sh" 4
+            fi
+            let cntr+=1
+        done
     done
-  done
 done
 
 echo ""
