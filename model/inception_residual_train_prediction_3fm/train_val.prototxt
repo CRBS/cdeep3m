@@ -10,7 +10,7 @@ layer {
 	   data_patch_shape{
 		dim: 320
 		dim: 320
-		dim: 3
+		dim: 5
 	   }
 	   label_patch_shape{
 		dim: 320
@@ -58,7 +58,7 @@ layer {
 	   data_patch_shape{
 		dim: 320
 		dim: 320
-		dim: 3
+		dim: 5
 	   }
 	   label_patch_shape{
 		dim: 320
