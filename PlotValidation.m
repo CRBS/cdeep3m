@@ -22,8 +22,9 @@
 %   [3,1] = output dir
 % }
 arg_list = argv ();
-
-if numel(arg_list) == 1
+if numel(arg_list) == 0
+fprintf('\nSyntax:\n PlotValidation.m <train_output.csv> <validation_output.csv> <output_filepath.png>\nor\nPlotValidation.m ~/trainingdata/1fm/log\n');return
+elseif numel(arg_list) == 1
 logdir = arg_list{1,1};
   if exist(logdir,'dir')==7
   disp('Parsing log file');
