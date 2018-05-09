@@ -60,7 +60,102 @@ teardown() {
     run $POSTPROCESS_WORKER_SH "$TEST_TMP_DIR"
     echo "$status $output" 1>&2
     [ "$status" -eq 0 ]
-    [ "${lines[0]}" == "FIX ME" ]
-
-
+    [ "${lines[5]}" == "Found $TEST_TMP_DIR/1fm/DONE Prediction on model completed. Skipping..." ]
+    [ "${lines[6]}" == "Postprocessing has completed." ]
 }
+
+@test "postprocessworker.sh StartPostprocessing.m fails" {
+    ln -s /bin/false "$TEST_TMP_DIR/StartPostprocessing.m"
+
+    pconfig="$TEST_TMP_DIR/predict.config"
+    echo "trainedmodeldir=tmodel" >> "$pconfig"
+    echo "imagedir=imagey" >> "$pconfig"
+    echo "models=1fm" >> "$pconfig"
+    echo "augspeed=1" >> "$pconfig"
+    mkdir -p "$TEST_TMP_DIR/augimages"
+    p_info="$TEST_TMP_DIR/augimages/package_processing_info.txt"
+    echo "" > "$p_info"
+    echo "Number of XY Packages" >> "$p_info"
+    echo "1" >> "$p_info"
+    echo "Number of z-blocks" >> "$p_info"
+    echo "1" >> "$p_info"
+    mkdir -p "$TEST_TMP_DIR/1fm/Pkg001_Z01"
+    touch "$TEST_TMP_DIR/1fm/Pkg001_Z01/PREDICTDONE"
+     
+    export A_TEMP_PATH=$PATH
+    export PATH=$TEST_TMP_DIR:$PATH
+    run $POSTPROCESS_WORKER_SH --waitinterval 0 "$TEST_TMP_DIR"
+    echo "$status $output" 1>&2
+    [ "$status" -eq 7 ]
+    [ "${lines[12]}" == "ERROR non-zero exit code (1) from running StartPostprocessing.m" ]
+    [ -f "$TEST_TMP_DIR/ERROR" ]
+    run cat "$TEST_TMP_DIR/ERROR" 
+    [ "${lines[0]}" == "ERROR non-zero exit code (1) from running StartPostprocessing.m" ]
+    export PATH=$A_TEMP_PATH
+}
+
+@test "postprocessworker.sh Merge_LargeData.m fails" {
+    ln -s /bin/true "$TEST_TMP_DIR/StartPostprocessing.m"
+    ln -s /bin/false "$TEST_TMP_DIR/Merge_LargeData.m"
+    pconfig="$TEST_TMP_DIR/predict.config"
+    echo "trainedmodeldir=tmodel" >> "$pconfig"
+    echo "imagedir=imagey" >> "$pconfig"
+    echo "models=1fm" >> "$pconfig"
+    echo "augspeed=1" >> "$pconfig"
+    mkdir -p "$TEST_TMP_DIR/augimages"
+    p_info="$TEST_TMP_DIR/augimages/package_processing_info.txt"
+    echo "" > "$p_info"
+    echo "Number of XY Packages" >> "$p_info"
+    echo "1" >> "$p_info"
+    echo "Number of z-blocks" >> "$p_info"
+    echo "1" >> "$p_info"
+    mkdir -p "$TEST_TMP_DIR/1fm/Pkg001_Z01"
+    touch "$TEST_TMP_DIR/1fm/Pkg001_Z01/PREDICTDONE"
+
+    export A_TEMP_PATH=$PATH
+    export PATH=$TEST_TMP_DIR:$PATH
+    run $POSTPROCESS_WORKER_SH --waitinterval 0 "$TEST_TMP_DIR"
+    echo "$status $output" 1>&2
+    [ "$status" -eq 8 ]
+    [ "${lines[16]}" == "ERROR non-zero exit code (1) from running Merge_LargeData.m" ]
+    [ -f "$TEST_TMP_DIR/ERROR" ]
+    run cat "$TEST_TMP_DIR/ERROR"
+    [ "${lines[0]}" == "ERROR non-zero exit code (1) from running Merge_LargeData.m" ]
+    export PATH=$A_TEMP_PATH
+}
+
+@test "postprocessworker.sh success" {
+    ln -s /bin/echo "$TEST_TMP_DIR/StartPostprocessing.m"
+    ln -s /bin/echo "$TEST_TMP_DIR/Merge_LargeData.m"
+    pconfig="$TEST_TMP_DIR/predict.config"
+    echo "trainedmodeldir=tmodel" >> "$pconfig"
+    echo "imagedir=imagey" >> "$pconfig"
+    echo "models=1fm" >> "$pconfig"
+    echo "augspeed=1" >> "$pconfig"
+    mkdir -p "$TEST_TMP_DIR/augimages"
+    p_info="$TEST_TMP_DIR/augimages/package_processing_info.txt"
+    echo "" > "$p_info"
+    echo "Number of XY Packages" >> "$p_info"
+    echo "1" >> "$p_info"
+    echo "Number of z-blocks" >> "$p_info"
+    echo "1" >> "$p_info"
+    mkdir -p "$TEST_TMP_DIR/1fm/Pkg001_Z01"
+    touch "$TEST_TMP_DIR/1fm/Pkg001_Z01/PREDICTDONE"
+
+    export A_TEMP_PATH=$PATH
+    export PATH=$TEST_TMP_DIR:$PATH
+    run $POSTPROCESS_WORKER_SH --waitinterval 0 "$TEST_TMP_DIR"
+    echo "$status $output" 1>&2
+    [ "$status" -eq 0 ]
+    [ "${lines[0]}" == "Running Postprocess" ]
+    [ ! -f "$TEST_TMP_DIR/ERROR" ]
+    [ "${lines[5]}" == "For model 1fm postprocessing Pkg001_Z01 1 of 1" ]
+    [ "${lines[6]}" == "Waiting for $TEST_TMP_DIR/1fm/Pkg001_Z01 to finish processing" ]
+    [ "${lines[7]}" == "Running StartPostprocessing.m on $TEST_TMP_DIR/1fm/Pkg001_Z01" ]
+    [ "${lines[8]}" == "$TEST_TMP_DIR/1fm/Pkg001_Z01" ]
+    [ "${lines[12]}" == "Removing $TEST_TMP_DIR/augimages/1fm/Pkg001_Z01" ]
+    [ "${lines[13]}" == "$TEST_TMP_DIR/1fm" ] 
+    [ "${lines[17]}" == "Postprocessing has completed." ]
+    export PATH=$A_TEMP_PATH
+}
+
