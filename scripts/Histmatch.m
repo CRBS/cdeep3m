@@ -5,10 +5,11 @@
 % to this end the average histogram of the second image stack will be used
 % as a reference
 %
-% Syntax: Histmatch /example/Dataset1/input/ /example/Dataset2/input/ /example/Dataset1/outputfilename
-% - Input data can be a folder with images or a single stack / individual
-% image
-% - Output data will be written as single tiff stack
+% Syntax: Histmatch ~/Dataset1/ ~/Reference_Dataset2/ ~/Histomatched_Dataset1/
+% Positional arguments:
+% - Input dataset
+% - Reference dataset
+% - Output folder
 % 
 % Expected runtime 3min for 1024x1024x100 dataset
 %
@@ -34,26 +35,14 @@ fprintf('Starting to process %d datasets \n',floor(numel(arg_list)/2));
 
 inputdir_raw = arg_list{1};
 inputdir_ref = arg_list{2};
-outputname = arg_list{3};
+outputfolder = arg_list{3};
 
 %-----------------------------------------
 %% Check with user before overwriting/deleting any files
 %-----------------------------------------
 
-if exist(outputname,'file')
-     reply = input(sprintf('Overwriting %s? Y/N [N]:',outputname),'s');
-     if isempty(reply)
-          reply = 'N';         
-     end
-     if strcmpi(reply, 'N') || strcmpi(reply, 'No')
-         disp('Could not proceed')
-         return
-     elseif strcmpi(reply, 'Y') || strcmpi(reply, 'yes')
-         disp(sprintf ('Deleting %s',outputname));
-         delete(outputname);
-     else
-         disp('Not specified')
-     end
+if ~exist(outputfolder,'folder')
+mkdir(outputfolder);
 end
 
 %-----------------------------------------
@@ -70,7 +59,11 @@ ref_image = mean(ref_stack,3);
 %-----------------------------------------
 
 disp('Saving ...')
-for i=1:size(raw_stack,3)  
+for i=1:size(raw_stack,3)
+fprintf('.');
+    outputfile = fullfile(outputfolder, sprintf('Image_%04d.png',i));
     hist_matched_imgs = imhistmatch(raw_stack(:,:,i),ref_image);
-    imwrite(hist_matched_imgs,outputname,'WriteMode','append')    
+    imwrite(hist_matched_imgs,outputfile);    
 end
+
+toc
