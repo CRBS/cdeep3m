@@ -100,6 +100,7 @@
                      "echo 'Done installing octave'\n",
                      "pip install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz -y\n",
                      "sudo -u ubuntu echo 'export PATH=$PATH:/home/ubuntu/cdeep3m:/home/ubuntu/caffe_nd_sense_segmentation/build/tools' >> /home/ubuntu/.bashrc\n",
+                     "sudo -u ubuntu echo 'export CAFFE_PATH=/home/ubuntu/caffe_nd_sense_segmentation' >> /home/ubuntu/.bashrc\n",
                      "cd /home/ubuntu\n",
                      "sudo -u ubuntu git clone https://github.com/coleslaw481/caffe_nd_sense_segmentation.git\n",
                      "cd /home/ubuntu/caffe_nd_sense_segmentation\n",
