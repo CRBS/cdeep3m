@@ -27,9 +27,6 @@ teardown() {
     echo "$status $output" 1>&2
     [ "$status" -eq 0 ] 
 
-    run $RUNENSEMBLE "$TEST_TMP_DIR/predictout/1fm" "$TEST_TMP_DIR/predictout/3fm" "$TEST_TMP_DIR/predictout/5fm" "$TEST_TMP_DIR/predictout/ensembled"
-    echo "$status $output" 1>&2
-    [ "$status" -eq 0 ]
     [ -s "$TEST_TMP_DIR/predictout/ensembled/Segmented_0001.png" ]
     [ -s "$TEST_TMP_DIR/predictout/ensembled/Segmented_0002.png" ]
     [ -s "$TEST_TMP_DIR/predictout/ensembled/Segmented_0003.png" ]
