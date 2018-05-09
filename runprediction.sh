@@ -195,7 +195,7 @@ fi
 echo -e "success\n0" > "$out_dir/DONE"
 
 echo ""
-echo "Prediction has completed. Results are stored in $out_dir"
+echo "Prediction has completed. Results are stored in $out_dir/ensembled"
 echo "Have a nice day!"
 echo ""
 exit 0
