@@ -17,8 +17,10 @@ function get_package_name {
 # given package number and z sets
 # $package_name to standard naming convention
 # for packages. Namely Pkg###_Z##
-    local curpkg=$1
-    local curz=$2
+    local rawpkg=$1
+    local rawz=$2
+    curpkg=`echo "$rawpkg" | sed "s/^0*//"`
+    curz=`echo "$rawz" | sed "s/^0*//"`
     local pad_pkg=`printf "%03d" $curpkg`
     local pad_z=`printf "%02d" $curz`
     echo "Pkg${pad_pkg}_Z${pad_z}"

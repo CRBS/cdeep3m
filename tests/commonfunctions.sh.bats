@@ -50,6 +50,13 @@ teardown() {
 
     package_name=$(get_package_name "1" "2")
     [ "$package_name" == "Pkg001_Z02" ]
+
+    package_name=$(get_package_name "008" "693")
+    [ "$package_name" == "Pkg008_Z693" ]
+
+    package_name=$(get_package_name "08000" "012345")
+    [ "$package_name" == "Pkg8000_Z12345" ]
+
 }
 
 @test "wait_for_prediction_to_catchup" {
