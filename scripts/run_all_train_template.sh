@@ -113,6 +113,7 @@ if [ "$gpu" == "all" ] ; then
   let cntr=0
 else
   let cntr=$gpu
+  let gpucount=1
 fi
 
 parallel_job_file="$script_dir/parallel.jobs"
