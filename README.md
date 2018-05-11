@@ -13,6 +13,7 @@
 [speedup]: https://github.com/CRBS/cdeep3m/wiki/Speed-up
 [parallel]: https://www.gnu.org/software/parallel/
 [validation]: https://github.com/CRBS/cdeep3m/wiki/Add-Validation-to-training
+[retrain]: https://github.com/CRBS/cdeep3m/wiki/How-to-retrain-a-pretrained-network
 
 # CDeep3M
 
@@ -68,7 +69,7 @@ Done with your segmentation? Don't forget to [delete your Cloud Stack][deletesta
   
 
 # Additional info for more experienced users
-
+* How to [retrain][retrain] a pretrained network
 * How to [speed up][speedup] processing time
 * How to insert and use a [validation dataset][validation] 
 
