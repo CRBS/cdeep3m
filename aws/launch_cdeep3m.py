@@ -20,6 +20,8 @@ def _parse_arguments(desc, theargs):
                              "(default us-east-2)")
     parser.add_argument('--name', default='USERNAMEstack',
                         help='Stack name to use')
+    parser.add_argument('--profile', default=None,
+                        help='AWS profile to load from credentials. default none')
     parser.add_argument('--cdeep3mversion', default='0.15.2',
                         help='Version of CDeep3M to launch (default 0.15.2)')
     parser.add_argument('--keypairname', default='id_rsa',
@@ -39,6 +41,9 @@ def _parse_arguments(desc, theargs):
 def _launch_cloudformation(theargs):
     """Launches cloud formation
     """
+    if theargs.profile is not None:
+        boto3.setup_default_session(profile_name=theargs.profile)
+
     cloudform = boto3.client('cloudformation', region_name=theargs.region)
     template = theargs.template
     with open(template, 'r') as f:
