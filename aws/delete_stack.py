@@ -18,12 +18,19 @@ def _parse_arguments(desc, theargs):
     parser.add_argument('--region', default='us-east-2',
                         help="Region to use" +
                              "(default us-east-2)")
+    parser.add_argument('--profile',
+                        default=None,
+                        help='AWS profile to load from credentials. default none')
+
     return parser.parse_args(theargs)
 
 
 def _delete_stack(theargs):
     """Launches cloud formation
     """
+    if theargs.profile is not None:
+        boto3.setup_default_session(profile_name=theargs.profile)
+   
     cloudform = boto3.client('cloudformation', region_name=theargs.region)
 
     resp = cloudform.delete_stack(
