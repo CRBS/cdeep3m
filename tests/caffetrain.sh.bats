@@ -2,11 +2,9 @@
 
 
 setup() {
-    export CAFFE_TRAIN_TEMPLATE_SH="${BATS_TEST_DIRNAME}/../scripts/caffetrain_template.sh"
+    export CAFFE_TRAIN_SH="${BATS_TEST_DIRNAME}/../caffetrain.sh"
     export TEST_TMP_DIR="${BATS_TMPDIR}/"`uuidgen`
     /bin/mkdir -p "$TEST_TMP_DIR"
-    export CAFFE_TRAIN_SH="$TEST_TMP_DIR/caffetrain.sh"
-   /bin/cp "$CAFFE_TRAIN_TEMPLATE_SH" "$CAFFE_TRAIN_SH"
 }
 
 teardown() {
@@ -23,7 +21,7 @@ teardown() {
 }
 
 @test "caffetrain.sh 1fm no 1fm/solver.prototxt file" {
-    run $CAFFE_TRAIN_SH 1fm
+    run $CAFFE_TRAIN_SH 1fm "$TEST_TMP_DIR"
     echo "$status $output" 1>&2
     [ "$status" -eq 2 ] 
     [ "${lines[1]}" = "ERROR trying to update max_iter in $TEST_TMP_DIR/1fm/solver.prototxt" ]
@@ -44,7 +42,7 @@ teardown() {
     echo "solver mode: GPU" >> $TEST_TMP_DIR/1fm/solver.prototxt
    
     touch $TEST_TMP_DIR/1fm/log
-    run $CAFFE_TRAIN_SH 1fm
+    run $CAFFE_TRAIN_SH 1fm "$TEST_TMP_DIR"
     [ "$status" -eq 3 ]
     [ "${lines[1]}" = "ERROR unable to make $TEST_TMP_DIR/1fm/log directory" ]
     run cat $TEST_TMP_DIR/1fm/solver.prototxt
@@ -77,7 +75,7 @@ teardown() {
     echo "solver mode: GPU" >> $TEST_TMP_DIR/1fm/solver.prototxt
     
     touch $TEST_TMP_DIR/1fm/log
-    run $CAFFE_TRAIN_SH --base_learn "1e-04" --power 0.2 --momentum 0.3 --weight_decay 0.4 --average_loss 0.5 --lr_policy yo --iter_size 7 --snapshot_interval 8 --numiterations 9 1fm
+    run $CAFFE_TRAIN_SH --base_learn "1e-04" --power 0.2 --momentum 0.3 --weight_decay 0.4 --average_loss 0.5 --lr_policy yo --iter_size 7 --snapshot_interval 8 --numiterations 9 1fm "$TEST_TMP_DIR"
     [ "$status" -eq 3 ]
     [ "${lines[1]}" = "ERROR unable to make $TEST_TMP_DIR/1fm/log directory" ]
     run cat $TEST_TMP_DIR/1fm/solver.prototxt
@@ -100,7 +98,7 @@ teardown() {
     mkdir -p $TEST_TMP_DIR/1fm
     touch $TEST_TMP_DIR/1fm/solver.prototxt
     touch $TEST_TMP_DIR/1fm/log
-    run $CAFFE_TRAIN_SH 1fm 
+    run $CAFFE_TRAIN_SH 1fm "$TEST_TMP_DIR"
     echo "$status $output" 1>&2
     [ "$status" -eq 3 ]
     [ "${lines[1]}" = "ERROR unable to make $TEST_TMP_DIR/1fm/log directory" ]
@@ -110,7 +108,7 @@ teardown() {
     mkdir -p $TEST_TMP_DIR/1fm
     touch $TEST_TMP_DIR/1fm/solver.prototxt
     touch $TEST_TMP_DIR/1fm/trainedmodel
-    run $CAFFE_TRAIN_SH 1fm
+    run $CAFFE_TRAIN_SH 1fm "$TEST_TMP_DIR"
     echo "$status $output" 1>&2
     [ "$status" -eq 4 ]
     [ "${lines[1]}" = "ERROR unable to make $TEST_TMP_DIR/1fm/trainedmodel directory" ]
@@ -123,7 +121,7 @@ teardown() {
     export A_TEMP_PATH=$PATH
     export PATH=$TEST_TMP_DIR:$PATH
      
-    run $CAFFE_TRAIN_SH 1fm
+    run $CAFFE_TRAIN_SH 1fm "$TEST_TMP_DIR"
     [ "$status" -eq 0 ]
     echo "$status $output" 1>&2
     [ "${lines[0]}" = "" ]

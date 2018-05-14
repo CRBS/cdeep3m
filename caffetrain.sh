@@ -28,14 +28,14 @@ function usage()
                               [--average_loss AVERAGE_LOSS] 
                               [--lr_policy POLICY] [--iter_size ITER_SIZE] 
                               [--snapshot_interval SNAPSHOT_INTERVAL]
-                              model
+                              model trainoutdir
 
               Version: $version
 
               Runs caffe on CDeep3M model specified by model argument 
               to perform training. The trained model will be stored in
-              <model>/trainedmodel directory
-              Output from caffe will be redirected to <model>/log/out.log
+              <trainoutdir>/<model>/trainedmodel directory
+              Output from caffe will be redirected to <trainoutdir>/<model>/log/out.log
  
               For further information about parameters below please see: 
               https://github.com/BVLC/caffe/wiki/Solver-Prototxt
@@ -44,6 +44,8 @@ function usage()
 positional arguments:
   model                The model to train, should be one of the following:
                        1fm, 3fm, 5fm
+  trainoutdir          Directory created by runtraining.sh contained
+                       output of training.
 
 optional arguments:
   -h, --help           show this help message and exit
@@ -89,13 +91,13 @@ while true ; do
 done
 
 
-if [ $# -ne 1 ] ; then
+if [ $# -ne 2 ] ; then
   usage
 fi
 
 model=$1
 
-base_dir=`cd "$script_dir";pwd`
+base_dir=$2
 model_dir="$base_dir/$model"
 log_dir="$model_dir/log"
 

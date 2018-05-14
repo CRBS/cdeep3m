@@ -24,7 +24,7 @@ model_list="1fm,3fm,5fm"
 
 function usage()
 {
-    echo "usage: $script_name [-h] [--models MODELS] 
+    echo "usage: $script_name [-h] [--models MODELS]
                               [--numiterations NUMITERATIONS] 
                               [--gpu GPU] [--base_lr BASE_LR] [--power POWER] 
                               [--momentum MOMENTUM] 
@@ -32,11 +32,11 @@ function usage()
                               [--average_loss AVERAGE_LOSS] 
                               [--lr_policy POLICY] [--iter_size ITER_SIZE] 
                               [--snapshot_interval SNAPSHOT_INTERVAL]
-
+                              trainoutdir
               Version: $version
 
-              Runs caffe training on CDeep3M model in directory where
-              this script resides
+              Runs caffe training on CDeep3M model in <trainoutdir>
+              directory.
 
               For further information about parameters below please see: 
               https://github.com/BVLC/caffe/wiki/Solver-Prototxt 
@@ -83,9 +83,15 @@ while true ; do
         --lr_policy ) lr_policy=$2 ; shift 2 ;;
         --iter_size ) iter_size=$2 ; shift 2 ;;
         --snapshot_interval ) snapshot_interval=$2 ; shift 2 ;;
-        --) break ;;
+        --) shift ; break ;;
     esac
 done
+
+if [ $# -ne 1 ] ; then
+  usage
+fi
+
+trainoutdir=$1
 
 echo ""
 
@@ -116,14 +122,14 @@ else
   let gpucount=1
 fi
 
-parallel_job_file="$script_dir/parallel.jobs"
+parallel_job_file="$trainoutdir/parallel.jobs"
 
 for model_name in `echo "$model_list" | sed "s/,/ /g"` ; do
-  if [ ! -d "$script_dir/$model_name" ] ; then
-    echo "ERROR, no $script_dir/$model_name directory found."
+  if [ ! -d "$trainoutdir/$model_name" ] ; then
+    echo "ERROR, no $trainoutdir/$model_name directory found."
     exit 2
   fi
-  echo -e "$numiterations\n$cntr\n$base_lr\n$power\n$momentum\n$weight_decay\n$average_loss\n$lr_policy\n$iter_size\n$snapshot_interval\n$model_name" >> $parallel_job_file
+  echo -e "$numiterations\n$cntr\n$base_lr\n$power\n$momentum\n$weight_decay\n$average_loss\n$lr_policy\n$iter_size\n$snapshot_interval\n$model_name\n$trainoutdir" >> $parallel_job_file
   if [ "$gpu" == "all" ] ; then
     let cntr++
     if [ $cntr -gt $maxgpuindex ] ; then
@@ -136,7 +142,7 @@ done
 # without this jobs would fail on GPU with out of memory error
 #
  
-cat $parallel_job_file | parallel --no-notice --delay 2 -N 11 -j $gpucount $script_dir/caffe_train.sh --numiterations {1} --gpu {2} --base_learn {3} --power {4} --momentum {5} --weight_decay {6} --average_loss {7} --lr_policy {8} --iter_size {9} --snapshot_interval {10} {11}
+cat $parallel_job_file | parallel --no-notice --delay 2 -N 12 -j $gpucount caffetrain.sh --numiterations {1} --gpu {2} --base_learn {3} --power {4} --momentum {5} --weight_decay {6} --average_loss {7} --lr_policy {8} --iter_size {9} --snapshot_interval {10} {11} {12}
   if [ $? != 0 ] ; then
     echo "Non zero exit code from caffe for train of model. Exiting."
     exit 1
