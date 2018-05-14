@@ -22,11 +22,6 @@ function run_train(arg_list)
   H_FIVE_SUFFIX='.h5';
   prog_name = program_name();
   base_dir = fileparts(make_absolute_filename(program_invocation_name()));
-  
-  caffe_train_template=strcat(base_dir,filesep(),'scripts',filesep(),
-                              'caffetrain_template.sh');
-  run_all_train_template=strcat(base_dir,filesep(),'scripts',filesep(),
-                              'run_all_train_template.sh');
 
   if numel(arg_list) < 2; 
     fprintf('\n');
@@ -46,7 +41,6 @@ function run_train(arg_list)
 
   outdir = make_absolute_filename(arg_list{2});
 
-  all_train_file = strcat(outdir,filesep(),'run_all_train.sh');
 
   if exist(all_train_file) == 2;
      fprintf('\n');
@@ -88,22 +82,14 @@ function run_train(arg_list)
   update_train_val_prototxt(outdir,'1fm',train_file,valid_file);
   update_train_val_prototxt(outdir,'3fm',train_file,valid_file);
   update_train_val_prototxt(outdir,'5fm',train_file,valid_file);
-  caffe_train = strcat(outdir,filesep(),'caffe_train.sh');
-  copyfile(caffe_train_template,caffe_train);
  
   copy_version(base_dir, outdir);
-  copyfile(run_all_train_template,all_train_file);
-  system(sprintf('chmod a+x %s',all_train_file));
   write_train_readme(outdir); 
   fprintf(stdout(),'success\n\n');
 
   fprintf(stdout(),'A new directory has been created: %s\n', outdir);
   fprintf(stdout(),'In this directory are 3 directories 1fm,3fm,5fm which\n');
-  fprintf(stdout(),'correspond to 3 caffe models that need to be trained');
-  fprintf(stdout(),'as well as two scripts:\n\n');
-  fprintf(stdout(),'caffe_train.sh -- Runs caffe for a single model\n');
-  fprintf(stdout(),'run_all_train.sh -- Runs caffe_train.sh serially for ');
-  fprintf(stdout(),'all 3 models\n\n');
+  fprintf(stdout(),'correspond to 3 caffe models that need to be trained\n');
   
 endfunction
 

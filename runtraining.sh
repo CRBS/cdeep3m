@@ -112,15 +112,11 @@ if [ $ecode != 0 ] ; then
   exit 2
 fi
 
-if [ ! -x "$train_out/run_all_train.sh" ] ; then
-  echo "ERROR, either $train_out/run_all_train.sh is missing or non-executable"
-  exit 3
-fi
 
-"$train_out/run_all_train.sh" ${one_fmonly}--numiterations $numiterations --base_learn $base_lr --power $power --momentum $momentum --weight_decay $weight_decay --average_loss $average_loss --lr_policy $lr_policy --iter_size $iter_size --snapshot_interval $snapshot_interval
+trainworker.sh" ${one_fmonly}--numiterations $numiterations --base_learn $base_lr --power $power --momentum $momentum --weight_decay $weight_decay --average_loss $average_loss --lr_policy $lr_policy --iter_size $iter_size --snapshot_interval $snapshot_interval "$train_out"
 ecode=$?
 if [ $ecode != 0 ] ; then
-  echo "ERROR, a non-zero exit code ($ecode) was received from: \"$train_out/run_all_train.sh\" --numiterations $numiterations"
+  echo "ERROR, a non-zero exit code ($ecode) was received from: trainworker.sh \" --numiterations $numiterations"
   exit 4
 fi
 
