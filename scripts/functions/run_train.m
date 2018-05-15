@@ -41,15 +41,6 @@ function run_train(arg_list)
 
   outdir = make_absolute_filename(arg_list{2});
 
-
-  if exist(all_train_file) == 2;
-     fprintf('\n');
-     msg = sprintf('CreateTrainJob.m appears to already have been run in %s directory',
-                   outdir);
-     msg = strcat(msg,sprintf('\nRun %s to run training\n',all_train_file));
-     error(msg);
-  endif
-
   validation_img_path = make_absolute_filename(arg_list{3});
 
   if isdir(validation_img_path) == 0;
