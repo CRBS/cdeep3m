@@ -18,7 +18,7 @@ teardown() {
     run $RUNPREPROC_SH ~/cdeep3m/mito_testsample/training/images ~/cdeep3m/mito_testsample/training/labels "$TEST_TMP_DIR/mito_testaugtrain"
     echo "$status $output" 1>&2
     [ "$status" -eq 0 ]
-    run $RUNTRAINING_SH --retrain ~/sbem/mitochrondria/xy5.9nm40nmz/30000iterations_train_out --numiterations 50 "$TEST_TMP_DIR/mito_testaugtrain" "$TEST_TMP_DIR/train_out"
+    run $RUNTRAINING_SH --retrain ~/sbem/mitochrondria/xy5.9nm40nmz/30000iterations_train_out --additerations 50 "$TEST_TMP_DIR/mito_testaugtrain" "$TEST_TMP_DIR/train_out"
     echo "$status $output" 1>&2
     [ "$status" -eq 0 ]
 
