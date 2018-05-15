@@ -152,8 +152,8 @@ teardown() {
     echo "$status $output" 1>&2
     [ "$status" -eq 12 ]
     [ "${lines[0]}" = "Start up worker to generate packages to process" ]
-    [ "${lines[1]}" = "Start up agent to run prediction on packages" ]
-    [ "${lines[2]}" = "Start up agent to run post processing on packages" ]
+    [ "${lines[1]}" = "Start up worker to run prediction on packages" ]
+    [ "${lines[2]}" = "Start up worker to run post processing on packages" ]
    
     run cat "$TEST_TMP_DIR/predictoutdir/ERROR"
     [ "$status" -eq 0 ]
@@ -161,6 +161,33 @@ teardown() {
     [ "${lines[0]}" == "ERROR, a non-zero exit code (1) was received from: EnsemblePredictions.m  $TEST_TMP_DIR/predictoutdir/1fm $TEST_TMP_DIR/predictoutdir/3fm $TEST_TMP_DIR/predictoutdir/5fm $TEST_TMP_DIR/predictoutdir/ensembled" ] 
 
 }
+
+@test "runprediction.sh success --maxpackages set to 5" {
+    ln -s /bin/true "$TEST_TMP_DIR/DefDataPackages.m"
+    ln -s /bin/echo "$TEST_TMP_DIR/preprocessworker.sh"
+    ln -s /bin/echo "$TEST_TMP_DIR/predictworker.sh"
+    ln -s /bin/echo "$TEST_TMP_DIR/postprocessworker.sh"
+    ln -s /bin/echo "$TEST_TMP_DIR/EnsemblePredictions.m"
+    mkdir -p "$TEST_TMP_DIR/predictoutdir/augimages"
+    touch "$TEST_TMP_DIR/predictoutdir/augimages/de_augmentation_info.mat"
+    touch "$TEST_TMP_DIR/predictoutdir/augimages/package_processing_info.txt"
+
+    export A_TEMP_PATH=$PATH
+    export PATH=$TEST_TMP_DIR:$PATH
+    run $RUNPREDICTION_SH --maxpackages 5 trainoutdir augimages "$TEST_TMP_DIR/predictoutdir"
+    echo "$output" 1>&2
+    [ "$status" -eq 0 ]
+    [ "${lines[0]}" = "Start up worker to generate packages to process" ]
+    [ "${lines[1]}" = "Start up worker to run prediction on packages" ]
+    [ "${lines[2]}" = "Start up worker to run post processing on packages" ]
+
+    run cat "$TEST_TMP_DIR/predictoutdir/logs/preprocess.log"
+    [ "$status" -eq 0 ]
+    [ "${lines[0]}" == "--maxpackages 5 $TEST_TMP_DIR/predictoutdir" ]
+
+    export PATH=$A_TEMP_PATH
+}
+
 
 @test "runprediction.sh success" {
     ln -s /bin/true "$TEST_TMP_DIR/DefDataPackages.m"
@@ -178,8 +205,8 @@ teardown() {
     echo "$output" 1>&2
     [ "$status" -eq 0 ]
     [ "${lines[0]}" = "Start up worker to generate packages to process" ]
-    [ "${lines[1]}" = "Start up agent to run prediction on packages" ]
-    [ "${lines[2]}" = "Start up agent to run post processing on packages" ]
+    [ "${lines[1]}" = "Start up worker to run prediction on packages" ]
+    [ "${lines[2]}" = "Start up worker to run post processing on packages" ]
     run cat "$TEST_TMP_DIR/predictoutdir/predict.config"
     echo "$output" 1>&2
     [ "$status" -eq 0 ]
@@ -221,8 +248,8 @@ teardown() {
     echo "$output" 1>&2
     [ "$status" -eq 0 ]
     [ "${lines[0]}" = "Start up worker to generate packages to process" ]
-    [ "${lines[1]}" = "Start up agent to run prediction on packages" ]
-    [ "${lines[2]}" = "Start up agent to run post processing on packages" ]
+    [ "${lines[1]}" = "Start up worker to run prediction on packages" ]
+    [ "${lines[2]}" = "Start up worker to run post processing on packages" ]
     run cat "$TEST_TMP_DIR/predictoutdir/predict.config"
     echo "$output" 1>&2
     [ "$status" -eq 0 ]

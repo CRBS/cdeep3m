@@ -60,7 +60,7 @@ optional arguments:
     exit 1;
 }
 
-TEMP=`getopt -o h --long "help,models:,augspeed:" -n '$0' -- "$@"`
+TEMP=`getopt -o h --long "help,models:,augspeed:,maxpackages:" -n '$0' -- "$@"`
 eval set -- "$TEMP"
 
 while true ; do
@@ -166,10 +166,10 @@ augspeed=$aug_speed" > "$out_dir/predict.config"
 echo "Start up worker to generate packages to process"
 preprocessworker.sh --maxpackages $maxpackages "$out_dir" >> "$log_dir/preprocess.log" 2>&1 &
 
-echo "Start up agent to run prediction on packages"
+echo "Start up worker to run prediction on packages"
 predictworker.sh "$out_dir" >> "$log_dir/prediction.log" 2>&1 &
 
-echo "Start up agent to run post processing on packages"
+echo "Start up worker to run post processing on packages"
 postprocessworker.sh "$out_dir" >> "$log_dir/postprocess.log" 2>&1 &
 
 echo ""
