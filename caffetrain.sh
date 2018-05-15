@@ -8,6 +8,8 @@ if [ -f "$script_dir/VERSION" ] ; then
    version=`cat $script_dir/VERSION`
 fi
 
+source "${script_dir}/commonfunctions.sh"
+
 numiterations="30000"
 gpu="all"
 base_lr="1e-02"
@@ -150,7 +152,7 @@ if [ ! -d "$model_dir/trainedmodel" ] ; then
   fi
 fi
 
-latest_iteration=`ls "$model_dir/trainedmodel" | egrep "\.solverstate$" | sed "s/^.*iter_//" | sed "s/\.solverstate//" | sort -g | tail -n 1`
+latest_iteration=$(get_latest_iteration "$model_dir/trainedmodel")
 
 snapshot_opts=""
 # we got a completed iteration lets start from that
