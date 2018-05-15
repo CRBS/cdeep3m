@@ -75,7 +75,6 @@ teardown() {
    touch "$trainout/1fm/trainedmodel/1fm_classifier_iter_290.solverstate"
    run $RUNTRAINING_SH --retrain "$trainout" trainimages "$trainoutdir"
    echo "$status $output" 1>&2
-   tree "$TEST_TMP_DIR" 1>&2
    [ "$status" -eq 4 ]
    [ "${lines[0]}" = "trainimages $trainoutdir trainimages" ]
    [ "${lines[1]}" = "Adding 290 from $trainout 1fm to numiterations" ]
