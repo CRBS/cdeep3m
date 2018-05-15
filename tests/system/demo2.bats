@@ -4,7 +4,6 @@ setup() {
     export RUNTRAINING_SH="${BATS_TEST_DIRNAME}/../../runtraining.sh"
     export RUNPREPROC_SH="${BATS_TEST_DIRNAME}/../../PreprocessTrainingData.m"
     export RUNPREDICTION_SH="${BATS_TEST_DIRNAME}/../../runprediction.sh"
-    export RUNENSEMBLE="${BATS_TEST_DIRNAME}/../../EnsemblePredictions.m"
     export TEST_TMP_DIR="${BATS_TMPDIR}/"`uuidgen`
     /bin/mkdir -p "$TEST_TMP_DIR"
 }
