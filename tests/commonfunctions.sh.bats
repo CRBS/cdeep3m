@@ -44,6 +44,101 @@ teardown() {
 
 }
 
+@test "copy_models_from_dir" {
+    # non existant source
+    res=$(copy_models_from_dir "$TEST_TMP_DIR/nodir" "$TEST_TMP_DIR")
+    # echo "$res" 1>&2
+    [ "$res" = "$TEST_TMP_DIR/nodir src dir not found" ]
+
+    # non existant dest
+    res=$(copy_models_from_dir "$TEST_TMP_DIR" "$TEST_TMP_DIR/nodir")
+    # echo "$res" 1>&2
+    [ "$res" = "$TEST_TMP_DIR/nodir dest dir not found" ]
+
+    src="$TEST_TMP_DIR/src"
+    mkdir -p "$src"
+    dest="$TEST_TMP_DIR/dest"
+    mkdir -p "$dest"
+
+    # no files to copy
+    res=$(copy_models_from_dir "$src" "$dest")
+    # echo "$res" 1>&2
+    [ "$res" = "ERROR $src to $dest copy failed" ]
+
+    echo "hi" > "$src/1fm_classifer123.solverstate"
+    echo "bye" > "$src/1fm_classifer123.caffemodel"
+
+    res=$(copy_models_from_dir "$src" "$dest")
+
+    [ "$res" = "Copy of $src to $dest success" ]
+
+    [ -f "$dest/1fm_classifer123.solverstate" ]
+    [ -f "$dest/1fm_classifer123.caffemodel" ]
+}
+
+@test "copy_trained_models 1fm" {
+    src="$TEST_TMP_DIR/src"
+    dest="$TEST_TMP_DIR/dest"
+    
+    # non existant source
+    res=$(copy_trained_models "$src" "$dest")
+    [ "$res" = "" ]
+    
+    mkdir -p "$src/1fm/trainedmodel"
+    # non existant dest
+    res=$(copy_trained_models "$src" "$dest")
+     echo "$res" 1>&2
+    [ "$res" = "" ]
+   
+    mkdir -p "$dest/1fm/trainedmodel"
+ 
+    # no files to copy
+    res=$(copy_trained_models "$src" "$dest")
+     echo "$res" 1>&2
+    [ "$res" = "ERROR $src/1fm/trainedmodel to $dest/1fm/trainedmodel copy failed" ]
+    
+    echo "hi" > "$src/1fm/trainedmodel/1fm_classifer123.solverstate"
+    echo "bye" > "$src/1fm/trainedmodel/1fm_classifer123.caffemodel"
+    
+    res=$(copy_trained_models "$src" "$dest")
+    echo ":$res:" 1>&2 
+    [ "$res" = "Copy of $src/1fm/trainedmodel to $dest/1fm/trainedmodel success" ]
+    
+    [ -f "$dest/1fm/trainedmodel/1fm_classifer123.solverstate" ]
+    [ -f "$dest/1fm/trainedmodel/1fm_classifer123.caffemodel" ]
+}
+
+@test "copy_trained_models 1fm 3fm 5fm" {
+    src="$TEST_TMP_DIR/src"
+    dest="$TEST_TMP_DIR/dest"
+
+    mkdir -p "$src/1fm/trainedmodel"
+    mkdir -p "$dest/1fm/trainedmodel"
+    mkdir -p "$src/3fm/trainedmodel"
+    mkdir -p "$dest/3fm/trainedmodel"
+    mkdir -p "$src/5fm/trainedmodel"
+    mkdir -p "$dest/5fm/trainedmodel"
+
+
+    echo "hi" > "$src/1fm/trainedmodel/1fm_classifer123.solverstate"
+    echo "bye" > "$src/1fm/trainedmodel/1fm_classifer123.caffemodel"
+
+    touch "$src/3fm/trainedmodel/3fm_yo.345.solverstate"
+    touch "$src/5fm/trainedmodel/5fm_ha.456.caffemodel"
+
+    res=$(copy_trained_models "$src" "$dest")
+    run echo "$res"
+    [ "${lines[0]}" = "Copy of $src/1fm/trainedmodel to $dest/1fm/trainedmodel success" ]
+    [ "${lines[1]}" = "Copy of $src/3fm/trainedmodel to $dest/3fm/trainedmodel success" ]
+    [ "${lines[2]}" = "Copy of $src/5fm/trainedmodel to $dest/5fm/trainedmodel success" ]
+    [ -f "$dest/1fm/trainedmodel/1fm_classifer123.solverstate" ]
+    [ -f "$dest/1fm/trainedmodel/1fm_classifer123.caffemodel" ]
+
+    [ -f "$dest/3fm/trainedmodel/3fm_yo.345.solverstate" ]
+    [ -f "$dest/5fm/trainedmodel/5fm_ha.456.caffemodel" ]
+}
+
+
 @test "get_package_name valid parameters" {
     package_name=$(get_package_name "001" "02")
     [ "$package_name" == "Pkg001_Z02" ] 
