@@ -73,9 +73,13 @@ optional arguments:
   --validation_dir     Augmented validation data
   --retrain            Continue training trained models from train directory
                        passed in here, writing results to trainoutdir
-  --additerations      If --retrain is set, set number of iterations to train
-                       to highest iteration found for each model plus
-                       the value passed to this flag.
+  --additerations      If --retrain is set, this value is added to the
+                       latest iteration model file found in the 
+                       <retrain dir>/1fm/trainedmodel directory. For example,
+                       if the latest iteration found in 
+                       <retrain>/1fm/trainedmodel is 10000 and 
+                       --additerations is set to 500 then training will
+                       run to 10500 iterations. (default $additerations)
 
     " 1>&2;
    exit 1;
@@ -131,8 +135,9 @@ if [ -n "$retrain" ] ; then
     fi
     latest_iteration=$(get_latest_iteration "$retrain/1fm/trainedmodel")
     if [ -n "$latest_iteration" ] ; then
-        echo "Adding $latest_iteration from $retrain 1fm to numiterations"
+        echo "Latest iteration found in 1fm from $retrain is $latest_iteration"
         let numiterations=$latest_iteration+$additerations
+        echo "Adding $additerations iterations so will now run to $numiterations iterations"
     else
         echo "No models $retrain/1fm/trainedmodel leaving numiterations at $numiterations"
     fi

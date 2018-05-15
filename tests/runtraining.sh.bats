@@ -77,10 +77,11 @@ teardown() {
    echo "$status $output" 1>&2
    [ "$status" -eq 4 ]
    [ "${lines[0]}" = "trainimages $trainoutdir trainimages" ]
-   [ "${lines[1]}" = "Adding 290 from $trainout 1fm to numiterations" ]
-   [ "${lines[2]}" = "Copying over trained models" ]
-   [ "${lines[3]}" = "Copy of $trainout/1fm/trainedmodel to $trainoutdir/1fm/trainedmodel success" ] 
-   [ "${lines[4]}" = "ERROR, a non-zero exit code (1) was received from: trainworker.sh --numiterations 2290" ]
+   [ "${lines[1]}" = "Latest iteration found in 1fm from $trainout is 290" ]
+   [ "${lines[2]}" = "Adding 2000 iterations so will now run to 2290 iterations" ]
+   [ "${lines[3]}" = "Copying over trained models" ]
+   [ "${lines[4]}" = "Copy of $trainout/1fm/trainedmodel to $trainoutdir/1fm/trainedmodel success" ] 
+   [ "${lines[5]}" = "ERROR, a non-zero exit code (1) was received from: trainworker.sh --numiterations 2290" ]
    [ -f "$trainoutdir/1fm/trainedmodel/1fm_classifier_iter_290.solverstate" ] 
    run tail -n 1 "$trainoutdir/readme.txt"
    echo "$status $output" 1>&2
