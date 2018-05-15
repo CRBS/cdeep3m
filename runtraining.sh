@@ -10,6 +10,8 @@ if [ -f "$script_dir/VERSION" ] ; then
    version=`cat $script_dir/VERSION`
 fi
 
+source "${script_dir}/commonfunctions.sh"
+
 numiterations="30000"
 one_fmonly=""
 base_lr="1e-02"
@@ -21,6 +23,8 @@ lr_policy="poly"
 iter_size="8"
 snapshot_interval="2000"
 validation_dir=""
+retrain=""
+additerations="2000"
 
 function usage()
 {
@@ -32,6 +36,8 @@ function usage()
                               [--lr_policy POLICY] [--iter_size ITER_SIZE] 
                               [--snapshot_interval SNAPSHOT_INTERVAL]
                               [--validation_dir VALIDATION_DIR]
+                              [--additerations NUMITERATIONS]
+                              [--retrain TRAINOUTDIR]
                               augtrainimages trainoutdir
 
               Version: $version
@@ -65,12 +71,17 @@ optional arguments:
                        (default $snapshot_interval)
   --numiterations      Number of training iterations to run (default $numiterations)
   --validation_dir     Augmented validation data
+  --retrain            Continue training trained models from train directory
+                       passed in here, writing results to trainoutdir
+  --additerations      If --retrain is set, set number of iterations to train
+                       to highest iteration found for each model plus
+                       the value passed to this flag.
 
     " 1>&2;
    exit 1;
 }
 
-TEMP=`getopt -o h --long "1fmonly,numiterations:,base_learn:,power:,momentum:,weight_decay:,average_loss:,lr_policy:,iter_size:,snapshot_interval:,validation_dir:" -n '$0' -- "$@"`
+TEMP=`getopt -o h --long "1fmonly,numiterations:,base_learn:,power:,momentum:,weight_decay:,average_loss:,lr_policy:,iter_size:,snapshot_interval:,validation_dir:,retrain:,additerations:" -n '$0' -- "$@"`
 eval set -- "$TEMP"
 
 while true ; do
@@ -86,6 +97,8 @@ while true ; do
         --iter_size ) iter_size=$2 ; shift 2 ;;
         --snapshot_interval ) snapshot_interval=$2 ; shift 2 ;;
         --numiterations ) numiterations=$2 ; shift 2 ;;
+        --additerations ) additerations=$2 ; shift 2 ;;
+        --retrain ) retrain=$2 ; shift 2 ;;
         --validation_dir ) validation_dir=$2 ; shift 2 ;;
         --) shift ; break ;;
     esac
@@ -99,25 +112,43 @@ fi
 declare -r aug_train=$1
 declare -r train_out=$2
 
-
 if [ -z "$validation_dir" ] ; then 
-  validation_dir=$aug_train
+    validation_dir=$aug_train
 fi
 
 CreateTrainJob.m "$aug_train" "$train_out" "$validation_dir"
 ecode=$?
 if [ $ecode != 0 ] ; then
-  echo "Error, a non-zero exit code ($ecode) was received from: CreateTrainJob.m \"$aug_train\" \"$train_out\" \"$validation_dir\""
-  echo ""
-  exit 2
+    echo "Error, a non-zero exit code ($ecode) was received from: CreateTrainJob.m \"$aug_train\" \"$train_out\" \"$validation_dir\""
+    echo ""
+    exit 2
 fi
 
+if [ -n "$retrain" ] ; then
+    if [ ! -d "$retrain" ] ; then
+        echo "ERROR, $retrain is not a directory"
+        exit 3
+    fi
+    latest_iteration=$(get_latest_iteration "$retrain/1fm/trainedmodel")
+    if [ -n "$latest_iteration" ] ; then
+        echo "Adding $latest_iteration from $retrain 1fm to numiterations"
+        let numiterations=$latest_iteration+$additerations
+    else
+        echo "No models $retrain/1fm/trainedmodel leaving numiterations at $numiterations"
+    fi
 
-trainworker.sh" ${one_fmonly}--numiterations $numiterations --base_learn $base_lr --power $power --momentum $momentum --weight_decay $weight_decay --average_loss $average_loss --lr_policy $lr_policy --iter_size $iter_size --snapshot_interval $snapshot_interval "$train_out"
+    echo "--retrain flag set, previous models copied from $retrain" >> "$train_out/readme.txt"
+
+    echo "Copying over trained models"
+    res=$(copy_trained_models "$retrain" "$train_out")
+    echo "$res"   
+fi
+
+trainworker.sh ${one_fmonly}--numiterations $numiterations --base_learn $base_lr --power $power --momentum $momentum --weight_decay $weight_decay --average_loss $average_loss --lr_policy $lr_policy --iter_size $iter_size --snapshot_interval $snapshot_interval "$train_out"
 ecode=$?
 if [ $ecode != 0 ] ; then
-  echo "ERROR, a non-zero exit code ($ecode) was received from: trainworker.sh \" --numiterations $numiterations"
-  exit 4
+    echo "ERROR, a non-zero exit code ($ecode) was received from: trainworker.sh --numiterations $numiterations"
+    exit 4
 fi
 
 echo ""
