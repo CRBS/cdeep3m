@@ -12,8 +12,10 @@ function write_train_readme(outdir)
   fprintf(out, "of the key files and directories:\n\n");
   fprintf(out, "1fm/,3fm/,5fm/ -- Model directories that contain results from training via caffe.\n");
   fprintf(out, "<model>/trainedmodel -- Contains .caffemodel files that are the actual trained models\n");
-  fprintf(out, "caffe_train.sh -- Runs caffe for single model\n");
-  fprintf(out, "\nrun_all_predict.sh -- Runs caffe serially for all 3 models\n");
+  fprintf(out, "parallel.jobs -- Input file to GNU parallel to run caffe training jobs in parallel\n");
+  fprintf(out, "VERSION -- Version of Cdeep3M used\n");
+  fprintf(out, "train_file.txt -- Paths of augmented training data, used by caffe\n");
+  fprintf(out, "valid_file.txt -- Paths of augmented validation data, used by caffe\n");
   fprintf(out, "\n");
   fclose(out);
 endfunction
