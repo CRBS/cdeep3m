@@ -61,7 +61,7 @@ set(gca, 'YMinorTick','on', 'YMinorGrid','on');
 set(gca,'YScale','log'); 
 legend("Training","Validation"); 
 
-outfile = fullfile(logdir, 'loss');
+outfile = fullfile(logdir, 'loss.pdf');
 
 %print(plt_loss,outfile, "-dpngcairo"); 
 print(plt_loss,outfile, "-dpdfcairo");
@@ -80,7 +80,7 @@ set(gca, 'Title', 'Validation Accuracy');
 
 
 
-outfile = fullfile(logdir, 'accuracy');
+outfile = fullfile(logdir, 'accuracy.pdf');
 print(plt_accuracy,outfile, "-dpdfcairo");
 fprintf('Your accuracy output file is saved as: %s.pdf\n', outfile);
 
