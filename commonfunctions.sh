@@ -12,6 +12,63 @@ function fatal_error {
     fi
 }
 
+function copy_trained_models {
+# Copies any trained models from 
+# source train_out dir $1 to
+# dest train_out dir $2
+    local src=$1
+    local dest=$2
+    local res=""
+    for Y in `echo "1fm 3fm 5fm"` ; do
+        if [ ! -d "$src/$Y/trainedmodel" ] ; then
+            continue
+        fi
+        if [ ! -d "$dest/$Y/trainedmodel" ] ; then
+            continue
+        fi
+        res=$(copy_models_from_dir "$src/$Y/trainedmodel" "$dest/$Y/trainedmodel")
+        echo "$res"
+    done
+}
+
+function copy_models_from_dir {
+# Copies trained models from $1 directory
+# to $2 directory if both directories exist
+# returning following values strings
+# Copy of $1 to $2 success - if both directories exist
+# $1 src dir not found - if source is not a directory
+# $2 dest dir not found - if destination is not a directory
+# ERROR $1 to $2 copy failed - if there was an error with copy
+# such as no files
+    local src=$1
+    local dest=$2
+    if [ ! -d "$src" ] ; then
+        echo "$src src dir not found"
+        return 0
+    fi
+    if [ ! -d "$dest" ] ; then
+        echo "$dest dest dir not found"
+        return 0
+    fi
+    /bin/cp "$src"/*.* "$dest/."
+    local ee=$?
+    if [ $ee != 0 ] ; then
+        echo "ERROR $src to $dest copy failed"
+        return 0
+    fi
+    echo "Copy of $src to $dest success"
+}
+
+function get_latest_iteration {
+# given path to trainedmodel directory
+# find latest iteration by parsing out
+# the iteration value from .solverstate
+# file in directory
+    local trainedmodeldir=$1
+    local latest_iteration=`ls "$trainedmodeldir" | egrep "\.solverstate$" | sed "s/^.*iter_//" | sed "s/\.solverstate//" | sort -g | tail -n 1`
+    echo "$latest_iteration"
+}
+
 function get_package_name {
 # get_package_name ($package_num, $package_z)
 # given package number and z sets
