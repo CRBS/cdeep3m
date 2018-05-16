@@ -23,10 +23,6 @@ def _parse_arguments(desc, theargs):
                                      formatter_class=help_formatter)
     parser.add_argument('outdir',
                         help='Directory to write out private key file')
-    parser.add_argument('--usestackid', default=None,
-                        help='If set use stackid instead')
-    parser.add_argument('--key_file', default=os.path.join(os.path.expanduser('~'),'.ssh','id_rsa'),
-                        help='Private key file to use')
     parser.add_argument('--template',
                         help='CloudFormation template file to use')
     parser.add_argument('--region', default='us-east-2',
@@ -45,6 +41,10 @@ def _parse_arguments(desc, theargs):
                         help='ip4 CIDR to denote ip address(s) to allow '
                              'ssh access to GPU EC2 instance. (default is ip '
                              'address of machine running this script')
+    parser.add_argument('--profile',
+                        default=None,
+                        help='AWS profile to load from credentials. default none')
+
     return parser.parse_args(theargs)
 
 
@@ -106,7 +106,7 @@ def _launch_cloudformation(theargs):
             'Value': theargs.name
         }
     ]
-
+    sys.stdout.write('Creating stack. This can take 10-15 minutes...\n')
     resp = cloudform.create_stack(
         StackName=theargs.name,
         TemplateBody=template_data,
@@ -185,21 +185,32 @@ def main(arglist):
            """
     sys.stdout.write('WARNING: THIS IS NOT COMPLETED\n')
     theargs = _parse_arguments(desc, sys.argv[1:])
-    if theargs.usestackid is None:
-      sys.stdout.write('Contacting AWS: \n')
-      stackid = _launch_cloudformation(theargs)
-      sys.stdout.write('Stack launched: ' + str(stackid) + ' ... Waiting')
-    else:
-      stackid = theargs.usestackid
-      sys.stdout.write('Using existing stackid: ' + str(stackid) +
-                       ' ... Checking')
+
+    if theargs.profile is not None:
+        boto3.setup_default_session(profile_name=theargs.profile)
+
+    sys.stdout.write('Contacting AWS: \n')
+    stackid = _launch_cloudformation(theargs)
+    sys.stdout.write('Stack launched: ' + str(stackid) + ' ... Waiting')
     dns = _wait_for_stack(stackid, theargs)
 
     if dns is None:
       return 1
     
     ssh_client = _get_ssh_client_connected_to_server(dns, theargs)
-    cmd_to_run = 'nohup /bin/bash -ic "source /home/ubuntu/.bashrc ;/usr/bin/time -p /home/ubuntu/cdeep3m/runprediction.sh /home/ubuntu/sbem/mitochrondria/xy5.9nm40nmz/30000iterations_train_out /home/ubuntu/sbem/mitochrondria/xy5.9nm40nmz/images /home/ubuntu/predictyoyo;/usr/bin/time -p /home/ubuntu/cdeep3m/EnsemblePredictions.m /home/ubuntu/predictyoyo/1fm /home/ubuntu/predictyoyo/3fm /home/ubuntu/predictyoyo/5fm /home/ubuntu/predictyoyo/ensembled; touch /home/ubuntu/predictyoyo/alldone" > output.txt 2>&1 < /dev/null &'
+
+    # create a 100 image stack
+    cp_cmd = '/bin/cp -r /home/ubuntu/sbem/mitochrondria/xy5.9nm40nmz/images /home/ubuntu/images'
+    sys.stdout.write('Attempting to run command: ' + cp_cmd + '\n')
+    sys.stdout.write(_exec_command(ssh_client, cp_cmd))
+
+    cp2_cmd = '/bin/cp /home/ubuntu/sbem/mitochrondria/xy5.9nm40nmz/labels/mitos_3D.0[01]* /home/ubuntu/images/.'
+    sys.stdout.write('Attempting to run command: ' + cp2_cmd + '\n')
+    sys.stdout.write(_exec_command(ssh_client, cp2_cmd))
+
+
+
+    cmd_to_run = 'nohup /bin/bash -ic "source /home/ubuntu/.bashrc ;/usr/bin/time -p /home/ubuntu/cdeep3m/runprediction.sh /home/ubuntu/sbem/mitochrondria/xy5.9nm40nmz/30000iterations_train_out /home/ubuntu/images /home/ubuntu/predictyoyo;touch /home/ubuntu/predictyoyo/alldone" > output.txt 2>&1 < /dev/null &'
 
     sys.stdout.write('Attempting to run command: ' + cmd_to_run + '\n')
     sys.stdout.write(_exec_command(ssh_client, cmd_to_run))
@@ -214,8 +225,13 @@ def main(arglist):
         sys.stdout.write('.')
         time.sleep(60)
         res = _exec_command(ssh_client,donecheck_cmd)
-        sys.stdout.write('Res:' + res + ':\n')
-    
+        sys.stdout.flush()
+
+    sys.stdout.write('Output from output.txt\n\n')
+    sys.stdout.write(_exec_command(ssh_client,'cat /home/ubuntu/output.txt'))
+    sys.stdout.write('\n\n')
+    sys.stdout.flush() 
+   
     ssh_client.close()   
 
 
