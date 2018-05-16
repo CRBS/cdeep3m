@@ -21,12 +21,19 @@ def _parse_arguments(desc, theargs):
     parser.add_argument('--region', default='us-east-2',
                         help="Region to use" +
                              "(default us-east-2)")
+    parser.add_argument('--profile',
+                        default=None,
+                        help='AWS profile to load from credentials. default none')
+
     return parser.parse_args(theargs)
 
 
 def _delete_keypair(theargs):
     """Delete key pair by name
     """
+    if theargs.profile is not None:
+        boto3.setup_default_session(profile_name=theargs.profile)
+
     ec2 = boto3.client('ec2', region_name=theargs.region)
 
     resp = ec2.delete_key_pair(KeyName=theargs.name)
