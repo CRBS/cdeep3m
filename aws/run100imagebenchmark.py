@@ -44,7 +44,9 @@ def _parse_arguments(desc, theargs):
     parser.add_argument('--profile',
                         default=None,
                         help='AWS profile to load from credentials. default none')
-
+    parser.add_argument('--augspeed', default=None, 
+                        choices=['1', '2', '4', '10'],
+                        help='Sets --augspeed flag on runprediction.sh. 1,2,4,10 are valid')
     return parser.parse_args(theargs)
 
 
@@ -154,6 +156,20 @@ def _is_stack_complete(stackid, cloudform):
             return output['OutputValue']
     return None
 
+def _delete_stack(theargs, stackid):
+    """Launches cloud formation
+    """
+    cloudform = boto3.client('cloudformation', region_name=theargs.region)
+
+    resp = cloudform.delete_stack(
+        StackName=stackid
+    )
+    """
+    Example successful response:
+    """
+    return str(resp)
+
+
 def _get_ssh_client_connected_to_server(hostname, theargs):
     ssh_client = paramiko.SSHClient()
     ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -208,9 +224,12 @@ def main(arglist):
     sys.stdout.write('Attempting to run command: ' + cp2_cmd + '\n')
     sys.stdout.write(_exec_command(ssh_client, cp2_cmd))
 
+    augspeed=''
+    if theargs.augspeed is not None:
+      augspeed='--augspeed ' + str(theargs.augspeed)
 
 
-    cmd_to_run = 'nohup /bin/bash -ic "source /home/ubuntu/.bashrc ;/usr/bin/time -p /home/ubuntu/cdeep3m/runprediction.sh /home/ubuntu/sbem/mitochrondria/xy5.9nm40nmz/30000iterations_train_out /home/ubuntu/images /home/ubuntu/predictyoyo;touch /home/ubuntu/predictyoyo/alldone" > output.txt 2>&1 < /dev/null &'
+    cmd_to_run = ('nohup /bin/bash -ic "source /home/ubuntu/.bashrc ;/usr/bin/time -p /home/ubuntu/cdeep3m/runprediction.sh ' + augspeed +' /home/ubuntu/sbem/mitochrondria/xy5.9nm40nmz/30000iterations_train_out /home/ubuntu/images /home/ubuntu/predictyoyo;touch /home/ubuntu/predictyoyo/alldone" > output.txt 2>&1 < /dev/null &')
 
     sys.stdout.write('Attempting to run command: ' + cmd_to_run + '\n')
     sys.stdout.write(_exec_command(ssh_client, cmd_to_run))
@@ -232,8 +251,9 @@ def main(arglist):
     sys.stdout.write('\n\n')
     sys.stdout.flush() 
    
-    ssh_client.close()   
-
+    ssh_client.close()
+    sys.stdout.write('Deleting stack\n\n')
+    _delete_stack(theargs, stackid)
 
 if __name__ == '__main__': # pragma: no cover
     sys.exit(main(sys.argv))
