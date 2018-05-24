@@ -70,6 +70,16 @@ def _create_key_pair(theargs):
    return name
 
 
+def _delete_keypair(theargs):
+    """Delete key pair by name
+    """
+    ec2 = boto3.client('ec2', region_name=theargs.region)
+
+    resp = ec2.delete_key_pair(KeyName=theargs.keypairname)
+
+    return str(resp)
+
+
 def _launch_cloudformation(theargs):
     """Launches cloud formation
        :returns string: stackid
@@ -252,8 +262,10 @@ def main(arglist):
     sys.stdout.flush() 
    
     ssh_client.close()
-    sys.stdout.write('Deleting stack\n\n')
+    sys.stdout.write('Deleting stack\n')
     _delete_stack(theargs, stackid)
+    sys.stdout.write('Deleting keypair: ' + str(theargs.keypairname) + '\n\n')
+    _delete_keypair(theargs)
 
 if __name__ == '__main__': # pragma: no cover
     sys.exit(main(sys.argv))
