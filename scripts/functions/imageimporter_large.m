@@ -45,9 +45,9 @@ elseif isdir(img_path)
         [~, type] = max([size(tif_list,1),size(png_list,1)]); %only read tif or pngs if ambiguous
         if type==1, file_list = tif_list; elseif type==2, file_list = png_list; end
         
-        
+        zdims = numel(all_zs);
         if type==1
-            for iii =1:numel(all_zs)
+            for iii =1:zdims
                 idx = all_zs(iii);
                 filename = fullfile(img_path,file_list(idx).name);
                 fprintf('Reading file: %s\n', filename);
@@ -56,14 +56,24 @@ elseif isdir(img_path)
         else
             tempdir = fullfile(img_path,'temp');
             mkdir(tempdir);
-            regions = [(area(1)), (area(1)+area(2)), (area(3)), (area(3)+area(4))];
-            disp(regions)
+            %num_cores = 4;
+            %all_files = str2mat(file_list.name);
+            %regions = [(area(1)), (area(1)+area(2)), (area(3)), (area(3)+area(4))];
+            %disp(regions)
             input_files = [];
-	    
             tempmat_infile = fullfile(tempdir,'infiles.txt');
-            delete(tempmat_infile);	    
+            delete(tempmat_infile);
             fid = fopen(tempmat_infile, 'a')
-	    for fl = 1:numel(all_zs)
+            for fl = 1:zdims           
+            %input_files = strcat(input_files, ',', fullfile(img_path,file_list(fl).name));
+            fprintf(fid, strcat(fullfile(img_path,file_list(fl).name),'\n'));
+	    end
+            fclose(fid);
+
+            tempmat_outfile = fullfile(tempdir,'outfiles.txt');
+            delete(tempmat_outfile);
+            fid = fopen(tempmat_outfile, 'a')
+            for fl = 1:zdims
             %input_files = strcat(input_files, ',', fullfile(img_path,file_list(fl).name))
             outfilename = fullfile(tempdir,file_list(fl).name);
             temp_files(fl).name = [outfilename(1:end-3),'png'];
@@ -71,29 +81,21 @@ elseif isdir(img_path)
             end
             fclose(fid);
 
-            tempmat_outfile = fullfile(tempdir,'outfiles.txt');
-            delete(tempmat_outfile);	    
-            fid = fopen(tempmat_outfile, 'a')
-            for fl = 1:numel(all_zs)
-            %input_files = strcat(input_files, ',', fullfile(img_path,file_list(fl).name));
-            fprintf(fid, strcat(fullfile(tempdir,file_list(fl).name),'\n'));
-            temp_files(fl).name = fullfile(tempdir,file_list(fl).name);
-            end
-            fclose(fid);
-
             %tempmatfile = fullfile(tempdir,'params.csv');
             %delete(tempmatfile)
-            zdims = numel(all_zs);
+	    %csvwrite(tempmatfile,input_files)
             %save(tempmatfile,"-v6",'input_files','temp_files','regions','zdims');
    system(sprintf('~/cdeep3m/scripts/functions/crop_png.py %s %s %s %s %s %s',tempmat_infile, tempmat_outfile, num2str(area(1)-1), num2str(area(1)+area(2)-1), num2str(area(3)-1), num2str(area(3)+area(4)-1)))
-            save(fullfile(tempdir,'done1'),'zdims');
-            for ttt = 1: numel(all_zs)
+            %save(fullfile(tempdir,'done1'),'zdims');
+            clear imgstack
+            for ttt = 1:zdims
               image1 = imread(temp_files(ttt).name);
               fprintf('Reading image %s\n', temp_files(ttt).name);
+            %  disp(size(image1))
               imgstack(:,:,ttt) = image1(:,:,1);
             end
-            delete(tempmat_outfile)
-
+            delete(tempmat_outfile)  
+            %save(fullfile(tempdir,'doneall'),'zdims','-append');
         end
     end
     
