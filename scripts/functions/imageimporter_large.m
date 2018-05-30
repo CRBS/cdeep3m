@@ -1,4 +1,4 @@
-function [imgstack] = imageimporter_large3(img_path,area,z_stack)
+function [imgstack] = imageimporter_large(img_path,area,z_stack)
 %imageimporter_large: loads subarea of large image data
 % from folder or from an individual image stack
 %
