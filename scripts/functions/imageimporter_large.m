@@ -90,7 +90,7 @@ elseif isdir(img_path)
             %delete(tempmatfile)
 	    %csvwrite(tempmatfile,input_files)
             %save(tempmatfile,"-v6",'input_files','temp_files','regions','zdims');
-   system(sprintf('%s %s %s %s %s %s %s',crop_png, tempmat_infile, tempmat_outfile, num2str(area(1)-1), num2str(area(1)+area(2)-1), num2str(area(3)-1), num2str(area(3)+area(4)-1)))
+   system(sprintf('%s %s %s %s %s %s %s',crop_png, tempmat_infile, tempmat_outfile, num2str(area(1)-1), num2str(area(2)-1), num2str(area(3)-1), num2str(area(4)-1)))
             %save(fullfile(tempdir,'done1'),'zdims');
             clear imgstack
             for ttt = 1:zdims
