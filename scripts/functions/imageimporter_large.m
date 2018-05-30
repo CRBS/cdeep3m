@@ -9,6 +9,11 @@ function [imgstack] = imageimporter_large(img_path,area,z_stack)
 %-----------------------------------------------------------------------------
 warning ("off")
 disp('Image importer loading ... ');
+script_dir = fileparts(make_absolute_filename(program_invocation_name()));
+crop_png = strcat(script_dir,filesep(),'scripts',filesep(),'functions',filesep(),'crop_png.py');
+
+fprintf('crop_png.py path: %s\n',crop_png);
+
 disp(img_path);
 % check if a folder of png/tif files or a single stack to load
 [Dir,name,ext] = fileparts(img_path);
@@ -85,7 +90,7 @@ elseif isdir(img_path)
             %delete(tempmatfile)
 	    %csvwrite(tempmatfile,input_files)
             %save(tempmatfile,"-v6",'input_files','temp_files','regions','zdims');
-   system(sprintf('~/cdeep3m/scripts/functions/crop_png.py %s %s %s %s %s %s',tempmat_infile, tempmat_outfile, num2str(area(1)-1), num2str(area(1)+area(2)-1), num2str(area(3)-1), num2str(area(3)+area(4)-1)))
+   system(sprintf('%s %s %s %s %s %s %s',crop_png, tempmat_infile, tempmat_outfile, num2str(area(1)-1), num2str(area(1)+area(2)-1), num2str(area(3)-1), num2str(area(3)+area(4)-1)))
             %save(fullfile(tempdir,'done1'),'zdims');
             clear imgstack
             for ttt = 1:zdims
