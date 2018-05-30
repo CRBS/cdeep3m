@@ -47,7 +47,7 @@ elseif isdir(img_path)
         
         
         if type==1
-            for iii =1:num_cores:numel(all_zs)
+            for iii =1:numel(all_zs)
                 idx = all_zs(iii);
                 filename = fullfile(img_path,file_list(idx).name);
                 fprintf('Reading file: %s\n', filename);
@@ -56,8 +56,6 @@ elseif isdir(img_path)
         else
             tempdir = fullfile(img_path,'temp');
             mkdir(tempdir);
-            %num_cores = 4;
-            %all_files = str2mat(file_list.name);
             regions = [(area(1)), (area(1)+area(2)), (area(3)), (area(3)+area(4))];
             disp(regions)
             input_files = [];
@@ -83,17 +81,15 @@ elseif isdir(img_path)
             %tempmatfile = fullfile(tempdir,'params.csv');
             %delete(tempmatfile)
             zdims = numel(all_zs);
-	    %csvwrite(tempmatfile,input_files)
             %save(tempmatfile,"-v6",'input_files','temp_files','regions','zdims');
    system(sprintf('~/cdeep3m/scripts/functions/crop_png.py %s %s %s %s %s %s',tempmat_infile, tempmat_outfile, num2str(area(1)-1), num2str(area(1)+area(2)-1), num2str(area(3)-1), num2str(area(3)+area(4)-1)))
             save(fullfile(tempdir,'done1'),'zdims');
-            for ttt = 1: size(temp_files,1)
+            for ttt = 1: numel(all_zs)
               image1 = imread(temp_files(ttt).name);
               fprintf('Reading image %s\n', temp_files(ttt).name);
               imgstack(:,:,ttt) = image1(:,:,1);
             end
-            delete(tempmat_outfile)  
-            save(fullfile(tempdir,'doneall'),'zdims','-append');
+            delete(tempmat_outfile)
 
         end
     end
