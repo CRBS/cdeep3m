@@ -88,9 +88,9 @@ elseif isdir(img_path)
    system(sprintf('~/cdeep3m/scripts/functions/crop_png.py %s %s %s %s %s %s',tempmat_infile, tempmat_outfile, num2str(area(1)-1), num2str(area(1)+area(2)-1), num2str(area(3)-1), num2str(area(3)+area(4)-1)))
             save(fullfile(tempdir,'done1'),'zdims');
             for ttt = 1: size(temp_files,1)
-              image = imread(temp_files(ttt).name);
+              image1 = imread(temp_files(ttt).name);
               fprintf('Reading image %s\n', temp_files(ttt).name);
-              imgstack(:,:,ttt) = image(:,:,1);
+              imgstack(:,:,ttt) = image1(:,:,1);
             end
             delete(tempmat_outfile)  
             save(fullfile(tempdir,'doneall'),'zdims','-append');
