@@ -38,13 +38,15 @@ file = open(tempmat_outfile, "r")
 outfiles = [line.rstrip('\n') for line in file]
 file.close()
 
-print lines
+#print lines
 
 for x in range(0, len(lines)):
     print 'Loading:', (str(lines[x]))
-    img = lycon.load(lines[x])
+    #img = lycon.load(lines[x])
+    img = cv2.imread(lines[x], cv2.IMREAD_UNCHANGED)
     type(img)
     cropped = img[in1:in2, in3:in4]
     print 'Saving:', str(outfiles[x])
-    lycon.save(outfiles[x], cropped)
-    print('done')
+    #lycon.save(outfiles[x], cropped)
+    cv2.imwrite(outfiles[x], cropped)
+    #print('done')
