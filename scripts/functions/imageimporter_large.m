@@ -59,19 +59,22 @@ elseif isdir(img_path)
             regions = [(area(1)), (area(1)+area(2)), (area(3)), (area(3)+area(4))];
             disp(regions)
             input_files = [];
+	    
             tempmat_infile = fullfile(tempdir,'infiles.txt');
-            delete(tempmat_infile);
+            delete(tempmat_infile);	    
             fid = fopen(tempmat_infile, 'a')
-            for fl = 1:size(file_list,1)            
-            %input_files = strcat(input_files, ',', fullfile(img_path,file_list(fl).name));
-            fprintf(fid, strcat(fullfile(img_path,file_list(fl).name),'\n'));
-	    end
+	    for fl = 1:numel(all_zs)
+            %input_files = strcat(input_files, ',', fullfile(img_path,file_list(fl).name))
+            outfilename = fullfile(tempdir,file_list(fl).name);
+            temp_files(fl).name = [outfilename(1:end-3),'png'];
+            fprintf(fid, strcat(temp_files(fl).name,'\n'));
+            end
             fclose(fid);
 
             tempmat_outfile = fullfile(tempdir,'outfiles.txt');
-            delete(tempmat_outfile);
+            delete(tempmat_outfile);	    
             fid = fopen(tempmat_outfile, 'a')
-            for fl = 1:size(file_list,1)
+            for fl = 1:numel(all_zs)
             %input_files = strcat(input_files, ',', fullfile(img_path,file_list(fl).name));
             fprintf(fid, strcat(fullfile(tempdir,file_list(fl).name),'\n'));
             temp_files(fl).name = fullfile(tempdir,file_list(fl).name);
