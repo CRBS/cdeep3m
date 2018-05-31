@@ -14,6 +14,7 @@
 [parallel]: https://www.gnu.org/software/parallel/
 [validation]: https://github.com/CRBS/cdeep3m/wiki/Add-Validation-to-training
 [retrain]: https://github.com/CRBS/cdeep3m/wiki/How-to-retrain-a-pretrained-network
+[runtraining.sh]: https://github.com/CRBS/cdeep3m/wiki/runtraining.sh
 
 # CDeep3M
 
@@ -27,7 +28,7 @@ This code is for a manuscript under revision, titled:
 Click launch button to spin up the latest release of CDeep3M on the cloud (~20 minute spin up time):
 **(Oregon region)** 
 
-[![Launch Deep3m AWS CloudFormation link](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=cdeep3m-stack-1-1-0&templateURL=https://s3-us-west-2.amazonaws.com/cdeep3m-releases/1.1.0/cdeep3m_1.1.0_basic_cloudformation.json)
+[![Launch Deep3m AWS CloudFormation link](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=cdeep3m-stack-1-2-0rc1&templateURL=https://s3-us-west-2.amazonaws.com/cdeep3m-releases/1.2.0rc1/cdeep3m_1.2.0rc1_basic_cloudformation.json)
 
 **NOTE: Running will result in EC2 charges (0.9-3$ per hour runtime)**
 
@@ -73,6 +74,7 @@ Done with your segmentation? Don't forget to [delete your Cloud Stack][deletesta
 * How to [speed up][speedup] processing time
 * How to insert and use a [validation dataset][validation] 
 
+Hyperparameters can be adjusted by passing flags to [runtraining.sh][runtraining.sh]
 
 # Local install, for advanced users/developers only
 
@@ -99,14 +101,14 @@ Done with your segmentation? Don't forget to [delete your Cloud Stack][deletesta
 #### Step 1) Download release tarball
 
 ```Bash
-wget https://github.com/CRBS/cdeep3m/releases/download/v1.1.0/cdeep3m-1.1.0.tar.gz
+wget https://github.com/CRBS/cdeep3m/releases/download/v1.2.0rc1/cdeep3m-1.2.0rc1.tar.gz
 ```
 
 #### Step 2) Uncompress 
 
 ```Bash
-tar -zxf cdeep3m-1.1.0.tar.gz
-cd cdeep3m-1.1.0
+tar -zxf cdeep3m-1.2.0rc1.tar.gz
+cd cdeep3m-1.2.0rc1
 ```
 
 #### Step 3) Add to path
