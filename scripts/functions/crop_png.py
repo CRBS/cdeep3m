@@ -1,7 +1,11 @@
 #!/usr/bin/env python
 
 """
-Crop image Frame
+Crop image frame for CDeep3M
+
+
+NCMIR/NBCR, UCSD -- Authors: M Haberl / C Churas -- Date: 5/2018
+
 """
 import sys
 import os
