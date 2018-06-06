@@ -65,7 +65,7 @@ outfile = fullfile(logdir, 'loss.pdf');
 
 %print(plt_loss,outfile, "-dpngcairo"); 
 print(plt_loss,outfile, "-dpdfcairo");
-fprintf('Your loss output file is saved as: %s.pdf\n', outfile);
+fprintf('Your loss output file is saved as: %s\n', outfile);
 
 
 
@@ -82,5 +82,5 @@ set(gca, 'Title', 'Validation Accuracy');
 
 outfile = fullfile(logdir, 'accuracy.pdf');
 print(plt_accuracy,outfile, "-dpdfcairo");
-fprintf('Your accuracy output file is saved as: %s.pdf\n', outfile);
+fprintf('Your accuracy output file is saved as: %s\n', outfile);
 
