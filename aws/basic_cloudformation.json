@@ -99,6 +99,7 @@
                      "done\n\n",
                      "echo 'Done installing octave'\n",
                      "pip install joblib\n",
+                     "pip install requests\n",
                      "pip install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz -y\n",
                      "sudo -u ubuntu echo 'export PATH=$PATH:/home/ubuntu/cdeep3m:/home/ubuntu/caffe_nd_sense_segmentation/build/tools' >> /home/ubuntu/.bashrc\n",
                      "sudo -u ubuntu echo 'export CAFFE_PATH=/home/ubuntu/caffe_nd_sense_segmentation' >> /home/ubuntu/.bashrc\n",
