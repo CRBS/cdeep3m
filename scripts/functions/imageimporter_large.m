@@ -51,14 +51,14 @@ elseif isdir(img_path)
         if type==1, file_list = tif_list; elseif type==2, file_list = png_list; end
         
         zdims = numel(all_zs);
-        if type==1
-            for iii =1:zdims
-                idx = all_zs(iii);
-                filename = fullfile(img_path,file_list(idx).name);
-                fprintf('Reading file: %s\n', filename);
-                imgstack(:,:,iii) = imread(filename,'PixelRegion', {cols, rows}); %tif allows to read subarea
-            end
-        else
+        %if type==1
+        %    for iii =1:zdims
+        %        idx = all_zs(iii);
+        %        filename = fullfile(img_path,file_list(idx).name);
+        %        fprintf('Reading file: %s\n', filename);
+        %        imgstack(:,:,iii) = imread(filename,'PixelRegion', {cols, rows}); %tif allows to read subarea
+        %    end
+        %else
             tempdir = fullfile(img_path,'temp');
             mkdir(tempdir);
             %num_cores = 4;
@@ -101,7 +101,7 @@ elseif isdir(img_path)
             end
             delete(tempmat_outfile)  
             %save(fullfile(tempdir,'doneall'),'zdims','-append');
-        end
+        %end
     end
     
 else
