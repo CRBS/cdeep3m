@@ -55,10 +55,10 @@ def _parse_arguments(desc, theargs):
     parser.add_argument('topycoord', type=int, help='Top y pixel coordinate')
     parser.add_argument('bottomycoord', type=int,
                         help='Bottom y pixel coordinate')
-    parser.add_argument('instancetypeurl', default=INSTANCE_TYPE_URL,
+    parser.add_argument('--instancetypeurl', default=INSTANCE_TYPE_URL,
                         help='URL to query for meta data instance type ' +
                              '(default ' + INSTANCE_TYPE_URL + ')')
-    parser.add_argument('instancetypeurltimeout',default='1.0',type=float,
+    parser.add_argument('--instancetypeurltimeout',default='1.0',type=float,
                         help='Timeout in seconds for checking instancetypeurl' +
                              ' default 1.0')
     return parser.parse_args(theargs)
