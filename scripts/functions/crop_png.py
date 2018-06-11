@@ -104,5 +104,5 @@ def processInput(x):
 
 
 p_tasks = _get_number_of_tasks_to_run_based_on_instance_type(theargs)
-
+sys.stdout.write('Running ' + str(p_tasks) + ' parallel tasks\n')
 results = Parallel(n_jobs=p_tasks)(delayed(processInput)(i) for i in range(0, len(lines)))
