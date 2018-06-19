@@ -76,11 +76,11 @@ packagedir = fullfile(fm_dir, sprintf('Pkg_%03d',x_y_num));
 filename = fullfile(packagedir, filelist(z_plane).name);
 
 small_patch = single(imread(filename));
-bitdepth = single(2.^([1:16]));
-[~,idx] = min(abs(bitdepth - max(small_patch(:))));
-fprintf('Scaling %s bit image\n', num2str(idx));
+%bitdepth = single(2.^([1:16]));
+%[~,idx] = min(abs(bitdepth - max(small_patch(:))));
+%fprintf('Scaling %s bit image\n', num2str(idx));
 %save_plane = uint8((255 /bitdepth(idx))*combined_plane);
-small_patch = single((255 /bitdepth(idx))*small_patch);
+%small_patch = single((255 /bitdepth(idx))*small_patch);
 %small_patch = single((255 /max(small_patch(:)))*small_patch);
 area = packages{x_y_num};
 if numel(packages)>1
@@ -103,6 +103,8 @@ end
 
 end
 
+bitdepth = single(2.^([1:16]));
+%fprintf('Scaling %s bit image\n', num2str(idx));
 [~,idx] = min(abs(bitdepth - single(max(merger_image(:)))));
 save_plane = uint8((255 /bitdepth(idx))*merger_image);
 outfile = fullfile(fm_dir, sprintf('Segmented_%04d.png',z_plane));
