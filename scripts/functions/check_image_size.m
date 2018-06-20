@@ -14,15 +14,19 @@ disp(img_path);
 if ~isempty(ext)
     if ~isempty(strfind(ext,'h5'))
         disp('Reading H5 image file');
-        hinfo = h5info(img_path);
-        try
-        imagesize = hinfo.Datasets.Dataspace.MaxSize;
-        catch
-        imagesize = hinfo.Datasets.ChunkSize;
-        end
+        %hinfo = h5info(img_path);
+        %try
+        %imagesize = hinfo.Datasets.Dataspace.MaxSize;
+        %catch
+        %imagesize = hinfo.Datasets.ChunkSize;
+        %end
         %hinfo.Datasets.ChunkSize;
+        temp = load(img_path);
+        cont = cell2mat(fieldnames(temp));
+        imagesize = size(temp.(cont));
         imagesize=[imagesize(2:3),imagesize(1)];
-    elseif ~isempty(strfind(ext,'tif'))
+        clear temp
+        elseif ~isempty(strfind(ext,'tif'))
         info = imfinfo(img_path);
         fprintf('Reading image stack with %d images\n',size(info,1));
         imagesize = [info(1).Height, info(1).Width, size(info,1)];
