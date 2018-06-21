@@ -201,11 +201,27 @@ teardown() {
 }
 
 @test "wait_for_predict_to_finish_on_package" {
+
+    touch "$TEST_TMP_DIR/KILL.REQUEST"
+    res=$(wait_for_predict_to_finish_on_package "$TEST_TMP_DIR" "$TEST_TMP_DIR" 0)
+    [ "$res" == "killed" ]
+    rm -f "$TEST_TMP_DIR/KILL.REQUEST"
+
     touch "$TEST_TMP_DIR/PREDICTDONE"
-    wait_for_predict_to_finish_on_package "$TEST_TMP_DIR" 0
+    res=$(wait_for_predict_to_finish_on_package "$TEST_TMP_DIR" "$TEST_TMP_DIR" 0)
+    [ "$res" == "" ]
+
+    touch "$TEST_TMP_DIR/KILL.REQUEST"
+    res=$(wait_for_predict_to_finish_on_package "$TEST_TMP_DIR" "$TEST_TMP_DIR" 0)
+    [ "$res" == "killed" ]
 }
 
 @test "wait_for_preprocess_to_finish_on_package" {
+    touch "$TEST_TMP_DIR/KILL.REQUEST"
+    res=$(wait_for_preprocess_to_finish_on_package "$TEST_TMP_DIR" "$TEST_TMP_DIR" 0)
+    [ "$res" == "killed" ]
+    rm -f "$TEST_TMP_DIR/KILL.REQUEST"
+
     touch "$TEST_TMP_DIR/DONE"
     res=$(wait_for_preprocess_to_finish_on_package "$TEST_TMP_DIR" "$TEST_TMP_DIR" 0)
     [ "$res" == "" ]
