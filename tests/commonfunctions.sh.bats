@@ -207,7 +207,13 @@ teardown() {
 
 @test "wait_for_preprocess_to_finish_on_package" {
     touch "$TEST_TMP_DIR/DONE"
-    wait_for_preprocess_to_finish_on_package "$TEST_TMP_DIR" 0
+    res=$(wait_for_preprocess_to_finish_on_package "$TEST_TMP_DIR" "$TEST_TMP_DIR" 0)
+    [ "$res" == "" ]
+
+    touch "$TEST_TMP_DIR/KILL.REQUEST"
+    res=$(wait_for_preprocess_to_finish_on_package "$TEST_TMP_DIR" "$TEST_TMP_DIR" 0)
+    [ "$res" == "killed" ]
+
 }
 
 @test "get_models_as_space_separated_list" {
