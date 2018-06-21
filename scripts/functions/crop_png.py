@@ -11,9 +11,33 @@ import sys
 import os
 import argparse
 import cv2
+import requests
 from joblib import Parallel, delayed
 from multiprocessing import Pool, TimeoutError
 import time
+
+INSTANCE_TYPE_URL = 'http://169.254.169.254/latest/meta-data/instance-type'
+
+def _get_number_of_tasks_to_run_based_on_instance_type(theargs):
+    """Gets instance type and returns number of parallel
+       tasks to run based on that value. If none are found then
+       default value of 2 is used.
+    """
+    try:
+        r = requests.get(theargs.instancetypeurl,
+                         timeout=theargs.instancetypeurltimeout)
+        if r.status_code is 200:
+            if 'p3.2xlarge' in r.text:
+                return 6
+            if 'p3.8xlarge' in r.text:
+                return 12
+            if 'p3.16xlarge' in r.text:
+                return 20
+    except Exception as e:
+        sys.stderr.write('Got exception checking instance type: ' +
+                         str(e) + '\n')
+    return 2
+    
 
 def _parse_arguments(desc, theargs):
     """Parses command line arguments using argparse
@@ -31,7 +55,14 @@ def _parse_arguments(desc, theargs):
     parser.add_argument('topycoord', type=int, help='Top y pixel coordinate')
     parser.add_argument('bottomycoord', type=int,
                         help='Bottom y pixel coordinate')
+    parser.add_argument('--instancetypeurl', default=INSTANCE_TYPE_URL,
+                        help='URL to query for meta data instance type ' +
+                             '(default ' + INSTANCE_TYPE_URL + ')')
+    parser.add_argument('--instancetypeurltimeout',default='1.0',type=float,
+                        help='Timeout in seconds for checking instancetypeurl' +
+                             ' default 1.0')
     return parser.parse_args(theargs)
+
 
 desc = """
 Given a file with a list of images (inputlistfile 1st arg), 
@@ -63,26 +94,6 @@ outfiles = [line.rstrip('\n') for line in file]
 file.close()
 
 
-#print lines
-'''
->>>>>>> master
-for x in range(0, len(lines)):
-    print 'Loading:', (str(lines[x]))
-    #img = lycon.load(lines[x])
-    img = cv2.imread(lines[x], cv2.IMREAD_UNCHANGED)
-<<<<<<< HEAD
-    type(img)
-=======
-    #type(img)
->>>>>>> master
-    cropped = img[in1:in2, in3:in4]
-    print 'Saving:', str(outfiles[x])
-    #lycon.save(outfiles[x], cropped)
-    cv2.imwrite(outfiles[x], cropped)
-    #print('done')
-<<<<<<< HEAD
-=======
-'''
 def processInput(x):
     sys.stdout.write('Loading: ' + str(lines[x]) + '\n')
     img = cv2.imread(lines[x], cv2.IMREAD_UNCHANGED)
@@ -91,4 +102,7 @@ def processInput(x):
     cv2.imwrite(outfiles[x], cropped)
     return
 
-results = Parallel(n_jobs=2)(delayed(processInput)(i) for i in range(0, len(lines)))
+
+p_tasks = _get_number_of_tasks_to_run_based_on_instance_type(theargs)
+sys.stdout.write('Running ' + str(p_tasks) + ' parallel tasks\n')
+results = Parallel(n_jobs=p_tasks)(delayed(processInput)(i) for i in range(0, len(lines)))

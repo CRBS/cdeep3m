@@ -192,6 +192,17 @@ if [ $ecode != 0 ] ; then
     fatal_error "$out_dir" "ERROR, a non-zero exit code ($ecode) was received from: EnsemblePredictions.m $ensemble_args" 12
 fi
 
+if [ -f "$out_dir/ERROR" ] ; then
+    echo "ERROR file found. Something went wrong"
+    cat "$out_dir/ERROR"
+    exit 10
+fi
+
+if [ -f "$out_dir/KILL.REQUEST" ] ; then
+    echo "KILL.REQUEST file found. Job killed"
+    exit 11
+fi
+
 echo -e "success\n0" > "$out_dir/DONE"
 
 echo ""

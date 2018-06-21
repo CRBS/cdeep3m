@@ -6,6 +6,7 @@ function fatal_error {
     local ecode=$3
     echo "$errmsg" 1>&2
     echo "$errmsg" >> "$jobdir/ERROR"
+    echo "$errmsg" >> "$jobdir/KILL.REQUEST"
     if [ -n "$ecode" ] ; then
         echo "$ecode" >> "$jobdir/ERROR"
         exit $ecode
@@ -90,11 +91,23 @@ function get_number_done_files_in_dir {
 }
 
 function wait_for_predict_to_finish_on_package {
-    local pkg_dir=$1
-    local wait_time=$2
+    local job_dir=$1
+    local pkg_dir=$2
+    local wait_time=$3
+
+    if [ -f "$job_dir/KILL.REQUEST" ] ; then
+        echo "killed"
+        return 0
+    fi
+
     while [ ! -f "$pkg_dir/PREDICTDONE" ] ; do
+        if [ -f "$job_dir/KILL.REQUEST" ] ; then
+            echo "killed"
+            return 0
+        fi
         sleep $wait_time
     done
+    echo ""
 }
 
 function wait_for_prediction_to_catchup {
@@ -115,11 +128,22 @@ function wait_for_prediction_to_catchup {
 }
 
 function wait_for_preprocess_to_finish_on_package {
-    local package_dir=$1
-    local wait_time=$2
+    local job_dir=$1
+    local package_dir=$2
+    local wait_time=$3
+    if [ -f "$job_dir/KILL.REQUEST" ] ; then
+        echo "killed"
+        return 0
+    fi
+
     while [ ! -f "$package_dir/DONE" ] ; do
+         if [ -f "$job_dir/KILL.REQUEST" ] ; then
+             echo "killed"
+             return 0
+         fi
         sleep $wait_time
     done
+    echo ""
 }
 
 function parse_package_processing_info {

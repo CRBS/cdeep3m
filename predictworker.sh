@@ -110,7 +110,11 @@ for model_name in `echo $space_sep_models` ; do
                 continue
             fi
             echo "For model $model_name preprocessing $package_name $cntr of $tot_pkgs"
-            wait_for_preprocess_to_finish_on_package "$Z" "$waitinterval"
+            res=$(wait_for_preprocess_to_finish_on_package "$out_dir" "$Z" "$waitinterval")
+            if [ "$res" == "killed" ] ; then
+                echo "KILL.REQUEST file found. Exiting"
+                exit 1
+            fi
             echo "Running prediction on $model_name $package_name"
             /usr/bin/time -p caffepredict.sh "$trained_model_dir/$model_name/trainedmodel" "$Z" "$out_pkg"
             ecode=$?
