@@ -104,7 +104,11 @@ for model_name in `echo $space_sep_models` ; do
             fi
             echo "For model $model_name postprocessing $package_name $cntr of $tot_pkgs"
             echo "Waiting for $out_pkg to finish processing"
-            wait_for_predict_to_finish_on_package "$out_pkg" "$waitinterval"
+            res=$(wait_for_predict_to_finish_on_package "$out_dir" "$out_pkg" "$waitinterval")
+            if [ "$res" == "killed" ] ; then
+                echo "KILL.REQUEST file found. Exiting"
+                exit 1
+            fi
 
             echo "Running StartPostprocessing.m on $out_pkg"
             /usr/bin/time -p StartPostprocessing.m "$out_pkg"
