@@ -12,7 +12,7 @@ disp('Image importer loading ... ');
 script_dir = fileparts(make_absolute_filename(program_invocation_name()));
 crop_png = strcat(script_dir,filesep(),'scripts',filesep(),'functions',filesep(),'crop_png.py');
 
-fprintf('crop_png.py path: %s\n',crop_png);
+%fprintf('crop_png.py path: %s\n',crop_png);
 
 disp(img_path);
 % check if a folder of png/tif files or a single stack to load
@@ -23,20 +23,28 @@ all_zs =  [z_stack(1):z_stack(2)];
 
 if ~isempty(ext)
     if ~isempty(strfind(ext,'h5'))
-        fprintf('Reading H5 image file %s\n', img_path);
-        hinfo = h5info(img_path);
-        start = [z_stack(1), rows(1), cols(1)];
-        count = [z_stack(2), rows(2)-rows(1), cols(2)-cols(1)];
+        %pkg load hdf5oct
+        %fprintf('Reading H5 image file %s\n', img_path);
+        %hinfo = h5info(img_path);
+        %start = [z_stack(1), rows(1), cols(1)];
+        %count = [z_stack(2), rows(2)-rows(1), cols(2)-cols(1)];
         %h5read(img_path, hinfo.GroupHierarchy.Datasets.Name);
-        imgstack = h5read(img_path, ['/', hinfo.Datasets.Name],start,count);
+        %imgstack = h5read(img_path, ['/', hinfo.Datasets.Name],start,count);
+        temp = load(img_path);
+        cont = cell2mat(fieldnames(temp));
+        imgstack = temp.(cont);clear temp
         imgstack=permute(imgstack,[2 3 1]); %To match the same format as TIF or PNG images
-    elseif ~isempty(strfind(ext,'tif'))
+        size(imgstack)
+        imgstack = imgstack(area(1):area(2), area(3):area(4),z_stack(1):z_stack(2));
+        disp('Processed size:')
+        size(imgstack)
+   elseif ~isempty(strfind(ext,'tif'))
         info = imfinfo(img_path);
         fprintf('Reading %s planes from image stack with %d planes\n', num2str(z_stack(2)+1-z_stack(1)),size(info,1));
         for iii =1:numel(all_zs)
             fprintf('.');
             idx = all_zs(iii);
-            imgstack(:,:,iii) = imread(img_path,'index',idx,'PixelRegion', {cols, rows});
+            imgstack(:,:,iii) = imread(img_path,'index',idx,'PixelRegion', {rows, cols});
         end
         fprintf('\n');
     end
@@ -58,7 +66,7 @@ elseif isdir(img_path)
         %        fprintf('Reading file: %s\n', filename);
         %        imgstack(:,:,iii) = imread(filename,'PixelRegion', {cols, rows}); %tif allows to read subarea
         %    end
-        %else
+       % else
             tempdir = fullfile(img_path,'temp');
             mkdir(tempdir);
             %num_cores = 4;
