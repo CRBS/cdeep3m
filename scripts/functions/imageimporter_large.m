@@ -35,7 +35,7 @@ if ~isempty(ext)
         imgstack = temp.(cont);clear temp
         imgstack=permute(imgstack,[2 3 1]); %To match the same format as TIF or PNG images
         size(imgstack)
-        imgstack = imgstack(area(3):area(4), area(1):area(2),z_stack(1):z_stack(2));
+        imgstack = imgstack(area(1):area(2), area(3):area(4),z_stack(1):z_stack(2));
         disp('Processed size:')
         size(imgstack)
    elseif ~isempty(strfind(ext,'tif'))
@@ -98,7 +98,7 @@ elseif isdir(img_path)
             %delete(tempmatfile)
 	    %csvwrite(tempmatfile,input_files)
             %save(tempmatfile,"-v6",'input_files','temp_files','regions','zdims');
-   system(sprintf('%s %s %s %s %s %s %s',crop_png, tempmat_infile, tempmat_outfile, num2str(area(3)-1), num2str(area(4)-1), num2str(area(1)-1), num2str(area(2)-1)))
+   system(sprintf('%s %s %s %s %s %s %s',crop_png, tempmat_infile, tempmat_outfile, num2str(area(1)-1), num2str(area(2)-1), num2str(area(3)-1), num2str(area(4)-1)))
             %save(fullfile(tempdir,'done1'),'zdims');
             clear imgstack
             for ttt = 1:zdims
