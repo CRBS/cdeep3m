@@ -76,6 +76,10 @@ Done with your segmentation? Don't forget to [delete your Cloud Stack][deletesta
 
 Hyperparameters can be adjusted by passing flags to [runtraining.sh][runtraining.sh]
 
+# Support
+
+Please email to cdeep3m@gmail.com for additional questions.
+
 # Local install, for advanced users/developers only
 
 ## Installation requirements for local install
