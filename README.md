@@ -20,19 +20,6 @@
 
 CDeep3M provides a plug-and-play cloud based deep learning solution for image segmentation of light, electron and X-ray microscopy. 
 
-If you use CDeep3M for your research please cite https://doi.org/10.1101/353425:
-
-```
-@article{,
-  title={CDeep3M - Plug-and-Play cloud based deep learning for image segmentation of light, electron and X-ray microscopy},
-  author={Matthias Haberl , Christopher Churas, Lucas Tindall, Daniela Boassa, Sebastien Phan, Eric A Bushong, Matthew Madany, Raffi Akay, Thomas J Deerinck, Steven T Peltier, and Mark H Ellisman},
-  journal={bioRxiv, 353425},
-  year={2018}
-  DOI = {10.1101/353425}
-}
-```
-
-
 
 ## Quickstart CDeep3M on the cloud
 
@@ -86,6 +73,24 @@ Done with your segmentation? Don't forget to [delete your Cloud Stack][deletesta
 * How to insert and use a [validation dataset][validation] 
 
 Hyperparameters can be adjusted by passing flags to [runtraining.sh][runtraining.sh]
+
+# References
+
+If you use CDeep3M for your research please cite https://doi.org/10.1101/353425:
+
+```
+@article{,
+  title={CDeep3M - Plug-and-Play cloud based deep learning for image segmentation of light, electron and X-ray microscopy},
+  author={Haberl M., Churas C., Tindall L., Boassa D., Phan S., Bushong E.A., Madany M., Akay R., Deerinck T.J., Peltier S., and Ellisman M.H.},
+  journal={bioRxiv, 353425},
+  year={2018}
+  DOI = {10.1101/353425}
+}
+```
+Further reading:
+
+* CDeep3M was developped based off a convolutional neural network implemented in [DeepEM3D][deepem3d]
+
 
 # Support
 
