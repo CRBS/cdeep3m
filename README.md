@@ -20,8 +20,9 @@
 
 CDeep3M provides a plug-and-play cloud based deep learning solution for image segmentation of light, electron and X-ray microscopy. CDeep3M was developped based off a convolutional neural network implemented in [DeepEM3D][deepem3d]
 
-This code is for a manuscript under revision, titled: 
-"CDeep3M - Plug-and-Play cloud based deep learning for image segmentation of light, electron and X-ray microscopy"
+Please cite our paper if you use CDeep3M for your research: 
+CDeep3M - Plug-and-Play cloud based deep learning for image segmentation of light, electron and X-ray microscopy
+Authors: Matthias Haberl , Christopher Churas, Lucas Tindall, Daniela Boassa, Sebastien Phan, Eric A Bushong, Matthew Madany, Raffi Akay, Thomas J Deerinck, Steven T Peltier, and Mark H Ellisman DOI:10.1101/353425 
 
 ## Quickstart CDeep3M on the cloud
 
