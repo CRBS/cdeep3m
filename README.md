@@ -121,13 +121,13 @@ Please email to cdeep3m@gmail.com for additional questions.
 #### Step 1) Download release tarball
 
 ```Bash
-wget https://github.com/CRBS/cdeep3m/releases/download/v1.2.1/cdeep3m-1.2.1.tar.gz
+wget https://github.com/CRBS/cdeep3m/releases/tag/v1.2.1/v1.2.1.tar.gz
 ```
 
 #### Step 2) Uncompress 
 
 ```Bash
-tar -zxf cdeep3m-1.2.1.tar.gz
+tar -zxf v1.2.1.tar.gz
 cd cdeep3m-1.2.1
 ```
 
