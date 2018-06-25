@@ -160,3 +160,5 @@ For contents of **model/** see [model/LICENSE file][divelablicense] for license
 * O. Tange (2011): GNU Parallel - The Command-Line Power Tool,
 ;login: The USENIX Magazine, February 2011:42-47.
 
+* This research benefitted from the use of credits from the National Institutes of Health (NIH) Cloud Credits Model Pilot, a component of the NIH Big Data to Knowledge (BD2K) program.
+
