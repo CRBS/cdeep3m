@@ -60,7 +60,7 @@ checkpoint_isbinary(lblstack);
 %% Check size of images and labels
 % ----------------------------------------------------------------------------------------
 
-[imgstack, lblstack] = check_img_dims(imgstack, lblstack, 400);
+[imgstack, lblstack] = check_img_dims(imgstack, lblstack, 325);
 
 % ----------------------------------------------------------------------------------------
 %% Augment the data, generating 16 versions and save
