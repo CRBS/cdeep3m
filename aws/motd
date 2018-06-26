@@ -2,7 +2,7 @@
 
 
 =======================================
-                CDeep3M
+           CDeep3M - @@VERSION@@
 =======================================
 
 CDeep3M - Plug-and-Play cloud based deep learning for image segmentation of light, electron and X-ray microscopy
@@ -30,3 +30,4 @@ ls ~/predictout/ensembled
 
 For further info go to:
 https://github.com/CRBS/cdeep3m
+

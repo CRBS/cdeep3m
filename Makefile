@@ -63,6 +63,7 @@ dist: clean ## creates distributable package
 	deep3mdirname=cdeep3m-$$vers ;\
 	distdir=dist/$$deep3mdirname ;\
 	/bin/mkdir -p $$distdir ;\
+        cat aws/motd | sed "s/@@VERSION@@/$${vers}/g" > $$distdir/motd ;\
 	cp *.m $$distdir/. ;\
 	cp *.sh $$distdir/. ;\
 	cp -a scripts $$distdir/. ;\
