@@ -124,7 +124,7 @@
                      "sudo -u ubuntu wget https://s3-us-west-2.amazonaws.com/cdeep3m-releases/${CDEEP3M_VERSION}/cdeep3m-${CDEEP3M_VERSION}.tar.gz\n",
                      "sudo -u ubuntu tar -xf cdeep3m-${CDEEP3M_VERSION}.tar.gz\n",
                      "sudo -u ubuntu ln -s /home/ubuntu/cdeep3m-${CDEEP3M_VERSION} /home/ubuntu/cdeep3m\n",
-                     "mv /home/cdeep3m/motd /etc/.\n",
+                     "mv /home/ubuntu/cdeep3m/motd /etc/.\n",
                      "cd /home/ubuntu\n",
                      "sudo -u ubuntu wget https://github.com/bats-core/bats-core/archive/v0.4.0.tar.gz\n",
                      "sudo -u ubuntu tar -zxf v0.4.0.tar.gz\n",
