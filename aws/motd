@@ -1,0 +1,32 @@
+
+
+
+=======================================
+                CDeep3M
+=======================================
+
+CDeep3M - Plug-and-Play cloud based deep learning for image segmentation of light, electron and X-ray microscopy
+
+If you are using CDeep3M for please reference:
+https://doi.org/10.1101/353425
+
+
+=======================================
+Quick instructions:
+
+# 1) Training:
+
+cd ~
+PreprocessTrainingData.m ~/cdeep3m/mito_testsample/training/images/ ~/cdeep3m/mito_testsample/training/labels/ ~/mito_testaugtrain
+runtraining.sh --numiterations 50000 ~/mito_testaugtrain ~/train_out
+
+# 2) Prediction
+runprediction.sh --augspeed 10 --models 5fm ~/train_out/ ~/cdeep3m/mito_testsample/testset/ ~/predictout
+# results are in ~/predictout/ensembled
+ls ~/predictout/ensembled
+
+
+=======================================
+
+For further info go to:
+https://github.com/CRBS/cdeep3m
