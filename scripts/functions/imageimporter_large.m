@@ -77,7 +77,7 @@ elseif isdir(img_path)
             tempmat_infile = fullfile(tempdir,'infiles.txt');
             delete(tempmat_infile);
             fid = fopen(tempmat_infile, 'a')
-            for fl = 1:zdims           
+            for fl = z_stack(1):z_stack(2)        
             %input_files = strcat(input_files, ',', fullfile(img_path,file_list(fl).name));
             fprintf(fid, strcat(fullfile(img_path,file_list(fl).name),'\n'));
 	    end
@@ -86,7 +86,7 @@ elseif isdir(img_path)
             tempmat_outfile = fullfile(tempdir,'outfiles.txt');
             delete(tempmat_outfile);
             fid = fopen(tempmat_outfile, 'a')
-            for fl = 1:zdims
+            for fl = z_stack(1):z_stack(2)
             %input_files = strcat(input_files, ',', fullfile(img_path,file_list(fl).name))
             outfilename = fullfile(tempdir,file_list(fl).name);
             temp_files(fl).name = [outfilename(1:end-3),'png'];
@@ -101,11 +101,13 @@ elseif isdir(img_path)
    system(sprintf('%s %s %s %s %s %s %s',crop_png, tempmat_infile, tempmat_outfile, num2str(area(1)-1), num2str(area(2)-1), num2str(area(3)-1), num2str(area(4)-1)))
             %save(fullfile(tempdir,'done1'),'zdims');
             clear imgstack
-            for ttt = 1:zdims
+            ticker = 0;
+            for ttt = z_stack(1):z_stack(2)
+            ticker = ticker + 1;
               image1 = imread(temp_files(ttt).name);
               fprintf('Reading image %s\n', temp_files(ttt).name);
             %  disp(size(image1))
-              imgstack(:,:,ttt) = image1(:,:,1);
+              imgstack(:,:,ticker) = image1(:,:,1);
             end
             delete(tempmat_outfile)  
             %save(fullfile(tempdir,'doneall'),'zdims','-append');
