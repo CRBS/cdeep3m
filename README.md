@@ -18,6 +18,8 @@
 
 # CDeep3M
 
+[![Build Status](https://travis-ci.org/CRBS/cdeep3m.svg?branch=master)](https://travis-ci.org/CRBS/cdeep3m)
+
 CDeep3M provides a plug-and-play cloud based deep learning solution for image segmentation of light, electron and X-ray microscopy. 
 
 
