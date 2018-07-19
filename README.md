@@ -15,6 +15,7 @@
 [validation]: https://github.com/CRBS/cdeep3m/wiki/Add-Validation-to-training
 [retrain]: https://github.com/CRBS/cdeep3m/wiki/How-to-retrain-a-pretrained-network
 [runtraining.sh]: https://github.com/CRBS/cdeep3m/wiki/runtraining.sh
+[cdeep3mbiorxiv]: https://www.biorxiv.org/content/early/2018/06/21/353425
 
 # CDeep3M
 
@@ -91,6 +92,7 @@ If you use CDeep3M for your research please cite:
 ```
 Further reading:
 
+* CDeep3M [preprint][cdeep3mbiorxiv]
 * CDeep3M was developped based off a convolutional neural network implemented in [DeepEM3D][deepem3d]
 
 
