@@ -78,15 +78,15 @@ Hyperparameters can be adjusted by passing flags to [runtraining.sh][runtraining
 
 # References
 
-If you use CDeep3M for your research please cite https://doi.org/10.1101/353425:
+If you use CDeep3M for your research please cite:
 
 ```
 @article{,
-  title={CDeep3M - Plug-and-Play cloud based deep learning for image segmentation of light, electron and X-ray microscopy},
+  title={CDeep3M - Plug-and-Play cloud based deep learning for image segmentation},
   author={Haberl M., Churas C., Tindall L., Boassa D., Phan S., Bushong E.A., Madany M., Akay R., Deerinck T.J., Peltier S., and Ellisman M.H.},
-  journal={bioRxiv, 353425},
+  journal={Nature Methods},
   year={2018}
-  DOI = {10.1101/353425}
+  DOI = {}
 }
 ```
 Further reading:
