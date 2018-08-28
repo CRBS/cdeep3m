@@ -175,7 +175,7 @@ postprocessworker.sh "$out_dir" >> "$log_dir/postprocess.log" 2>&1 &
 echo ""
 echo "To see progress run the following command in another window:"
 echo ""
-echo "tail -f \"$out_dir/logs/*.log\""
+echo "tail -f $out_dir/logs/*.log"
 
 wait
 
