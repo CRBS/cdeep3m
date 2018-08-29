@@ -192,6 +192,11 @@ if [ $ecode != 0 ] ; then
     fatal_error "$out_dir" "ERROR, a non-zero exit code ($ecode) was received from: EnsemblePredictions.m $ensemble_args" 12
 fi
 
+echo "Removing png files under model directories"
+for Y in `echo $space_sep_models` ; do
+    /bin/rm -f $out_dir/$Y/*.png
+done
+
 if [ -f "$out_dir/ERROR" ] ; then
     echo "ERROR file found. Something went wrong"
     cat "$out_dir/ERROR"

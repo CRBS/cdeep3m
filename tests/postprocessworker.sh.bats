@@ -141,7 +141,9 @@ teardown() {
     echo "1" >> "$p_info"
     mkdir -p "$TEST_TMP_DIR/1fm/Pkg001_Z01"
     touch "$TEST_TMP_DIR/1fm/Pkg001_Z01/PREDICTDONE"
-
+    mkdir -p "$TEST_TMP_DIR/1fm/Pkg_001"
+    mkdir -p "$TEST_TMP_DIR/1fm/Pkg_002"
+    touch "$TEST_TMP_DIR/1fm/Pkg_001/test.5h.png"
     export A_TEMP_PATH=$PATH
     export PATH=$TEST_TMP_DIR:$PATH
     run $POSTPROCESS_WORKER_SH --waitinterval 0 "$TEST_TMP_DIR"
@@ -155,7 +157,11 @@ teardown() {
     [ "${lines[8]}" == "$TEST_TMP_DIR/1fm/Pkg001_Z01" ]
     [ "${lines[12]}" == "Removing $TEST_TMP_DIR/augimages/1fm/Pkg001_Z01" ]
     [ "${lines[13]}" == "$TEST_TMP_DIR/1fm" ] 
-    [ "${lines[17]}" == "Postprocessing has completed." ]
+    [ "${lines[17]}" == "Removing Pkg_* folders" ]
+    [ "${lines[18]}" == "Postprocessing has completed." ]
+
+    [ ! -d "$TEST_TMP_DIR/1fm/Pkg_001" ] 
+    [ ! -d "$TEST_TMP_DIR/1fm/Pkg_002" ]
     export PATH=$A_TEMP_PATH
 }
 
