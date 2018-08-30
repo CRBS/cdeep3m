@@ -196,17 +196,34 @@ teardown() {
     ln -s /bin/echo "$TEST_TMP_DIR/postprocessworker.sh"
     ln -s /bin/echo "$TEST_TMP_DIR/EnsemblePredictions.m"
     mkdir -p "$TEST_TMP_DIR/predictoutdir/augimages"
+    
+    export p_outdir="$TEST_TMP_DIR/predictoutdir"
+    mkdir -p "$p_outdir/1fm"
+    touch "$p_outdir/1fm/Segmented_0001.png"
+ 
+    mkdir -p "$p_outdir/3fm"
+    touch "$p_outdir/3fm/Segmented_0001.png"
+     
+    mkdir -p "$p_outdir/5fm"
+    touch "$p_outdir/5fm/Segmented_0001.png"
+    
     touch "$TEST_TMP_DIR/predictoutdir/augimages/de_augmentation_info.mat"
     touch "$TEST_TMP_DIR/predictoutdir/augimages/package_processing_info.txt"
 
     export A_TEMP_PATH=$PATH
     export PATH=$TEST_TMP_DIR:$PATH
-    run $RUNPREDICTION_SH trainoutdir augimages "$TEST_TMP_DIR/predictoutdir"
+    run $RUNPREDICTION_SH trainoutdir augimages "$p_outdir"
     echo "$output" 1>&2
     [ "$status" -eq 0 ]
     [ "${lines[0]}" = "Start up worker to generate packages to process" ]
     [ "${lines[1]}" = "Start up worker to run prediction on packages" ]
     [ "${lines[2]}" = "Start up worker to run post processing on packages" ]
+    [ "${lines[6]}" = "Removing png files under model directories" ]
+    
+    [ ! -f "$p_outdir/1fm/Segmented_0001.png" ]
+    [ ! -f "$p_outdir/3fm/Segmented_0001.png" ]
+    [ ! -f "$p_outdir/5fm/Segmented_0001.png" ]
+    
     run cat "$TEST_TMP_DIR/predictoutdir/predict.config"
     echo "$output" 1>&2
     [ "$status" -eq 0 ]
@@ -215,7 +232,6 @@ teardown() {
     [ "${lines[2]}" = "imagedir=augimages" ]
     [ "${lines[3]}" = "models=1fm,3fm,5fm" ]
     [ "${lines[4]}" = "augspeed=1" ]
-
 
     run cat "$TEST_TMP_DIR/predictoutdir/logs/preprocess.log"
     [ "$status" -eq 0 ]
