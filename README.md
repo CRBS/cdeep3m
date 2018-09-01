@@ -16,6 +16,7 @@
 [retrain]: https://github.com/CRBS/cdeep3m/wiki/How-to-retrain-a-pretrained-network
 [runtraining.sh]: https://github.com/CRBS/cdeep3m/wiki/runtraining.sh
 [cdeep3mbiorxiv]: https://www.biorxiv.org/content/early/2018/06/21/353425
+[cdeep3mnaturemethods]: https://rdcu.be/5zIF
 
 # CDeep3M
 
@@ -87,11 +88,11 @@ If you use CDeep3M for your research please cite:
   author={Haberl M., Churas C., Tindall L., Boassa D., Phan S., Bushong E.A., Madany M., Akay R., Deerinck T.J., Peltier S., and Ellisman M.H.},
   journal={Nature Methods},
   year={2018}
-  DOI = {}
+  DOI = {10.1038/s41592-018-0106-z}
 }
 ```
 Further reading:
-
+* CDeep3M [open access][cdeep3mnaturemethods] article in NatureMethods
 * CDeep3M [preprint][cdeep3mbiorxiv]
 * CDeep3M was developped based off a convolutional neural network implemented in [DeepEM3D][deepem3d]
 
