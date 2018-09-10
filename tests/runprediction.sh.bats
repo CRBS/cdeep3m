@@ -218,11 +218,10 @@ teardown() {
     [ "${lines[0]}" = "Start up worker to generate packages to process" ]
     [ "${lines[1]}" = "Start up worker to run prediction on packages" ]
     [ "${lines[2]}" = "Start up worker to run post processing on packages" ]
-    [ "${lines[6]}" = "Removing png files under model directories" ]
     
-    [ ! -f "$p_outdir/1fm/Segmented_0001.png" ]
-    [ ! -f "$p_outdir/3fm/Segmented_0001.png" ]
-    [ ! -f "$p_outdir/5fm/Segmented_0001.png" ]
+    [ -f "$p_outdir/1fm/Segmented_0001.png" ]
+    [ -f "$p_outdir/3fm/Segmented_0001.png" ]
+    [ -f "$p_outdir/5fm/Segmented_0001.png" ]
     
     run cat "$TEST_TMP_DIR/predictoutdir/predict.config"
     echo "$output" 1>&2
