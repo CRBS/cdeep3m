@@ -67,7 +67,7 @@ for xx = 1:(numel(x_breaks)-1)
     
 end
 else
-packages{1} = [1, imagesize(2), 1, imagesize(1)];
+packages{1} = [1, imagesize(1), 1, imagesize(2)];
 end
 
 
