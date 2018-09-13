@@ -157,7 +157,7 @@ teardown() {
    run $RUNTRAINING_SH --numiterations 50 --1fmonly trainimages "$TEST_TMP_DIR/trainoutdir"
    [ "$status" -eq 0 ]
    echo "$output" 1>&2
-   [ "${lines[0]}" = "--1fmonly --numiterations 50 --base_learn 1e-02 --power 0.8 --momentum 0.9 --weight_decay 0.0005 --average_loss 16 --lr_policy poly --iter_size 8 --snapshot_interval 2000 $TEST_TMP_DIR/trainoutdir" ]
+   [ "${lines[0]}" = "--models 1fm --numiterations 50 --base_learn 1e-02 --power 0.8 --momentum 0.9 --weight_decay 0.0005 --average_loss 16 --lr_policy poly --iter_size 8 --snapshot_interval 2000 $TEST_TMP_DIR/trainoutdir" ]
    [ "${lines[1]}" = "Training has completed. Results are stored in $TEST_TMP_DIR/trainoutdir" ]
 
    export PATH=$A_TEMP_PATH

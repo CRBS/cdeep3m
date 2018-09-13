@@ -91,7 +91,7 @@ eval set -- "$TEMP"
 while true ; do
     case "$1" in
         -h ) usage ;; 
-        --1fmonly ) one_fmonly="--1fmonly " ; shift ;;
+        --1fmonly ) one_fmonly="--models 1fm " ; shift ;;
         --base_learn ) base_lr=$2 ; shift 2 ;;
         --power ) power=$2 ; shift 2 ;;
         --momentum ) momentum=$2 ; shift 2 ;;
