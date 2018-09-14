@@ -171,6 +171,18 @@ function get_models_as_space_separated_list {
     echo "$space_sep_models"
 }
 
+function get_number_of_models {
+# Counts number of models passed in string by
+# replacing , character with newline and counting
+# number of lines
+    if [ -z "$1" ] ; then
+        echo "0"
+        return 0
+    fi
+    local model_count=`echo "$1" | sed "s/,/\n/g" | wc -l`
+    echo "$model_count"
+}
+
 function parse_predict_config {
 # parses file passed in as first 
 # argument which is assumed to be
