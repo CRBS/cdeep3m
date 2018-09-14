@@ -246,6 +246,20 @@ teardown() {
     [ "$res" == "1fm 3fm 5fm" ]
 }
 
+@test "get_number_of_models" {
+    res=$(get_number_of_models "")
+    [ "$res" == "0" ]
+
+    res=$(get_number_of_models "1fm")
+    [ "$res" == "1" ]
+
+    res=$(get_number_of_models "1fm,3fm")
+    [ "$res" == "2" ]
+
+    res=$(get_number_of_models "1fm,3fm,5fm")
+    [ "$res" == "3" ]
+}
+
 @test "parse_package_processing_info" {
     echo "" > "$TEST_TMP_DIR/package_processing_info.txt"
     echo "Number of XY Packages" >> "$TEST_TMP_DIR/package_processing_info.txt"
