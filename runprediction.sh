@@ -179,17 +179,26 @@ echo "tail -f $out_dir/logs/*.log"
 
 wait
 
-space_sep_models=$(get_models_as_space_separated_list $model_list)
-for Y in `echo $space_sep_models` ; do
-    ensemble_args=`echo "$ensemble_args $out_dir/$Y"`
-done
 
-ensemble_args=`echo "$ensemble_args $out_dir/ensembled"`
+num_models=$(get_number_of_models $model_list)
 
-EnsemblePredictions.m $ensemble_args
-ecode=$?
-if [ $ecode != 0 ] ; then
-    fatal_error "$out_dir" "ERROR, a non-zero exit code ($ecode) was received from: EnsemblePredictions.m $ensemble_args" 12
+resultdir="$out_dir/ensembled"
+
+if [ $num_models -gt 1 ] ; then
+    space_sep_models=$(get_models_as_space_separated_list $model_list)
+    for Y in `echo $space_sep_models` ; do
+        ensemble_args=`echo "$ensemble_args $out_dir/$Y"`
+    done
+
+    ensemble_args=`echo "$ensemble_args $resultdir"`
+
+    EnsemblePredictions.m $ensemble_args
+    ecode=$?
+    if [ $ecode != 0 ] ; then
+        fatal_error "$out_dir" "ERROR, a non-zero exit code ($ecode) was received from: EnsemblePredictions.m $ensemble_args" 12
+    fi
+else
+    ln -s "$model_list" "$resultdir"
 fi
 
 if [ -f "$out_dir/ERROR" ] ; then
@@ -206,7 +215,7 @@ fi
 echo -e "success\n0" > "$out_dir/DONE"
 
 echo ""
-echo "Prediction has completed. Results are stored in $out_dir/ensembled"
+echo "Prediction has completed. Results are stored in $resultdir"
 echo "Have a nice day!"
 echo ""
 exit 0
