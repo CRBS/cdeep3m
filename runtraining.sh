@@ -13,6 +13,7 @@ fi
 source "${script_dir}/commonfunctions.sh"
 
 numiterations="30000"
+gpu="all"
 one_fmonly=""
 base_lr="1e-02"
 power="0.8"
@@ -29,7 +30,7 @@ additerations="2000"
 function usage()
 {
     echo "usage: $script_name [-h] [--1fmonly] [--numiterations NUMITERATIONS]
-                              [--base_lr BASE_LR] [--power POWER] 
+                              [--gpu GPU] [--base_lr BASE_LR] [--power POWER] 
                               [--momentum MOMENTUM] 
                               [--weight_decay WEIGHT_DECAY] 
                               [--average_loss AVERAGE_LOSS] 
@@ -56,6 +57,8 @@ positional arguments:
 optional arguments:
   -h, --help           show this help message and exit
   --1fmonly            Only train 1fm model
+  --gpu                Which GPU to use, can be a number ie 0 or 1 or
+                       all to use all GPUs (default $gpu)
   --base_learn         Base learning rate (default $base_lr)
   --power              Used in poly and sigmoid lr_policies. (default $power)
   --momentum           Indicates how much of the previous weight will be 
@@ -85,13 +88,14 @@ optional arguments:
    exit 1;
 }
 
-TEMP=`getopt -o h --long "1fmonly,numiterations:,base_learn:,power:,momentum:,weight_decay:,average_loss:,lr_policy:,iter_size:,snapshot_interval:,validation_dir:,retrain:,additerations:" -n '$0' -- "$@"`
+TEMP=`getopt -o h --long "1fmonly,numiterations:,gpu:,base_learn:,power:,momentum:,weight_decay:,average_loss:,lr_policy:,iter_size:,snapshot_interval:,validation_dir:,retrain:,additerations:" -n '$0' -- "$@"`
 eval set -- "$TEMP"
 
 while true ; do
     case "$1" in
         -h ) usage ;; 
         --1fmonly ) one_fmonly="--models 1fm " ; shift ;;
+        --gpu ) gpu=$2 ; shift 2 ;;
         --base_learn ) base_lr=$2 ; shift 2 ;;
         --power ) power=$2 ; shift 2 ;;
         --momentum ) momentum=$2 ; shift 2 ;;
@@ -149,7 +153,7 @@ if [ -n "$retrain" ] ; then
     echo "$res"   
 fi
 
-trainworker.sh ${one_fmonly}--numiterations $numiterations --base_learn $base_lr --power $power --momentum $momentum --weight_decay $weight_decay --average_loss $average_loss --lr_policy $lr_policy --iter_size $iter_size --snapshot_interval $snapshot_interval "$train_out"
+trainworker.sh ${one_fmonly}--numiterations $numiterations --gpu $gpu --base_learn $base_lr --power $power --momentum $momentum --weight_decay $weight_decay --average_loss $average_loss --lr_policy $lr_policy --iter_size $iter_size --snapshot_interval $snapshot_interval "$train_out"
 ecode=$?
 if [ $ecode != 0 ] ; then
     echo "ERROR, a non-zero exit code ($ecode) was received from: trainworker.sh --numiterations $numiterations"
