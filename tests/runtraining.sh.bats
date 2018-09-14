@@ -112,7 +112,7 @@ teardown() {
    run $RUNTRAINING_SH trainimages "$TEST_TMP_DIR/trainoutdir"
    echo "$status $output" 1>&2
    [ "$status" -eq 0 ]
-   [ "${lines[0]}" = "--numiterations 30000 --base_learn 1e-02 --power 0.8 --momentum 0.9 --weight_decay 0.0005 --average_loss 16 --lr_policy poly --iter_size 8 --snapshot_interval 2000 $TEST_TMP_DIR/trainoutdir" ]
+   [ "${lines[0]}" = "--numiterations 30000 --gpu all --base_learn 1e-02 --power 0.8 --momentum 0.9 --weight_decay 0.0005 --average_loss 16 --lr_policy poly --iter_size 8 --snapshot_interval 2000 $TEST_TMP_DIR/trainoutdir" ]
    [ "${lines[1]}" = "Training has completed. Results are stored in $TEST_TMP_DIR/trainoutdir" ]
 
    export PATH=$A_TEMP_PATH
@@ -142,22 +142,22 @@ teardown() {
    run $RUNTRAINING_SH --numiterations 50 trainimages "$TEST_TMP_DIR/trainoutdir"
    [ "$status" -eq 0 ]
    echo "$output" 1>&2
-   [ "${lines[0]}" = "--numiterations 50 --base_learn 1e-02 --power 0.8 --momentum 0.9 --weight_decay 0.0005 --average_loss 16 --lr_policy poly --iter_size 8 --snapshot_interval 2000 $TEST_TMP_DIR/trainoutdir" ]
+   [ "${lines[0]}" = "--numiterations 50 --gpu all --base_learn 1e-02 --power 0.8 --momentum 0.9 --weight_decay 0.0005 --average_loss 16 --lr_policy poly --iter_size 8 --snapshot_interval 2000 $TEST_TMP_DIR/trainoutdir" ]
    [ "${lines[1]}" = "Training has completed. Results are stored in $TEST_TMP_DIR/trainoutdir" ]
 
    export PATH=$A_TEMP_PATH
 }
 
-@test "runtraining.sh success --1fmonly set" {
+@test "runtraining.sh success --1fmonly and --gpu set" {
    ln -s /bin/true "$TEST_TMP_DIR/CreateTrainJob.m"
    mkdir -p "$TEST_TMP_DIR/trainoutdir"
    ln -s /bin/echo "$TEST_TMP_DIR/trainworker.sh"
    export A_TEMP_PATH=$PATH
    export PATH=$TEST_TMP_DIR:$PATH
-   run $RUNTRAINING_SH --numiterations 50 --1fmonly trainimages "$TEST_TMP_DIR/trainoutdir"
+   run $RUNTRAINING_SH --numiterations 50 --1fmonly --gpu 1 trainimages "$TEST_TMP_DIR/trainoutdir"
    [ "$status" -eq 0 ]
    echo "$output" 1>&2
-   [ "${lines[0]}" = "--models 1fm --numiterations 50 --base_learn 1e-02 --power 0.8 --momentum 0.9 --weight_decay 0.0005 --average_loss 16 --lr_policy poly --iter_size 8 --snapshot_interval 2000 $TEST_TMP_DIR/trainoutdir" ]
+   [ "${lines[0]}" = "--models 1fm --numiterations 50 --gpu 1 --base_learn 1e-02 --power 0.8 --momentum 0.9 --weight_decay 0.0005 --average_loss 16 --lr_policy poly --iter_size 8 --snapshot_interval 2000 $TEST_TMP_DIR/trainoutdir" ]
    [ "${lines[1]}" = "Training has completed. Results are stored in $TEST_TMP_DIR/trainoutdir" ]
 
    export PATH=$A_TEMP_PATH
