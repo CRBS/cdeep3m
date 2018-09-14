@@ -247,12 +247,15 @@ teardown() {
     export PATH=$A_TEMP_PATH
 }
 
-@test "runprediction.sh success --models and --augspeed set" {
+@test "runprediction.sh success --models and --augspeed set and only 1 model" {
     ln -s /bin/true "$TEST_TMP_DIR/DefDataPackages.m"
     ln -s /bin/true "$TEST_TMP_DIR/preprocessworker.sh"
     ln -s /bin/true "$TEST_TMP_DIR/predictworker.sh"
     ln -s /bin/true "$TEST_TMP_DIR/postprocessworker.sh"
-    ln -s /bin/true "$TEST_TMP_DIR/EnsemblePredictions.m"
+    # setting EnsemblePredictions.m to false so the test
+    # verifies its not being called cause there is only a single
+    # model.
+    ln -s /bin/false "$TEST_TMP_DIR/EnsemblePredictions.m"
     mkdir -p "$TEST_TMP_DIR/predictoutdir/augimages"
     touch "$TEST_TMP_DIR/predictoutdir/augimages/de_augmentation_info.mat"
     touch "$TEST_TMP_DIR/predictoutdir/augimages/package_processing_info.txt"
@@ -265,6 +268,7 @@ teardown() {
     [ "${lines[0]}" = "Start up worker to generate packages to process" ]
     [ "${lines[1]}" = "Start up worker to run prediction on packages" ]
     [ "${lines[2]}" = "Start up worker to run post processing on packages" ]
+    [ "${lines[5]}" = "Prediction has completed. Results are stored in $TEST_TMP_DIR/predictoutdir/ensembled" ]
     run cat "$TEST_TMP_DIR/predictoutdir/predict.config"
     echo "$output" 1>&2
     [ "$status" -eq 0 ]
