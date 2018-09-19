@@ -12,9 +12,11 @@ if [ -f "$script_dir/VERSION" ] ; then
     version=`cat $script_dir/VERSION`
 fi
 
+gpu="all"
+
 function usage()
 {
-    echo "usage: $script_name [-h]
+    echo "usage: $script_name [-h] [--gpu GPU] [--waitinterval WAIT]
                       predictdir
 
               Version: $version
@@ -31,7 +33,8 @@ positional arguments:
 
 optional arguments:
   -h, --help           show this help message and exit
-
+  --gpu                Which GPU to use, can be a number ie 0 or 1 or
+                       all to use all GPUs (default $gpu)
   --waitinterval       Number of seconds to wait between checking
                        for number of completed packages 
                        (default $waitinterval)
@@ -40,13 +43,14 @@ optional arguments:
     exit 1;
 }
 
-TEMP=`getopt -o h --long "help,waitinterval:" -n '$0' -- "$@"`
+TEMP=`getopt -o h --long "help,waitinterval:,gpu:" -n '$0' -- "$@"`
 eval set -- "$TEMP"
 
 while true ; do
     case "$1" in
         -h ) usage ;;
         --help ) usage ;;
+        --gpu ) gpu=$2 ; shift 2 ;;
         --waitinterval ) waitinterval=$2 ; shift 2 ;;
         --) shift ; break ;;
     esac
@@ -75,6 +79,7 @@ echo "Trained Model Dir: $trained_model_dir"
 echo "Image Dir: $img_dir"
 echo "Models: $model_list"
 echo "Speed: $aug_speed"
+echo "GPU: $gpu"
 echo ""
 
 package_proc_info="$out_dir/augimages/package_processing_info.txt"
@@ -116,7 +121,7 @@ for model_name in `echo $space_sep_models` ; do
                 exit 1
             fi
             echo "Running prediction on $model_name $package_name"
-            /usr/bin/time -p caffepredict.sh "$trained_model_dir/$model_name/trainedmodel" "$Z" "$out_pkg"
+            /usr/bin/time -p caffepredict.sh --gpu $gpu "$trained_model_dir/$model_name/trainedmodel" "$Z" "$out_pkg"
             ecode=$?
             if [ $ecode != 0 ] ; then
                 fatal_error "$out_dir" "ERROR, a non-zero exit code ($ecode) was received from: caffepredict.sh" 4

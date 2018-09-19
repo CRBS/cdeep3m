@@ -24,11 +24,12 @@ fi
 
 model_list="1fm,3fm,5fm"
 aug_speed="1"
+gpu="all"
 
 function usage()
 {
     echo "usage: $script_name [-h] [--models MODELS] [--augspeed AUGSPEED]
-                              [--maxpackages PACKAGES]
+                              [--gpu GPU] [--maxpackages PACKAGES]
                       trainoutdir imagesdir predictoutdir
 
               Version: $version
@@ -43,6 +44,8 @@ positional arguments:
 
 optional arguments:
   -h, --help           show this help message and exit
+  --gpu                Which GPU to use, can be a number ie 0 or 1 or
+                       all to use all GPUs (default $gpu)
   --models             Only run prediction on models specified
                        in comma delimited list. (default $model_list)
   --augspeed           Augmentation speed. Higher the number
@@ -60,13 +63,14 @@ optional arguments:
     exit 1;
 }
 
-TEMP=`getopt -o h --long "help,models:,augspeed:,maxpackages:" -n '$0' -- "$@"`
+TEMP=`getopt -o h --long "help,models:,augspeed:,maxpackages:,gpu:" -n '$0' -- "$@"`
 eval set -- "$TEMP"
 
 while true ; do
     case "$1" in
         -h ) usage ;; 
         --help ) usage ;;
+        --gpu ) gpu=$2 ; shift 2 ;;
         --models ) model_list=$2 ; shift 2 ;;
         --augspeed ) aug_speed=$2 ; shift 2 ;;
         --maxpackages ) maxpackages=$2 ; shift 2 ;;
@@ -167,7 +171,7 @@ echo "Start up worker to generate packages to process"
 preprocessworker.sh --maxpackages $maxpackages "$out_dir" >> "$log_dir/preprocess.log" 2>&1 &
 
 echo "Start up worker to run prediction on packages"
-predictworker.sh "$out_dir" >> "$log_dir/prediction.log" 2>&1 &
+predictworker.sh --gpu $gpu "$out_dir" >> "$log_dir/prediction.log" 2>&1 &
 
 echo "Start up worker to run post processing on packages"
 postprocessworker.sh "$out_dir" >> "$log_dir/postprocess.log" 2>&1 &

@@ -238,7 +238,8 @@ teardown() {
 
     run cat "$TEST_TMP_DIR/predictoutdir/logs/prediction.log"
     [ "$status" -eq 0 ]
-    [ "${lines[0]}" == "$TEST_TMP_DIR/predictoutdir" ]
+    cat "$TEST_TMP_DIR/predictoutdir/logs/prediction.log" 1>&2
+    [ "${lines[0]}" == "--gpu all $TEST_TMP_DIR/predictoutdir" ]
 
     run cat "$TEST_TMP_DIR/predictoutdir/logs/postprocess.log"
     [ "$status" -eq 0 ]
@@ -247,10 +248,10 @@ teardown() {
     export PATH=$A_TEMP_PATH
 }
 
-@test "runprediction.sh success --models and --augspeed set and only 1 model" {
+@test "runprediction.sh success --gpu 4 --models and --augspeed set and only 1 model" {
     ln -s /bin/true "$TEST_TMP_DIR/DefDataPackages.m"
     ln -s /bin/true "$TEST_TMP_DIR/preprocessworker.sh"
-    ln -s /bin/true "$TEST_TMP_DIR/predictworker.sh"
+    ln -s /bin/echo "$TEST_TMP_DIR/predictworker.sh"
     ln -s /bin/true "$TEST_TMP_DIR/postprocessworker.sh"
     # setting EnsemblePredictions.m to false so the test
     # verifies its not being called cause there is only a single
@@ -262,7 +263,7 @@ teardown() {
  
     export A_TEMP_PATH=$PATH
     export PATH=$TEST_TMP_DIR:$PATH
-    run $RUNPREDICTION_SH --models 1fm --augspeed 4 trainoutdir augimages "$TEST_TMP_DIR/predictoutdir"
+    run $RUNPREDICTION_SH --models 1fm --augspeed 4 --gpu 4 trainoutdir augimages "$TEST_TMP_DIR/predictoutdir"
     echo "$output" 1>&2
     [ "$status" -eq 0 ]
     [ "${lines[0]}" = "Start up worker to generate packages to process" ]
@@ -278,6 +279,12 @@ teardown() {
     [ "${lines[3]}" = "models=1fm" ]
     [ "${lines[4]}" = "augspeed=4" ]
 
+    run cat "$TEST_TMP_DIR/predictoutdir/logs/prediction.log"
+    [ "$status" -eq 0 ]
+    cat "$TEST_TMP_DIR/predictoutdir/logs/prediction.log" 1>&2
+    [ "${lines[0]}" == "--gpu 4 $TEST_TMP_DIR/predictoutdir" ]
+
+    
     export PATH=$A_TEMP_PATH
 }
 

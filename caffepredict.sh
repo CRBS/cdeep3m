@@ -11,6 +11,8 @@ if [ -f "$script_dir/VERSION" ] ; then
    version=`cat $script_dir/VERSION`
 fi
 
+gpu="all"
+
 function usage()
 {
     echo "usage: $script_name [-h]
@@ -35,18 +37,21 @@ positional arguments:
                        created if it does not exist.
 optional arguments:
   -h, --help           show this help message and exit
+  --gpu                Which GPU to use, can be a number ie 0 or 1 or
+                       all to use all GPUs (default $gpu)
 
     " 1>&2;
    exit 1;
 }
 
-TEMP=`getopt -o h --long "help" -n '$0' -- "$@"`
+TEMP=`getopt -o h --long "help,gpu:" -n '$0' -- "$@"`
 eval set -- "$TEMP"
 
 while true ; do
     case "$1" in
         -h ) usage ;;
         --help ) usage ;;
+        --gpu ) gpu=$2 ; shift 2 ;;
         --) shift ; break ;;
     esac
 done
@@ -94,13 +99,24 @@ fi
 let maxgpuindex=$gpucount-1
 
 if [ $maxgpuindex -gt 0 ] ; then
-  echo "Detected $gpucount GPU(s). Will run in parallel"
+  echo -n "Detected $gpucount GPU(s)."
+  if [ "$gpu" == "all" ] ; then
+    echo " Will run in parallel."
+  else
+    echo " Using only GPU $gpu"
+  fi
 else
-  echo "Single GPU detected"
+  echo "Single GPU detected."
+fi
+
+if [ "$gpu" == "all" ] ; then
+  let cntr=0
+else
+  let cntr=$gpu
+  let gpucount=1
 fi
 
 theargs=""
-let cntr=0
 parallel_job_file="$out_dir/parallel.jobs"
 for input_file in `find "${in_dir}" -name "*.h5" -type f | sort -V` ;
   do
@@ -117,9 +133,11 @@ for input_file in `find "${in_dir}" -name "*.h5" -type f | sort -V` ;
     fi
   fi
   echo -e "$log_dir\n$deploy_dir\n$model\n$input_file\n$predict_dir\n$cntr" >> $parallel_job_file
-  let cntr++
-  if [ $cntr -gt $maxgpuindex ] ; then
-    let cntr=0
+  if [ "$gpu" == "all" ] ; then
+    let cntr++
+    if [ $cntr -gt $maxgpuindex ] ; then
+      let cntr=0
+    fi
   fi
 done
 
