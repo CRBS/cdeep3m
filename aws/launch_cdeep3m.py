@@ -35,6 +35,8 @@ def _parse_arguments(desc, theargs):
                         help='ip4 CIDR to denote ip address(s) to allow '
                              'ssh access to GPU EC2 instance. (default is ip '
                              'address of machine running this script')
+    parser.add_argument('--dataseturl', default='',
+                        help='url of file to download during initialization of ec2 instance')
     return parser.parse_args(theargs)
 
 
@@ -70,6 +72,13 @@ def _launch_cloudformation(theargs):
             'ParameterValue': theargs.sshlocation
         }
     ]
+
+    if theargs.dataseturl!='':
+        params.append({ 
+                       'ParameterKey': 'DatasetURL',
+                       'ParameterValue': theargs.dataseturl
+                      })
+    
 
     tags = [
         {
