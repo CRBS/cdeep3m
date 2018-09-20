@@ -23,6 +23,8 @@ def _parse_arguments(desc, theargs):
     parser.add_argument('--profile',
                         default=None,
                         help='AWS profile to load from credentials. default none')
+    parser.add_argument('--region', default=None,
+                        help='Only search in this specific region')
     return parser.parse_args(theargs)
 
 def _get_running_ec2_instances(theargs):
@@ -36,6 +38,9 @@ def _get_running_ec2_instances(theargs):
     response = ec2.describe_regions()
     for region in response['Regions']:
         rname = region['RegionName']
+        if theargs.region is not None:
+            if rname != theargs.region:
+                continue
         sys.stdout.write('Running ec2 query in region: ' + rname + '\n')
         ec2 = boto3.client('ec2', region_name=rname)
         mapstr += 'Region: ' + rname + '\n'

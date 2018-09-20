@@ -20,6 +20,8 @@ def _parse_arguments(desc, theargs):
     parser.add_argument('--profile',
                         default=None,
                         help='AWS profile to load from credentials. default none')
+    parser.add_argument('--region', default=None,
+                        help='Only search in this specific region')
     return parser.parse_args(theargs)
 
 def _get_running_cloudformations(theargs):
@@ -32,14 +34,17 @@ def _get_running_cloudformations(theargs):
     response = ec2.describe_regions()
     for region in response['Regions']:
         rname = region['RegionName']
+        if theargs.region is not None:
+            if rname != theargs.region:
+ 	        continue
         sys.stdout.write('Running cloudformation query in region: ' + rname + '\n')
         ec2 = boto3.client('cloudformation', region_name=rname)
         mapstr += '\nRegion: ' + rname + '\n'
         respy = ec2.describe_stacks()
-        pp = pprint.PrettyPrinter(indent=4)
+        # pp = pprint.PrettyPrinter(indent=4)
 
         for stack in respy['Stacks']:
-            pp.pprint(stack)
+            # pp.pprint(stack)
             mapstr += ('\n\t\tName: ' + stack['StackName'] + '\n' +
                        '\t\tStackId: ' + stack['StackId'] + '\n' +
                        '\t\tStackStatus: ' + stack['StackStatus'] + '\n' +
