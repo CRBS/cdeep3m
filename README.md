@@ -121,6 +121,8 @@ Please email to cdeep3m@gmail.com for additional questions.
 
 * [GNU Parallel][parallel]
 
+* Python 2.7 with cv2 (OpenCV), joblib and requests
+
 ## How to install locally
 
 #### Step 1) Download release tarball
