@@ -20,9 +20,9 @@ if speed == 10
             case 1
             do_var = [1];
             case 3
-            do_var = [11];
+            do_var = [1];
             case 5
-            do_var = [4];
+            do_var = [1];
          endswitch
          
 elseif speed == 1 
