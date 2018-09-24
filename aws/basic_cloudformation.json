@@ -8,11 +8,11 @@
             "ConstraintDescription": "must be the name of an existing EC2 KeyPair."
         },
         "DatasetURL": {
-            "Description": "URL for a dataset to download",
+            "Description": "Web link that will be automatically downloaded by EC2 instance",
             "Type": "String",
             "Default": "",
             "AllowedPattern": "( *(\\b(https?|ftp)://)[-A-Za-z0-9+&@#/%?=~_|!:,.;]+)|( *)",
-            "ConstraintDescription": "must be a HTTP URL to a file for download"
+            "ConstraintDescription": "must be empty or set to a HTTP URL to a file for download"
         },
         "GPUInstanceType": {
             "Description": "GPU EC2 instance type",
