@@ -181,7 +181,7 @@
                      "  chown ubuntu.ubuntu /home/ubuntu/datasetdownload.sh\n",
                      "  sudo -u ubuntu nice -n 19 /home/ubuntu/datasetdownload.sh \"$DATASETURL\" &\n",
                      "  export DATASETFILE=`echo \"$DATASETURL\" | sed 's/.*\\///'`\n",
-                     "  echo 'NOTE: Downloading '$DATASETFILE' from '$DATASETURL' in background to ~/.datasetdownload, '$DATASETFILE' will appear in /home/ubuntu when done' >> /etc/motd\n",
+                     "  echo 'NOTE: Downloading '$DATASETFILE' file from '$DATASETURL' in background to ~/.datasetdownload, '$DATASETFILE' file will appear in /home/ubuntu when done' >> /etc/motd\n",
                      "fi\n",
                      "echo 'Done with update' `date` ' ::::'`date +%s`\n"
                        ]]}}
