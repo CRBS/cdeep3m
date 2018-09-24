@@ -4,6 +4,7 @@ import sys
 import os
 import argparse
 import boto3
+import time
 from ipify import get_ip
 
 
@@ -22,10 +23,12 @@ def _parse_arguments(desc, theargs):
                         help='Stack name to use')
     parser.add_argument('--profile', default=None,
                         help='AWS profile to load from credentials. default none')
-    parser.add_argument('--cdeep3mversion', default='0.15.2',
-                        help='Version of CDeep3M to launch (default 0.15.2)')
+    # parser.add_argument('--cdeep3mversion', default='0.15.2',
+    #                     help='Version of CDeep3M to launch (default 0.15.2)')
     parser.add_argument('--keypairname', default='id_rsa',
                         help='AWS EC2 KeyPair Name')
+    parser.add_argument('--wait', action='store_true',
+                        help='If set wait for cloudformation to complete')
     parser.add_argument('--instancetype', default='p3.2xlarge',
                         choices=['p2.xlarge', 'p3.2xlarge','p3.8xlarge','p3.16xlarge'],
                         help='GPU Instance type to launch (default p3.2xlarge')
@@ -108,7 +111,34 @@ def _launch_cloudformation(theargs):
                           }
     }
     """
-    return str(resp)
+    return resp
+
+
+def _wait_for_stack(stackid, theargs):
+   cloudform = boto3.client('cloudformation', region_name=theargs.region)
+   dns = _is_stack_complete(stackid, cloudform)
+   while dns is None:
+     sys.stdout.write('.')
+     sys.stdout.flush()
+     time.sleep(30)
+     dns = _is_stack_complete(stackid, cloudform)
+   sys.stdout.write('\n')
+   time.sleep(30)
+   return dns
+
+
+def _is_stack_complete(stackid, cloudform):
+    """Waits for stack to launch"""
+
+    resp = cloudform.describe_stacks(StackName=stackid)
+    for stack in resp['Stacks']:
+      if 'CREATE_COMPLETE' in stack['StackStatus']:
+        for output in stack['Outputs']:
+          if output['OutputKey'] == 'PublicDNS':
+            return output['OutputValue']
+      if not 'CREATE_IN_PROGRESS' in stack['StackStatus']:
+          return 'Error, stack status: ' + str(stack['StackStatus'])
+    return None
 
 
 def main(arglist):
@@ -117,7 +147,12 @@ def main(arglist):
            """
     theargs = _parse_arguments(desc, sys.argv[1:])
     sys.stdout.write('Contacting AWS: \n')
-    sys.stdout.write(_launch_cloudformation(theargs))
+    res = _launch_cloudformation(theargs)
+    sys.stdout.write(str(res))
+    sys.stdout.flush()
+    if theargs.wait is True:
+        dns = _wait_for_stack(res['StackId'], theargs)
+        sys.stdout.write('\nStack created, DNS => ' + str(dns) + '\n')
 
 
 if __name__ == '__main__': # pragma: no cover
