@@ -30,7 +30,7 @@ CDeep3M provides a plug-and-play cloud based deep learning solution for image se
 Click launch button to spin up the latest release of CDeep3M on the cloud (~20 minute spin up time):
 **(Oregon region)** 
 
-[![Launch Deep3m AWS CloudFormation link](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=cdeep3m-stack-1-6-1m&templateURL=https://s3-us-west-2.amazonaws.com/cdeep3m-releases/1.6.1m/cdeep3m_1.6.1m_basic_cloudformation.json)
+[![Launch Deep3m AWS CloudFormation link](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=cdeep3m-stack-1-6-1test&templateURL=https://s3-us-west-2.amazonaws.com/cdeep3m-releases/1.6.1test/cdeep3m_1.6.1test_basic_cloudformation.json)
 
 **NOTE: Running will result in EC2 charges (0.9-3$ per hour runtime)**
 
@@ -128,14 +128,14 @@ Please email to cdeep3m@gmail.com for additional questions.
 #### Step 1) Download release tarball
 
 ```Bash
-wget https://github.com/CRBS/cdeep3m/archive/v1.6.1m.tar.gz
+wget https://github.com/CRBS/cdeep3m/archive/v1.6.1test.tar.gz
 ```
 
 #### Step 2) Uncompress 
 
 ```Bash
-tar -zxf v1.6.1m.tar.gz
-cd cdeep3m-1.6.1m
+tar -zxf v1.6.1test.tar.gz
+cd cdeep3m-1.6.1test
 ```
 
 #### Step 3) Add to path
