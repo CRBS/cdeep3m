@@ -59,7 +59,7 @@ end
 %define label name
 
 area = packages{ii};
-[stack] = imageimporter_large(in_img_path,area,z_stack); %load only subarea here
+[stack] = imageimporter_large(in_img_path,area,z_stack,outdir); %load only subarea here
 checkpoint_nobinary(stack);
 disp('Padding images');
 [stack] = add_z_padding(stack); %adds 2 planes i beginning and end

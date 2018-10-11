@@ -1,4 +1,4 @@
-function [imgstack] = imageimporter_large(img_path,area,z_stack)
+function [imgstack] = imageimporter_large(img_path,area,z_stack,outfolder)
 %imageimporter_large: loads subarea of large image data
 % from folder or from an individual image stack
 %
@@ -67,7 +67,10 @@ elseif isdir(img_path)
         %        imgstack(:,:,iii) = imread(filename,'PixelRegion', {cols, rows}); %tif allows to read subarea
         %    end
        % else
-            tempdir = fullfile(img_path,'temp');
+
+
+            tempdir = fullfile(outfolder,'temp');
+
             mkdir(tempdir);
             %num_cores = 4;
             %all_files = str2mat(file_list.name);
