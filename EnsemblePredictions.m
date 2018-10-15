@@ -5,18 +5,14 @@
 % last argument has to be the outputdirectory where the average files are stored
 %
 % -----------------------------------------------------------------------------
-%% NCMIR, UCSD -- Author: M Haberl -- Data: 10/2017
+%% NCMIR, UCSD -- Author: M Haberl -- Data: 10/2017 -- Update: 10/2018
 % -----------------------------------------------------------------------------
 %
 
 %% Initialize
-pkg load hdf5oct
-pkg load image
 
 script_dir = fileparts(make_absolute_filename(program_invocation_name()));
 addpath(genpath(script_dir));
-addpath(genpath(strcat(script_dir,filesep(),'scripts',filesep())));
-addpath(genpath(strcat(script_dir,filesep(),'scripts',filesep(),'functions')));
 tic
 
 arg_list = argv ();
@@ -29,7 +25,7 @@ end
 for i = 1:(numel(arg_list)-1)
     to_process{i} = arg_list{i};
     if ~isdir(arg_list{i})
-    fprintf('%s not a directory\nPlease use: EnsemblePredictions ./inputdir1 ./inputdir2 ./inputdir3 ./outputdir\n',arg_list{i});
+    fprintf('%s not a directory\nPlease check if predictions ran successfully or ensure to use: EnsemblePredictions ./inputdir1 ./inputdir2 ./inputdir3 ./outputdir\n',arg_list{i});
     return
     end
     list{i} = filter_files(read_files_in_folder(to_process{i}),'.png');
@@ -40,21 +36,17 @@ mkdir(outputdir);
 
 %% =============== Generate ensemble predictions =================================
 
-%merged_file_save=fullfile(outfolder, 'EnsemblePredict.tiff');
-%if exist(merged_file_save, 'file'),delete(merged_file_save); end
-%outputdir =  fileparts(to_process{1}); % Writes automatically in the parent directory of the first prediction folder 
-total_zplanes = size(list{1},1);
-for z = 1:total_zplanes
-    for proc = 1:numel(to_process)                
-        image_name = fullfile(to_process{proc}, list{proc}(z).name);
-        cumul_plane(:,:,proc) = imread(image_name);   %Cumulate all average predictions of this plane
-    end    
-        prob_map = uint8(mean(cumul_plane,3));
+pysemble = strcat(script_dir,filesep(),'scripts',filesep(),'functions',filesep(),'ensemble.py');
 
-        save_file_save = fullfile(outputdir, list{1}(z).name);
-        fprintf('Saving Image # %s of %s: %s\n', num2str(z), num2str(total_zplanes),save_file_save);
-	imwrite(prob_map, save_file_save);
-        clear cumul_plane prob_map;
+tempmat_infile = fullfile(fileparts(outputdir),'infolders.txt');
+delete(tempmat_infile);
+
+fid = fopen(tempmat_infile, 'a')
+for fl = 1:numel(to_process)             
+fprintf(fid, strcat(fullfile(to_process{fl}),'\n'));
 end
+fclose(fid);
+
+system(sprintf('%s %s %s',pysemble, tempmat_infile, outputdir));
 
 fprintf('Elapsed time for merging predictions is %06d seconds.\n', round(toc));
