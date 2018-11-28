@@ -109,7 +109,7 @@ Please email to cdeep3m@gmail.com for additional questions.
 
 * Nvidia K40 GPU or better (needs 12gb+ ram) with CUDA 7.5 or higher
 
-* Special forked version of caffe found here: https://github.com/Xiaomi2008/caffe_nd_sense_segmentation
+* Special forked version of caffe found here: https://github.com/coleslaw481/caffe_nd_sense_segmentation
 
 * Linux OS, preferably Ubuntu with Nvidia drivers installed and working correctly
 
