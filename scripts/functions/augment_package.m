@@ -3,7 +3,7 @@ function augment_package(original, outsubdir,fmnumber,speed);
 % removed memory limiting steps
 % All vectorized
 % Optimized for reducing time of processing
-%
+% rm dependency on hdf5 package
 %
 %------------------------------------------------
 %% augment_package for CDeep3M -- NCMIR/NBCR, UCSD
@@ -90,7 +90,9 @@ for i = do_var(do_var<9)
         filename = fullfile(outsubdir, sprintf('image_stacks_v%s.h5', num2str(i)));
         fprintf('Saving: %s\n',filename)
         %h5create(filename,d_details,size(i_stack)); %nescessary for Matlab not for Octave
-        h5write(filename,d_details,stack_out);
+        %h5write(filename,d_details,stack_out);
+        data = stack_out;
+        save("-hdf5", filename, "data");
         %clear -v stack   
 end
 
@@ -132,7 +134,9 @@ for i = do_var(do_var>8)
         filename = fullfile(outsubdir, sprintf('image_stacks_v%s.h5', num2str(i)));
         fprintf('Saving: %s\n',filename)
         %h5create(filename,d_details,size(i_stack)); %nescessary for Matlab not for Octave
-        h5write(filename,d_details,stack_out);
+        %h5write(filename,d_details,stack_out);
+        data = stack_out;
+        save("-hdf5", filename, "data");
         %clear -v stack
     
 end
