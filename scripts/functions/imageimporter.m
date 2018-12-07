@@ -47,8 +47,8 @@ else
 end
 
 x_size=size(imgstack,1);y_size=size(imgstack,2);
-if x_size<320 || y_size<320
-    temp_img = zeros(320,320,size(imgstack,3));
+if x_size<325 || y_size<325
+    temp_img = zeros(325,325,size(imgstack,3));
     temp_img(1:size(imgstack,1),1:size(imgstack,2),:) = imgstack;
     imgstack = temp_img;
 end
