@@ -17,6 +17,8 @@
 [runtraining.sh]: https://github.com/CRBS/cdeep3m/wiki/runtraining.sh
 [cdeep3mbiorxiv]: https://www.biorxiv.org/content/early/2018/06/21/353425
 [cdeep3mnaturemethods]: https://rdcu.be/5zIF
+[dockercdeep3m]: https://github.com/CrispyCrafter/cdeep3m-docker
+
 
 # CDeep3M
 
@@ -100,6 +102,13 @@ Further reading:
 # Support
 
 Please email to cdeep3m@gmail.com for additional questions.
+
+# Local install using Docker
+
+Thanks to CrispyCrafter and Jurgen for making a Docker version of CDeep3M. If you want to run CDeep3M locally this should be the quickest way:
+
+* [Docker version of CDeep3M][dockercdeep3m]
+
 
 # Local install, for advanced users/developers only
 
