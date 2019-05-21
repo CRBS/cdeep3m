@@ -143,9 +143,38 @@ done
 
 # the --delay 2 is to add a 2 second delay between starting jobs
 # without this jobs would fail on GPU with out of memory error
-#
+#cat $parallel_job_file | parallel --no-notice --delay 2 -N 6 -j $gpucount 'GLOG_logtostderr="{1}" /usr/bin/time -p $CAFFE_PATH/.build_release/tools/predict_seg_new.bin --model={2}/deploy.prototxt --weights={3} --data={4} --predict={5}/test.h5 --shift_axis=2 --shift_stride=1 --gpu={6}' >> "$out_log" 2>&1
 
-cat $parallel_job_file | parallel --no-notice --delay 2 -N 6 -j $gpucount 'GLOG_logtostderr="{1}" /usr/bin/time -p predict_seg_new.bin --model={2}/deploy.prototxt --weights={3} --data={4} --predict={5}/test.h5 --shift_axis=2 --shift_stride=1 --gpu={6}' >> "$out_log" 2>&1
+cnt=0
+job_array=""
+cmdlets="$out_dir/cmdlets"
+
+for line in `cat $parallel_job_file`; do
+  case $cnt in
+  [0-4]*)
+  job_array[$cnt]=$line
+  ;;
+  5)
+  echo "GLOG_logtostderr=\"${job_array[0]}\" /usr/bin/time -p $CAFFE_PATH/.build_release/tools/predict_seg_new.bin --model=${job_array[1]}/deploy.prototxt --weights=${job_array[2]} --data=${job_array[3]} --predict=${job_array[4]}/test.h5 --shift_axis=2 --shift_stride=1 --gpu=$line >> \"$out_log\" 2>&1" >> $cmdlets
+  ;;
+  *)
+  echo "I should never be here"
+  ;;
+  esac
+
+  if [ $cnt == 5 ]; then
+    cnt=0
+  else
+    ((cnt++))
+  fi
+
+done
+
+# The --delay 2 in parallel doesn't seem to be required for these sequenced runs but more testing
+# is required.
+parallel --no-notice -j $gpucount < $cmdlets
+
+
   ecode=$?
   if [ $ecode != 0 ] ; then
     fatal_error "$out_dir" "ERROR non-zero exit code ($ecode) from running predict_seg_new.bin" 6
