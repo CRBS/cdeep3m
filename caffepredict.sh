@@ -144,41 +144,73 @@ done
 # the --delay 2 is to add a 2 second delay between starting jobs
 # without this jobs would fail on GPU with out of memory error
 #cat $parallel_job_file | parallel --no-notice --delay 2 -N 6 -j $gpucount 'GLOG_logtostderr="{1}" /usr/bin/time -p $CAFFE_PATH/.build_release/tools/predict_seg_new.bin --model={2}/deploy.prototxt --weights={3} --data={4} --predict={5}/test.h5 --shift_axis=2 --shift_stride=1 --gpu={6}' >> "$out_log" 2>&1
+line_cnt=0                      # COUNTS THE LINES IN THE PARALLEL JOBS FILE
+job_count=0                     # COUNTS THE NUMBER OF COMMANDS IN THE cmdlets FILE
+job_array=""                    # STORES THE PARALLEL JOB INFORMATION
+cmdlets="$out_dir/cmdlets"      # STORES THE COMMANDS TO RUN VIA PARALLEL
+cmdsran="$out_dir/cmdruns"      # STORES THE COMMANDS THAT WERE ALREADY RUN
 
-cnt=0
-job_array=""
-cmdlets="$out_dir/cmdlets"
+# ---------------------------------------------------------------------------------------
+# TAKES THE INFORMATION BUILT IN THE parallel.jobs FILE AND PARSES IT
+# INTO A COMMAND FILE THAT CAN BE PASSED TO parallel FOR PROCESSING
+# The first 4 switch cases grab the following from the parallel.jobs file in order:
+# job_array[0] - GLOG folder
+# job_array[1] - Training model
+# job_array[2] - weights
+# job_array[3] - input data
+# job_array[4] - output folder
+# The 5th switch injects the current line as the --gpu paramater
+# Those 5 characteristics together makeup the command to be ran with predict_seg_new.bin
+# via parallel
+#
+# Once the line_cnt is equal to 5 a command is available and the job_count increments.
+# When the job_count reaches the gpucount (the max number of parallel jobs that can run)
+# the jobs are then pushed into parallel. When parallel finishes blocking the commands
+# are logged to the cmdsran file, the job_count is reset and the cmdlets file removed
+# for the next iteration of commands.
 
-for line in `cat $parallel_job_file`; do
-  case $cnt in
-  [0-4]*)
-  job_array[$cnt]=$line
-  ;;
-  5)
-  echo "GLOG_logtostderr=\"${job_array[0]}\" /usr/bin/time -p $CAFFE_PATH/.build_release/tools/predict_seg_new.bin --model=${job_array[1]}/deploy.prototxt --weights=${job_array[2]} --data=${job_array[3]} --predict=${job_array[4]}/test.h5 --shift_axis=2 --shift_stride=1 --gpu=$line >> \"$out_log\" 2>&1" >> $cmdlets
-  ;;
-  *)
-  echo "I should never be here"
-  ;;
+for line in `cat $parallel_job_file`; do     # EACH LINE IN THE parallel.jobs FILE
+  case $line_cnt in
+    # GLOG, model, weights, input and output
+    [0-4]*)
+    job_array[$line_cnt]=$line
+    ;;
+    # The gpu number makes the final command string
+    5)
+    echo "GLOG_logtostderr=\"${job_array[0]}\" /usr/bin/time -p $CAFFE_PATH/.build_release/tools/predict_seg_new.bin --model=${job_array[1]}/deploy.prototxt --weights=${job_array[2]} --data=${job_array[3]} --predict=${job_array[4]}/test.h5 --shift_axis=2 --shift_stride=1 --gpu=$line >> \"$out_log\" 2>&1" >> $cmdlets
+    ;;
+    *)
+    echo "I should never be here in default"
+    ;;
   esac
-
-  if [ $cnt == 5 ]; then
-    cnt=0
+  # IF THE line_cnt HAS REACHED 5 A COMMAND HAS BEEN BUILT
+  # IF THE job_count HAS REACHED THE gpucount RUN THE NUMBER OF JOBS
+  # IN PARALLEL THAT CAN BE RUN
+  if [ $line_cnt == 5 ]; then                       # IF THE LINE COUNT IS 5 THEN A COMMAND IS READY
+    line_cnt=0                                      # RESET THE CURRENT LINE COUNT
+    ((job_count++))                                 # ADD A JOB
+    if [ $job_count == $gpucount ]; then            # IF THE job_count HAS REACHED IT'S MAX (gpucount)
+      parallel --no-notice -j $gpucount < $cmdlets  # RUN THE CURRENT JOB QUEUE
+      job_count=0                                   # RESET THE JOB COUNT
+      cat $cmdlets >> $cmdsran                      # TRACK THE COMMANDS THAT WERE RUN
+      rm -f $cmdlets                                # CLEAN OLD COMMANDS
+    fi
   else
-    ((cnt++))
+    ((line_cnt++))                                  # INCREMENT THE CURRENT LINE COUNT
   fi
+done # END - for line in `cat $parallel_job_file`; do
 
-done
+# CHECK TO SEE IF THERE ARE ANY JOBS STILL PENDING AND RUN THEM
+if [ $job_count -gt 0 ]; then
+  parallel --no-notice -j $gpucount < $cmdlets
+  cat $cmdlets >> $cmdsran
+  rm -f $cmdlets
+fi
 
-# The --delay 2 in parallel doesn't seem to be required for these sequenced runs but more testing
-# is required.
-parallel --no-notice -j $gpucount < $cmdlets
-
-
-  ecode=$?
-  if [ $ecode != 0 ] ; then
-    fatal_error "$out_dir" "ERROR non-zero exit code ($ecode) from running predict_seg_new.bin" 6
-  fi
+ecode=$?
+if [ $ecode != 0 ] ; then
+  fatal_error "$out_dir" "ERROR non-zero exit code ($ecode) from running predict_seg_new.bin" 6
+fi
 
 echo ""
 
