@@ -112,7 +112,7 @@ teardown() {
    [ "${lines[1]}" = "Creating directory $TEST_TMP_DIR/v2" ]
    [ "${lines[15]}" = "Creating directory $TEST_TMP_DIR/v16" ]
 
-   [ "${lines[16]}" = "--no-notice --delay 2 -N 6 -j 2 GLOG_logtostderr=\"{1}\" /usr/bin/time -p predict_seg_new.bin --model={2}/deploy.prototxt --weights={3} --data={4} --predict={5}/test.h5 --shift_axis=2 --shift_stride=1 --gpu={6}" ]
+   #[ "${lines[16]}" = "--no-notice --delay 2 -N 6 -j 2 GLOG_logtostderr=\"{1}\" /usr/bin/time -p predict_seg_new.bin --model={2}/deploy.prototxt --weights={3} --data={4} --predict={5}/test.h5 --shift_axis=2 --shift_stride=1 --gpu={6}" ]
 
    run cat "$TEST_TMP_DIR/parallel.jobs"
    cat "$TEST_TMP_DIR/parallel.jobs" 1>&2
@@ -167,7 +167,7 @@ teardown() {
    [ "${lines[1]}" = "Creating directory $TEST_TMP_DIR/v2" ]
    [ "${lines[15]}" = "Creating directory $TEST_TMP_DIR/v16" ]
 
-   [ "${lines[16]}" = "--no-notice --delay 2 -N 6 -j 1 GLOG_logtostderr=\"{1}\" /usr/bin/time -p predict_seg_new.bin --model={2}/deploy.prototxt --weights={3} --data={4} --predict={5}/test.h5 --shift_axis=2 --shift_stride=1 --gpu={6}" ]
+   #[ "${lines[16]}" = "--no-notice --delay 2 -N 6 -j 1 GLOG_logtostderr=\"{1}\" /usr/bin/time -p predict_seg_new.bin --model={2}/deploy.prototxt --weights={3} --data={4} --predict={5}/test.h5 --shift_axis=2 --shift_stride=1 --gpu={6}" ]
 
    run cat "$TEST_TMP_DIR/parallel.jobs"
    cat "$TEST_TMP_DIR/parallel.jobs" 1>&2
