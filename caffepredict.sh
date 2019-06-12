@@ -191,6 +191,10 @@ for line in `cat $parallel_job_file`; do     # EACH LINE IN THE parallel.jobs FI
     ((job_count++))                                 # ADD A JOB
     if [ $job_count == $gpucount ]; then            # IF THE job_count HAS REACHED IT'S MAX (gpucount)
       parallel --no-notice -j $gpucount < $cmdlets  # RUN THE CURRENT JOB QUEUE
+      ecode=$?
+      if [ $ecode != 0 ] ; then
+        fatal_error "$out_dir" "ERROR non-zero exit code ($ecode) from running predict_seg_new.bin" 6
+      fi
       job_count=0                                   # RESET THE JOB COUNT
       cat $cmdlets >> $cmdsran                      # TRACK THE COMMANDS THAT WERE RUN
       rm -f $cmdlets                                # CLEAN OLD COMMANDS
@@ -203,13 +207,12 @@ done # END - for line in `cat $parallel_job_file`; do
 # CHECK TO SEE IF THERE ARE ANY JOBS STILL PENDING AND RUN THEM
 if [ $job_count -gt 0 ]; then
   parallel --no-notice -j $gpucount < $cmdlets
+  ecode=$?
+  if [ $ecode != 0 ] ; then
+    fatal_error "$out_dir" "ERROR non-zero exit code ($ecode) from running predict_seg_new.bin" 6
+  fi
   cat $cmdlets >> $cmdsran
   rm -f $cmdlets
-fi
-
-ecode=$?
-if [ $ecode != 0 ] ; then
-  fatal_error "$out_dir" "ERROR non-zero exit code ($ecode) from running predict_seg_new.bin" 6
 fi
 
 echo ""
