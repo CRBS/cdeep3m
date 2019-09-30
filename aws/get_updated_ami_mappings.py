@@ -16,10 +16,10 @@ def _parse_arguments(desc, theargs):
                         help="Owner id to pass to search " +
                              "(default 898082745236)")
     parser.add_argument('--namefilter',
-                        default='Deep Learning AMI with Source Code v2.0',
+                        default='Deep Learning AMI with Source Code Ubuntu v5.0',
                         help='Find only AMI image with this string in name' +
-                             ' (default: Deep Learning AMI with Source ' + 
-                             'Code v2.0')
+                             ' (default: Deep Learning AMI with Source Code)' +
+                             ' Ubuntu v5.0')
     return parser.parse_args(theargs)
 
 def _get_ami_mapping(theargs):
@@ -36,9 +36,9 @@ def _get_ami_mapping(theargs):
                                    Filters=[{'Name': 'name',
                                              'Values': [theargs.namefilter]}])
         for image in resp['Images']:
-            mapstr += ('           "' + rname + '"    {"AMI" : "' +
+            mapstr += ('           "' + rname + '" : {"AMI" : "' +
                        image['ImageId'] + '"},\n')
-    sys.stdout.write('\n\n Below is json fragment that can ' + 
+    sys.stdout.write('\n\n Below is json fragment that can ' +
                      'go in "RegionMap"\n\n')
     return mapstr
 
@@ -50,7 +50,6 @@ def main(arglist):
               passed in via --ownerid and --namefilter flags for
               this tool.  The output is json fragment that can
               be put in the "Mappings" => "RegionMap" section
-
            """
     theargs = _parse_arguments(desc, sys.argv[1:])
     sys.stdout.write('Querying AWS: \n')
