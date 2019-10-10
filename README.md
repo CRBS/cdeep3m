@@ -32,7 +32,7 @@ CDeep3M provides a plug-and-play cloud based deep learning solution for image se
 Click launch button to spin up the latest release of CDeep3M on the cloud (~20 minute spin up time):
 **(Oregon region)** 
 
-[![Launch Deep3m AWS CloudFormation link](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=cdeep3m-stack-1-6-3rc3&templateURL=https://s3-us-west-2.amazonaws.com/cdeep3m-releases/1.6.3rc3/cdeep3m_1.6.3rc3_basic_cloudformation.json)
+[![Launch Deep3m AWS CloudFormation link](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=cdeep3m-stack-1-6-3rc3&templateURL=https://s3-us-west-2.amazonaws.com/cdeep3m-releases-s3/1.6.3rc3/cdeep3m_1.6.3rc3_basic_cloudformation.json)
 
 **NOTE: Running will result in EC2 charges (0.9-3$ per hour runtime)**
 
