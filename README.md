@@ -19,7 +19,7 @@
 [cdeep3mnaturemethods]: https://rdcu.be/5zIF
 [dockercdeep3m]: https://github.com/CrispyCrafter/cdeep3m-docker
 
-![alt text](./vagrant/cdeep3m_logo-01.png)
+
 
 # CDeep3M
 
