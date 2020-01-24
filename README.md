@@ -21,7 +21,7 @@
 
 ![alt text](./vagrant/cdeep3m_logo-01.png)
 
-# CDeep3M
+# Overview
 
 [![Build Status](https://travis-ci.org/CRBS/cdeep3m.svg?branch=master)](https://travis-ci.org/CRBS/cdeep3m)
 
