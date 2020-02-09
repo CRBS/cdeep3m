@@ -157,7 +157,7 @@ teardown() {
     [ "${lines[8]}" == "$TEST_TMP_DIR/1fm/Pkg001_Z01" ]
     [ "${lines[12]}" == "Removing $TEST_TMP_DIR/augimages/1fm/Pkg001_Z01" ]
     [ "${lines[13]}" == "$TEST_TMP_DIR/1fm" ] 
-    [ "${lines[17]}" == "Removing Pkg_* folders" ]
+    [ "${lines[17]}" == "Removing Pkg* folders" ]
     [ "${lines[18]}" == "Postprocessing has completed." ]
 
     [ ! -d "$TEST_TMP_DIR/1fm/Pkg_001" ] 
