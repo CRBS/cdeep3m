@@ -127,8 +127,8 @@ for model_name in `echo $space_sep_models` ; do
     if [ $ecode != 0 ] ; then
         fatal_error "$out_dir" "ERROR non-zero exit code ($ecode) from running Merge_LargeData.m" 8
     fi
-    echo "Removing Pkg_* folders"
-    /bin/rm -rf $out_dir/$model_name/Pkg_*
+    echo "Removing Pkg* folders"
+    /bin/rm -rf $out_dir/$model_name/Pkg*
 done
 
 echo ""
